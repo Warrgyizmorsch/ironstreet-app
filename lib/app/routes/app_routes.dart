@@ -1,16 +1,30 @@
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 part of 'app_pages.dart';
-// DO NOT EDIT. This is code generated via package:get_cli/get_cli.dart
 
 abstract class Routes {
   Routes._();
-  static const LOGIN = _Paths.LOGIN;
-  static const ONBOARDING = _Paths.ONBOARDING;
   static const HOME = _Paths.HOME;
+  static const CATEGORY = _Paths.CATEGORY;
+  static const PRODUCT_DETAIL = _Paths.PRODUCT_DETAIL;
+  static const WISHLIST = _Paths.WISHLIST;
+  static const CART = _Paths.CART;
+  static const ACCOUNT = _Paths.ACCOUNT;
+  static const STORES = _Paths.STORES;
+  static const CALLBACK = _Paths.CALLBACK;
 }
 
 abstract class _Paths {
   _Paths._();
-  static const LOGIN = '/login';
-  static const ONBOARDING = '/onboarding';
   static const HOME = '/home';
+  static const CATEGORY = '/category';
+  static const PRODUCT_DETAIL = '/product-detail';
+  static const WISHLIST = '/wishlist';
+  static const CART = '/cart';
+  static const ACCOUNT = '/account';
+  static const STORES = '/stores';
+  static const CALLBACK = '/callback';
 }
