@@ -10,7 +10,7 @@ void main() {
 }
 
 class IronStreetApp extends StatelessWidget {
-  const IronStreetApp({Key? key}) : super(key: key);
+  const IronStreetApp({super.key});
 
   @override
   Widget build(BuildContext context) {
