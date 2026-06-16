@@ -422,25 +422,14 @@ class HomeView extends GetView<HomeController> {
 
   Widget _buildCategoryHorizontalScroll() {
     return Container(
-      height: 195,
+      height: 175,
       color: Colors.white,
       // padding: const EdgeInsets.symmetric(vertical: 12),
-      // margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          //   child: Text(
-          //     'Browse by Rooms & Categories',
-          //     style: GoogleFonts.poppins(
-          //       fontSize: 12,
-          //       fontWeight: FontWeight.w900,
-          //       color: const Color(0xFF222222),
-          //     ),
-          //   ),
-          // ),
-          // const SizedBox(height: 8),
+          const SizedBox(height: 8),
           Expanded(
             child: GridView.builder(
               scrollDirection: Axis.horizontal,
