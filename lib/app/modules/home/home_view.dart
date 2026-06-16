@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import 'home_controller.dart';
 import '../category/category_view.dart';
@@ -96,7 +97,7 @@ class HomeView extends GetView<HomeController> {
                       style: GoogleFonts.poppins(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
-                        color: const Color(0xFFF37021),
+                        color: AppColors.primary,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -227,7 +228,7 @@ class HomeView extends GetView<HomeController> {
         currentIndex: controller.currentIndex.value,
         onTap: (index) => controller.onTabChanged(index),
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFFF37021),
+        selectedItemColor: AppColors.primary,
         unselectedItemColor: Colors.grey,
         selectedLabelStyle: GoogleFonts.poppins(
           fontSize: 9,
@@ -367,7 +368,7 @@ class HomeView extends GetView<HomeController> {
         _buildDecorGridSection(),
 
         // Recently Viewed items
-        SectionHeader(
+        const SectionHeader(
           title: 'Recently Viewed',
           subtitle: 'Items you inspected recently',
         ),
@@ -399,9 +400,7 @@ class HomeView extends GetView<HomeController> {
               decoration: BoxDecoration(
                 color: isActive ? const Color(0xFFFFF0E6) : Colors.transparent,
                 border: Border.all(
-                  color: isActive
-                      ? const Color(0xFFF37021)
-                      : const Color(0xFFE5E5E5),
+                  color: isActive ? AppColors.primary : const Color(0xFFE5E5E5),
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -410,7 +409,7 @@ class HomeView extends GetView<HomeController> {
                 style: GoogleFonts.poppins(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
-                  color: isActive ? const Color(0xFFF37021) : Colors.grey[700],
+                  color: isActive ? AppColors.primary : Colors.grey[700],
                 ),
               ),
             ),
@@ -464,16 +463,16 @@ class HomeView extends GetView<HomeController> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFECE0),
+        color: AppColors.primary.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFFFD4C0)),
+        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              const Icon(Icons.flash_on, color: Color(0xFFF37021), size: 24),
+              const Icon(Icons.flash_on, color: AppColors.primary, size: 24),
               const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -483,7 +482,7 @@ class HomeView extends GetView<HomeController> {
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
-                      color: const Color(0xFFF37021),
+                      color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -499,7 +498,7 @@ class HomeView extends GetView<HomeController> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFFF37021),
+              color: AppColors.primary,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
@@ -673,7 +672,7 @@ class HomeView extends GetView<HomeController> {
                             item.priceText,
                             style: GoogleFonts.poppins(
                               fontSize: 8,
-                              color: const Color(0xFFF37021),
+                              color: AppColors.primary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -751,7 +750,7 @@ class HomeView extends GetView<HomeController> {
                             item.priceText,
                             style: GoogleFonts.poppins(
                               fontSize: 8,
-                              color: const Color(0xFFF37021),
+                              color: AppColors.primary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -786,7 +785,7 @@ class HomeView extends GetView<HomeController> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.check_circle_outline,
-                  color: Color(0xFFF37021), size: 68),
+                  color: AppColors.primary, size: 68),
               const SizedBox(height: 16),
               Text(
                 'Request Registered!',
@@ -844,7 +843,7 @@ class HomeView extends GetView<HomeController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Icon(Icons.phone_callback,
-                        color: Color(0xFFF37021), size: 24),
+                        color: AppColors.primary, size: 24),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -855,7 +854,7 @@ class HomeView extends GetView<HomeController> {
                             style: GoogleFonts.poppins(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFFF37021),
+                              color: AppColors.primary,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -997,7 +996,7 @@ class HomeView extends GetView<HomeController> {
                 height: 48,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF37021),
+                    backgroundColor: AppColors.primary,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10)),
                   ),
@@ -1069,7 +1068,7 @@ class HomeView extends GetView<HomeController> {
                           : Colors.transparent,
                       border: Border.all(
                         color: isActive
-                            ? const Color(0xFFF37021)
+                            ? AppColors.primary
                             : const Color(0xFFE5E5E5),
                       ),
                       borderRadius: BorderRadius.circular(20),
@@ -1079,9 +1078,7 @@ class HomeView extends GetView<HomeController> {
                       style: GoogleFonts.poppins(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        color: isActive
-                            ? const Color(0xFFF37021)
-                            : Colors.grey[700],
+                        color: isActive ? AppColors.primary : Colors.grey[700],
                       ),
                     ),
                   ),
@@ -1187,7 +1184,7 @@ class HomeView extends GetView<HomeController> {
                                           'Opening directions in maps to ${store.name}');
                                     },
                                     icon: const Icon(Icons.navigation,
-                                        size: 14, color: Color(0xFFF37021)),
+                                        size: 14, color: AppColors.primary),
                                     label: const Text('Directions',
                                         style: TextStyle(fontSize: 11)),
                                   ),
@@ -1196,8 +1193,7 @@ class HomeView extends GetView<HomeController> {
                                 Expanded(
                                   child: ElevatedButton.icon(
                                     style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            const Color(0xFFF37021)),
+                                        backgroundColor: AppColors.primary),
                                     onPressed: () {
                                       Get.snackbar('Calling',
                                           'Showroom coordinators dial line diallers: ${store.phone}');

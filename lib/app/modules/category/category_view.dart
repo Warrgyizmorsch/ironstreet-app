@@ -1,11 +1,7 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import 'category_controller.dart';
 import '../../widgets/product_card.dart';
@@ -59,7 +55,7 @@ class CategoryView extends GetView<CategoryController> {
                             : Colors.transparent,
                         border: Border.all(
                           color: isActive
-                              ? const Color(0xFFF37021)
+                              ? AppColors.primary
                               : const Color(0xFFE5E5E5),
                         ),
                         borderRadius: BorderRadius.circular(20),
@@ -69,9 +65,8 @@ class CategoryView extends GetView<CategoryController> {
                         style: GoogleFonts.poppins(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: isActive
-                              ? const Color(0xFFF37021)
-                              : Colors.grey[700],
+                          color:
+                              isActive ? AppColors.primary : Colors.grey[700],
                         ),
                       ),
                     ),
@@ -89,7 +84,7 @@ class CategoryView extends GetView<CategoryController> {
                   Row(
                     children: [
                       const Icon(Icons.sort,
-                          size: 16, color: Color(0xFFF37021)),
+                          size: 16, color: AppColors.primary),
                       const SizedBox(width: 4),
                       Text(
                         'Sort By: ',

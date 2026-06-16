@@ -1,7 +1,6 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 class SectionHeader extends StatelessWidget {
   final String title;
@@ -10,12 +9,12 @@ class SectionHeader extends StatelessWidget {
   final VoidCallback? onActionTap;
 
   const SectionHeader({
-    Key? key,
+    super.key,
     required this.title,
     required this.subtitle,
     this.actionText,
     this.onActionTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -61,14 +60,14 @@ class SectionHeader extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
-                      color: const Color(0xFFF37021),
+                      color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(width: 2),
                   const Icon(
                     Icons.keyboard_arrow_right,
                     size: 14,
-                    color: Color(0xFFF37021),
+                    color: AppColors.primary,
                   ),
                 ],
               ),

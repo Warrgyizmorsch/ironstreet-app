@@ -1,8 +1,8 @@
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import '../data/models/other_models.dart';
 
@@ -11,10 +11,10 @@ class BannerSlider extends StatefulWidget {
   final ValueChanged<BannerItem> onTap;
 
   const BannerSlider({
-    Key? key,
+    super.key,
     required this.banners,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   State<BannerSlider> createState() => _BannerSliderState();
@@ -74,10 +74,11 @@ class _BannerSliderState extends State<BannerSlider> {
               return GestureDetector(
                 onTap: () => widget.onTap(item),
                 child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                         color: Colors.black12,
                         blurRadius: 6,
@@ -98,7 +99,8 @@ class _BannerSliderState extends State<BannerSlider> {
                           placeholder: (context, url) => Container(
                             color: Colors.grey[200],
                             // align: Alignment.center,
-                            child: const CircularProgressIndicator(color: Color(0xFFF37021)),
+                            child: const CircularProgressIndicator(
+                                color: AppColors.primary),
                           ),
                           errorWidget: (context, url, error) => Container(
                             color: Colors.grey[350],
@@ -130,9 +132,10 @@ class _BannerSliderState extends State<BannerSlider> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 3),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF37021),
+                                  color: AppColors.primary,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(

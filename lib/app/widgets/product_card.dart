@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
+import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import '../data/models/product_model.dart';
 import '../modules/cart/cart_controller.dart';
@@ -201,7 +202,7 @@ class ProductCard extends StatelessWidget {
                             style: GoogleFonts.poppins(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
-                              color: const Color(0xFFF37021),
+                              color: AppColors.primary,
                             ),
                           ),
                           if (product.oldPrice > product.price)
@@ -223,7 +224,7 @@ class ProductCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF37021),
+                            color: AppColors.primary,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(

@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import '../modules/cart/cart_controller.dart';
 import '../modules/wishlist/wishlist_controller.dart';
@@ -32,7 +33,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
         'Iron Street',
         style: GoogleFonts.poppins(
           textStyle: const TextStyle(
-            color: Color(0xFFF37021),
+            color: AppColors.primary,
             fontWeight: FontWeight.w900,
             fontSize: 20,
             letterSpacing: -0.5,
@@ -57,7 +58,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: const BoxDecoration(
-                      color: Color(0xFFF37021),
+                      color: AppColors.primary,
                       shape: BoxShape.circle,
                     ),
                     constraints: const BoxConstraints(
@@ -86,7 +87,8 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
             alignment: Alignment.center,
             children: [
               IconButton(
-                icon: const Icon(Icons.shopping_bag_outlined, color: Colors.black87),
+                icon: const Icon(Icons.shopping_bag_outlined,
+                    color: Colors.black87),
                 onPressed: () => Get.toNamed(Routes.CART),
               ),
               if (count > 0)
@@ -96,7 +98,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                   child: Container(
                     padding: const EdgeInsets.all(4),
                     decoration: const BoxDecoration(
-                      color: Color(0xFFF37021),
+                      color: AppColors.primary,
                       shape: BoxShape.circle,
                     ),
                     constraints: const BoxConstraints(
