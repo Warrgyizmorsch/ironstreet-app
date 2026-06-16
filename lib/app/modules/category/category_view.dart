@@ -51,11 +51,16 @@ class CategoryView extends GetView<CategoryController> {
                     onTap: () => catController.selectCategory(cat),
                     child: Container(
                       margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 4),
                       decoration: BoxDecoration(
-                        color: isActive ? const Color(0xFFFFF0E6) : Colors.transparent,
+                        color: isActive
+                            ? const Color(0xFFFFF0E6)
+                            : Colors.transparent,
                         border: Border.all(
-                          color: isActive ? const Color(0xFFF37021) : const Color(0xFFE5E5E5),
+                          color: isActive
+                              ? const Color(0xFFF37021)
+                              : const Color(0xFFE5E5E5),
                         ),
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -64,7 +69,9 @@ class CategoryView extends GetView<CategoryController> {
                         style: GoogleFonts.poppins(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: isActive ? const Color(0xFFF37021) : Colors.grey[700],
+                          color: isActive
+                              ? const Color(0xFFF37021)
+                              : Colors.grey[700],
                         ),
                       ),
                     ),
@@ -81,31 +88,46 @@ class CategoryView extends GetView<CategoryController> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.sort, size: 16, color: Color(0xFFF37021)),
+                      const Icon(Icons.sort,
+                          size: 16, color: Color(0xFFF37021)),
                       const SizedBox(width: 4),
                       Text(
                         'Sort By: ',
-                        style: GoogleFonts.poppins(fontSize: 11, color: Colors.grey[600], fontWeight: FontWeight.bold),
+                        style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.bold),
                       ),
                       DropdownButton<String>(
                         value: catController.sortBy.value,
                         underline: const SizedBox(),
                         iconSize: 16,
-                        style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.w800, color: const Color(0xFF222222)),
+                        style: GoogleFonts.poppins(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF222222)),
                         onChanged: (val) {
                           if (val != null) catController.updateSort(val);
                         },
                         items: const [
-                          DropdownMenuItem(value: 'rating', child: Text('Top Rated')),
-                          DropdownMenuItem(value: 'priceLowHigh', child: Text('Price: Low to High')),
-                          DropdownMenuItem(value: 'priceHighLow', child: Text('Price: High to Low')),
+                          DropdownMenuItem(
+                              value: 'rating', child: Text('Top Rated')),
+                          DropdownMenuItem(
+                              value: 'priceLowHigh',
+                              child: Text('Price: Low to High')),
+                          DropdownMenuItem(
+                              value: 'priceHighLow',
+                              child: Text('Price: High to Low')),
                         ],
                       )
                     ],
                   ),
                   Text(
                     '${products.length} items found',
-                    style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.w600),
+                    style: GoogleFonts.poppins(
+                        fontSize: 10,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
@@ -118,23 +140,29 @@ class CategoryView extends GetView<CategoryController> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.category_outlined, size: 48, color: Colors.grey[400]),
+                          Icon(Icons.category_outlined,
+                              size: 48, color: Colors.grey[400]),
                           const SizedBox(height: 12),
                           Text(
                             'No products found.',
-                            style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                            style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey),
                           ),
                         ],
                       ),
                     )
                   : GridView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
                       physics: const BouncingScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 10,
-                        childAspectRatio: 0.64,
+                        childAspectRatio: 0.60,
                       ),
                       itemCount: products.length,
                       itemBuilder: (context, index) {

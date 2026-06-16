@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -24,7 +23,8 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final wishlistController = Get.find<WishlistController>();
     final cartController = Get.find<CartController>();
-    final formatCurrency = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+    final formatCurrency =
+        NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
 
     return GestureDetector(
       onTap: () => Get.toNamed(Routes.PRODUCT_DETAIL, arguments: product),
@@ -49,7 +49,8 @@ class ProductCard extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(15)),
                   child: AspectRatio(
                     aspectRatio: 1,
                     child: CachedNetworkImage(
@@ -66,7 +67,8 @@ class ProductCard extends StatelessWidget {
                       ),
                       errorWidget: (context, url, error) => Container(
                         color: const Color(0xFFFAF9F6),
-                        child: const Icon(Icons.image, size: 40, color: Colors.grey),
+                        child: const Icon(Icons.image,
+                            size: 40, color: Colors.grey),
                       ),
                     ),
                   ),
@@ -77,7 +79,8 @@ class ProductCard extends StatelessWidget {
                   top: 8,
                   right: 8,
                   child: Obx(() {
-                    bool isHearted = wishlistController.isWishlisted(product.id);
+                    bool isHearted =
+                        wishlistController.isWishlisted(product.id);
                     return GestureDetector(
                       onTap: () => wishlistController.toggleWishlist(product),
                       child: Container(
@@ -85,11 +88,11 @@ class ProductCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.9),
                           shape: BoxShape.circle,
-                          boxShadow: [
+                          boxShadow: const [
                             BoxShadow(
                               color: Colors.black12,
                               blurRadius: 2,
-                              offset: const Offset(0, 1),
+                              offset: Offset(0, 1),
                             ),
                           ],
                         ),
@@ -109,7 +112,8 @@ class ProductCard extends StatelessWidget {
                     bottom: 8,
                     left: 8,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: Colors.green[600],
                         borderRadius: BorderRadius.circular(4),
@@ -216,7 +220,8 @@ class ProductCard extends StatelessWidget {
                       GestureDetector(
                         onTap: () => cartController.addToCart(product),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
                             color: const Color(0xFFF37021),
                             borderRadius: BorderRadius.circular(8),

@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,7 +36,8 @@ class HomeView extends GetView<HomeController> {
               onChanged: (val) {
                 controller.searchQuery.value = val;
                 if (val.trim().isNotEmpty) {
-                  controller.currentIndex.value = 1; // Auto switch to Catalog/Search
+                  controller.currentIndex.value =
+                      1; // Auto switch to Catalog/Search
                 }
               },
             );
@@ -214,7 +213,8 @@ class HomeView extends GetView<HomeController> {
           color: const Color(0xFF444444),
         ),
       ),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
+      trailing:
+          const Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
       dense: true,
       onTap: onTap,
     );
@@ -222,47 +222,49 @@ class HomeView extends GetView<HomeController> {
 
   // --- BOTTOM NAV BAR ---
   Widget _buildBottomNavBar() {
-    return BottomNavigationBar(
-      currentIndex: controller.currentIndex.value,
-      onTap: (index) => controller.onTabChanged(index),
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: const Color(0xFFF37021),
-      unselectedItemColor: Colors.grey,
-      selectedLabelStyle: GoogleFonts.poppins(
-        fontSize: 9,
-        fontWeight: FontWeight.bold,
+    return Obx(
+      () => BottomNavigationBar(
+        currentIndex: controller.currentIndex.value,
+        onTap: (index) => controller.onTabChanged(index),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xFFF37021),
+        unselectedItemColor: Colors.grey,
+        selectedLabelStyle: GoogleFonts.poppins(
+          fontSize: 9,
+          fontWeight: FontWeight.bold,
+        ),
+        unselectedLabelStyle: GoogleFonts.poppins(
+          fontSize: 9,
+          fontWeight: FontWeight.normal,
+        ),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.grid_view_outlined),
+            activeIcon: Icon(Icons.grid_view),
+            label: 'Catalog',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.phone_callback_outlined),
+            activeIcon: Icon(Icons.phone_callback),
+            label: 'Callback',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.storefront_outlined),
+            activeIcon: Icon(Icons.storefront),
+            label: 'Stores',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Account',
+          ),
+        ],
       ),
-      unselectedLabelStyle: GoogleFonts.poppins(
-        fontSize: 9,
-        fontWeight: FontWeight.normal,
-      ),
-      items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home_outlined),
-          activeIcon: Icon(Icons.home),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.grid_view_outlined),
-          activeIcon: Icon(Icons.grid_view),
-          label: 'Catalog',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.phone_callback_outlined),
-          activeIcon: Icon(Icons.phone_callback),
-          label: 'Callback',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.storefront_outlined),
-          activeIcon: Icon(Icons.storefront),
-          label: 'Stores',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person_outline),
-          activeIcon: Icon(Icons.person),
-          label: 'Account',
-        ),
-      ],
     );
   }
 
@@ -274,13 +276,15 @@ class HomeView extends GetView<HomeController> {
       onPressed: () {
         Get.defaultDialog(
           title: 'Opening WhatsApp',
-          middleText: 'Connecting you with our on-call layout executive on WhatsApp...',
+          middleText:
+              'Connecting you with our on-call layout executive on WhatsApp...',
           textConfirm: 'Proceed',
           confirmTextColor: Colors.white,
           buttonColor: const Color(0xFF25D366),
           onConfirm: () {
             Get.back();
-            Get.snackbar('Connected', 'Virtual styling advisor lines are now active!');
+            Get.snackbar(
+                'Connected', 'Virtual styling advisor lines are now active!');
           },
         );
       },
@@ -295,10 +299,14 @@ class HomeView extends GetView<HomeController> {
 
     if (controller.selectedSubCategory.value != 'All') {
       displayDiscover = discoverNewProducts
-          .where((p) => p.category.toLowerCase() == controller.selectedSubCategory.value.toLowerCase())
+          .where((p) =>
+              p.category.toLowerCase() ==
+              controller.selectedSubCategory.value.toLowerCase())
           .toList();
       displayTopRated = topRatedProducts
-          .where((p) => p.category.toLowerCase() == controller.selectedSubCategory.value.toLowerCase())
+          .where((p) =>
+              p.category.toLowerCase() ==
+              controller.selectedSubCategory.value.toLowerCase())
           .toList();
     }
 
@@ -315,7 +323,8 @@ class HomeView extends GetView<HomeController> {
         BannerSlider(
           banners: bannerCarouselCount,
           onTap: (banner) {
-            Get.snackbar('Promo Tapped', 'Opening selection: "${banner.title}"');
+            Get.snackbar(
+                'Promo Tapped', 'Opening selection: "${banner.title}"');
           },
         ),
 
@@ -386,11 +395,13 @@ class HomeView extends GetView<HomeController> {
             onTap: () => controller.selectSubCategory(cat),
             child: Container(
               margin: const EdgeInsets.only(right: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
               decoration: BoxDecoration(
                 color: isActive ? const Color(0xFFFFF0E6) : Colors.transparent,
                 border: Border.all(
-                  color: isActive ? const Color(0xFFF37021) : const Color(0xFFE5E5E5),
+                  color: isActive
+                      ? const Color(0xFFF37021)
+                      : const Color(0xFFE5E5E5),
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -413,33 +424,33 @@ class HomeView extends GetView<HomeController> {
     return Container(
       height: 195,
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 12),
-      margin: const EdgeInsets.only(bottom: 8),
+      // padding: const EdgeInsets.symmetric(vertical: 12),
+      // margin: const EdgeInsets.only(bottom: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Text(
-              'Browse by Rooms & Categories',
-              style: GoogleFonts.poppins(
-                fontSize: 12,
-                fontWeight: FontWeight.w900,
-                color: const Color(0xFF222222),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
+          // Padding(
+          //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          //   child: Text(
+          //     'Browse by Rooms & Categories',
+          //     style: GoogleFonts.poppins(
+          //       fontSize: 12,
+          //       fontWeight: FontWeight.w900,
+          //       color: const Color(0xFF222222),
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(height: 8),
           Expanded(
             child: GridView.builder(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              // padding: const EdgeInsets.symmetric(horizontal: 16),
               physics: const BouncingScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 10,
-                childAspectRatio: 0.9,
+                // mainAxisSpacing: 12,
+                // crossAxisSpacing: 10,
+                // childAspectRatio: 0.9,
               ),
               itemCount: categoriesList.length,
               itemBuilder: (context, index) {
@@ -489,7 +500,8 @@ class HomeView extends GetView<HomeController> {
                   const SizedBox(height: 2),
                   Text(
                     'Grab premium solid wood at up to 60% OFF',
-                    style: GoogleFonts.poppins(fontSize: 9, color: Colors.grey[700]),
+                    style: GoogleFonts.poppins(
+                        fontSize: 9, color: Colors.grey[700]),
                   ),
                 ],
               ),
@@ -504,7 +516,9 @@ class HomeView extends GetView<HomeController> {
             child: Row(
               children: [
                 _buildTimeBox(controller.minutes),
-                const Text(':', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                const Text(':',
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold)),
                 _buildTimeBox(controller.seconds),
               ],
             ),
@@ -578,7 +592,8 @@ class HomeView extends GetView<HomeController> {
                     Text(
                       item.title,
                       maxLines: 1,
-                      style: GoogleFonts.poppins(fontSize: 9, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.poppins(
+                          fontSize: 9, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -592,7 +607,7 @@ class HomeView extends GetView<HomeController> {
 
   Widget _buildHorizontalProductsList(List<Product> list) {
     return SizedBox(
-      height: 250,
+      height: 290,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -646,7 +661,8 @@ class HomeView extends GetView<HomeController> {
                   children: [
                     Expanded(
                       child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(12)),
                         child: CachedNetworkImage(
                           imageUrl: item.image,
                           fit: BoxFit.cover,
@@ -661,7 +677,8 @@ class HomeView extends GetView<HomeController> {
                           Text(
                             item.title,
                             maxLines: 1,
-                            style: GoogleFonts.poppins(fontSize: 9, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.poppins(
+                                fontSize: 9, fontWeight: FontWeight.bold),
                           ),
                           Text(
                             item.priceText,
@@ -722,7 +739,8 @@ class HomeView extends GetView<HomeController> {
                   children: [
                     Expanded(
                       child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(12)),
                         child: CachedNetworkImage(
                           imageUrl: item.image,
                           fit: BoxFit.cover,
@@ -737,7 +755,8 @@ class HomeView extends GetView<HomeController> {
                           Text(
                             item.title,
                             maxLines: 1,
-                            style: GoogleFonts.poppins(fontSize: 9, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.poppins(
+                                fontSize: 9, fontWeight: FontWeight.bold),
                           ),
                           Text(
                             item.priceText,
@@ -777,11 +796,13 @@ class HomeView extends GetView<HomeController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.check_circle_outline, color: Color(0xFFF37021), size: 68),
+              const Icon(Icons.check_circle_outline,
+                  color: Color(0xFFF37021), size: 68),
               const SizedBox(height: 16),
               Text(
                 'Request Registered!',
-                style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold),
+                style: GoogleFonts.poppins(
+                    fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 8),
               Padding(
@@ -789,22 +810,26 @@ class HomeView extends GetView<HomeController> {
                 child: Text(
                   'We hear you, ${nameController.text}! Our professional interior layout and styling coordinator will ring you back on ${phoneController.text} during the requested slot (${timeSlot.value}).',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[600]),
+                  style: GoogleFonts.poppins(
+                      fontSize: 12, color: Colors.grey[600]),
                 ),
               ),
               const SizedBox(height: 24),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF222222),
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                 ),
                 onPressed: () {
                   isSubmitted.value = false;
                   nameController.clear();
                   phoneController.clear();
                 },
-                child: Text('Request Another Call', style: GoogleFonts.poppins(color: Colors.white)),
+                child: Text('Request Another Call',
+                    style: GoogleFonts.poppins(color: Colors.white)),
               ),
             ],
           ),
@@ -829,7 +854,8 @@ class HomeView extends GetView<HomeController> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.phone_callback, color: Color(0xFFF37021), size: 24),
+                    const Icon(Icons.phone_callback,
+                        color: Color(0xFFF37021), size: 24),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -846,7 +872,8 @@ class HomeView extends GetView<HomeController> {
                           const SizedBox(height: 4),
                           Text(
                             'Struggling with space sizing, fabric combinations or custom layout advice? Get a free home layout call with zero commitments.',
-                            style: GoogleFonts.poppins(fontSize: 9, color: Colors.grey[700]),
+                            style: GoogleFonts.poppins(
+                                fontSize: 9, color: Colors.grey[700]),
                           ),
                         ],
                       ),
@@ -857,7 +884,11 @@ class HomeView extends GetView<HomeController> {
               const SizedBox(height: 20),
 
               // Full Name Text field
-              Text('Your Full Name', style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey)),
+              Text('Your Full Name',
+                  style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey)),
               const SizedBox(height: 6),
               TextField(
                 controller: nameController,
@@ -866,13 +897,19 @@ class HomeView extends GetView<HomeController> {
                   isDense: true,
                   filled: true,
                   fillColor: const Color(0xFFF6F6F6),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none),
                 ),
               ),
               const SizedBox(height: 16),
 
               // Mobile Number
-              Text('Mobile Number', style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey)),
+              Text('Mobile Number',
+                  style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey)),
               const SizedBox(height: 6),
               TextField(
                 controller: phoneController,
@@ -883,17 +920,25 @@ class HomeView extends GetView<HomeController> {
                   isDense: true,
                   filled: true,
                   fillColor: const Color(0xFFF6F6F6),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none),
                 ),
               ),
               const SizedBox(height: 16),
 
               // What are you looking to buy?
-              Text('What are you looking to buy?', style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey)),
+              Text('What are you looking to buy?',
+                  style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey)),
               const SizedBox(height: 6),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(color: const Color(0xFFF6F6F6), borderRadius: BorderRadius.circular(8)),
+                decoration: BoxDecoration(
+                    color: const Color(0xFFF6F6F6),
+                    borderRadius: BorderRadius.circular(8)),
                 child: Obx(() {
                   return DropdownButton<String>(
                     isExpanded: true,
@@ -903,10 +948,18 @@ class HomeView extends GetView<HomeController> {
                       if (val != null) category.value = val;
                     },
                     items: const [
-                      DropdownMenuItem(value: 'Living Room Furniture', child: Text('Living Room Furniture')),
-                      DropdownMenuItem(value: 'Bed Room Setup', child: Text('Bedroom Setup')),
-                      DropdownMenuItem(value: 'Dining & Kitchen', child: Text('Dining & Kitchen Setup')),
-                      DropdownMenuItem(value: 'Complete Home Makeover', child: Text('Complete Home Makeover')),
+                      DropdownMenuItem(
+                          value: 'Living Room Furniture',
+                          child: Text('Living Room Furniture')),
+                      DropdownMenuItem(
+                          value: 'Bed Room Setup',
+                          child: Text('Bedroom Setup')),
+                      DropdownMenuItem(
+                          value: 'Dining & Kitchen',
+                          child: Text('Dining & Kitchen Setup')),
+                      DropdownMenuItem(
+                          value: 'Complete Home Makeover',
+                          child: Text('Complete Home Makeover')),
                     ],
                   );
                 }),
@@ -914,11 +967,17 @@ class HomeView extends GetView<HomeController> {
               const SizedBox(height: 16),
 
               // Time slot
-              Text('Preferred Call Slot', style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey)),
+              Text('Preferred Call Slot',
+                  style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey)),
               const SizedBox(height: 6),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(color: const Color(0xFFF6F6F6), borderRadius: BorderRadius.circular(8)),
+                decoration: BoxDecoration(
+                    color: const Color(0xFFF6F6F6),
+                    borderRadius: BorderRadius.circular(8)),
                 child: Obx(() {
                   return DropdownButton<String>(
                     isExpanded: true,
@@ -928,9 +987,15 @@ class HomeView extends GetView<HomeController> {
                       if (val != null) timeSlot.value = val;
                     },
                     items: const [
-                      DropdownMenuItem(value: 'Immediate (Within 15 mins)', child: Text('Immediate (Within 15 mins)')),
-                      DropdownMenuItem(value: 'Today: 2:00 PM - 5:00 PM', child: Text('Today: 2:00 PM - 5:00 PM')),
-                      DropdownMenuItem(value: 'Tomorrow Morning', child: Text('Tomorrow Morning')),
+                      DropdownMenuItem(
+                          value: 'Immediate (Within 15 mins)',
+                          child: Text('Immediate (Within 15 mins)')),
+                      DropdownMenuItem(
+                          value: 'Today: 2:00 PM - 5:00 PM',
+                          child: Text('Today: 2:00 PM - 5:00 PM')),
+                      DropdownMenuItem(
+                          value: 'Tomorrow Morning',
+                          child: Text('Tomorrow Morning')),
                     ],
                   );
                 }),
@@ -944,16 +1009,21 @@ class HomeView extends GetView<HomeController> {
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFF37021),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
                   ),
                   onPressed: () {
-                    if (nameController.text.trim().isEmpty || phoneController.text.trim().isEmpty) {
-                      Get.snackbar('Error', 'Please fill out your Name and Phone Number.');
+                    if (nameController.text.trim().isEmpty ||
+                        phoneController.text.trim().isEmpty) {
+                      Get.snackbar('Error',
+                          'Please fill out your Name and Phone Number.');
                       return;
                     }
                     isSubmitted.value = true;
                   },
-                  child: Text('Confirm Request Call-Back', style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: Text('Confirm Request Call-Back',
+                      style: GoogleFonts.poppins(
+                          color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ),
 
@@ -979,7 +1049,10 @@ class HomeView extends GetView<HomeController> {
     return Obx(() {
       final filteredList = selectedCity.value == 'All'
           ? experienceStores
-          : experienceStores.where((s) => s.city.toLowerCase() == selectedCity.value.toLowerCase()).toList();
+          : experienceStores
+              .where((s) =>
+                  s.city.toLowerCase() == selectedCity.value.toLowerCase())
+              .toList();
 
       return Column(
         children: [
@@ -999,11 +1072,16 @@ class HomeView extends GetView<HomeController> {
                   onTap: () => selectedCity.value = city,
                   child: Container(
                     margin: const EdgeInsets.only(right: 8),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                     decoration: BoxDecoration(
-                      color: isActive ? const Color(0xFFFFF0E6) : Colors.transparent,
+                      color: isActive
+                          ? const Color(0xFFFFF0E6)
+                          : Colors.transparent,
                       border: Border.all(
-                        color: isActive ? const Color(0xFFF37021) : const Color(0xFFE5E5E5),
+                        color: isActive
+                            ? const Color(0xFFF37021)
+                            : const Color(0xFFE5E5E5),
                       ),
                       borderRadius: BorderRadius.circular(20),
                     ),
@@ -1012,7 +1090,9 @@ class HomeView extends GetView<HomeController> {
                       style: GoogleFonts.poppins(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        color: isActive ? const Color(0xFFF37021) : Colors.grey[700],
+                        color: isActive
+                            ? const Color(0xFFF37021)
+                            : Colors.grey[700],
                       ),
                     ),
                   ),
@@ -1041,7 +1121,8 @@ class HomeView extends GetView<HomeController> {
                       AspectRatio(
                         aspectRatio: 16 / 9,
                         child: ClipRRect(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                          borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(15)),
                           child: CachedNetworkImage(
                             imageUrl: store.image,
                             fit: BoxFit.cover,
@@ -1057,18 +1138,21 @@ class HomeView extends GetView<HomeController> {
                           children: [
                             Text(
                               store.name,
-                              style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.bold),
+                              style: GoogleFonts.poppins(
+                                  fontSize: 13, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 8),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
+                                const Icon(Icons.location_on_outlined,
+                                    size: 16, color: Colors.grey),
                                 const SizedBox(width: 4),
                                 Expanded(
                                   child: Text(
                                     store.address,
-                                    style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey[600]),
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 10, color: Colors.grey[600]),
                                   ),
                                 ),
                               ],
@@ -1079,17 +1163,23 @@ class HomeView extends GetView<HomeController> {
                               children: [
                                 Row(
                                   children: [
-                                    const Icon(Icons.access_time, size: 15, color: Colors.grey),
+                                    const Icon(Icons.access_time,
+                                        size: 15, color: Colors.grey),
                                     const SizedBox(width: 4),
                                     Text(
                                       store.timings,
-                                      style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey[600]),
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 10,
+                                          color: Colors.grey[600]),
                                     ),
                                   ],
                                 ),
                                 Text(
                                   'Open Everyday',
-                                  style: GoogleFonts.poppins(fontSize: 10, color: Colors.green, fontWeight: FontWeight.bold),
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 10,
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -1101,23 +1191,33 @@ class HomeView extends GetView<HomeController> {
                                   child: OutlinedButton.icon(
                                     style: OutlinedButton.styleFrom(
                                         foregroundColor: Colors.grey[800],
-                                        side: BorderSide(color: Colors.grey[300]!)),
+                                        side: BorderSide(
+                                            color: Colors.grey[300]!)),
                                     onPressed: () {
-                                      Get.snackbar('GPS', 'Opening directions in maps to ${store.name}');
+                                      Get.snackbar('GPS',
+                                          'Opening directions in maps to ${store.name}');
                                     },
-                                    icon: const Icon(Icons.navigation, size: 14, color: Color(0xFFF37021)),
-                                    label: const Text('Directions', style: TextStyle(fontSize: 11)),
+                                    icon: const Icon(Icons.navigation,
+                                        size: 14, color: Color(0xFFF37021)),
+                                    label: const Text('Directions',
+                                        style: TextStyle(fontSize: 11)),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: ElevatedButton.icon(
-                                    style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFF37021)),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFFF37021)),
                                     onPressed: () {
-                                      Get.snackbar('Calling', 'Showroom coordinators dial line diallers: ${store.phone}');
+                                      Get.snackbar('Calling',
+                                          'Showroom coordinators dial line diallers: ${store.phone}');
                                     },
-                                    icon: const Icon(Icons.phone, size: 14, color: Colors.white),
-                                    label: const Text('Call Store', style: TextStyle(fontSize: 11, color: Colors.white)),
+                                    icon: const Icon(Icons.phone,
+                                        size: 14, color: Colors.white),
+                                    label: const Text('Call Store',
+                                        style: TextStyle(
+                                            fontSize: 11, color: Colors.white)),
                                   ),
                                 ),
                               ],
