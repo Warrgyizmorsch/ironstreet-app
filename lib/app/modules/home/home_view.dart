@@ -3,6 +3,7 @@ import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import 'home_controller.dart';
@@ -730,7 +731,10 @@ class HomeView extends GetView<HomeController> {
           final prod = list[index];
           return Padding(
             padding: const EdgeInsets.only(right: 12),
-            child: ProductCard(product: prod),
+            child: ProductCard(
+              product: prod,
+              productListModel: ProductListModel.fromJson(prod.toJson()),
+            ),
           );
         },
       ),
