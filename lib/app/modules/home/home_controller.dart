@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:iron_street_app/app/data/models/category_model.dart';
+import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/data/repositories/main_repositories.dart';
 
 class HomeController extends GetxController {
@@ -11,6 +12,13 @@ class HomeController extends GetxController {
     super.onInit();
     _startTimer();
     fetchCategories();
+    scrollController.addListener(() {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        loadMoreProducts();
+      }
+    });
+    fetchProductsByCategory(0);
   }
 
   // Navigation State
@@ -33,9 +41,18 @@ class HomeController extends GetxController {
   var allCategories = <CategoryModel>[].obs;
   var mainCategories = <CategoryModel>[].obs;
   var subCategories = <CategoryModel>[].obs;
-  // var level2Categories = <CategoryModel>[].obs;
 
   var selectedMainCatId = 0.obs;
+
+  var products = <ProductListModel>[].obs;
+  var isProductsLoading = false.obs; // For the initial page 1 load
+  var isFetchingMoreProducts = false.obs; // For loading page 2, 3...
+  var hasMoreProducts = true.obs;
+  int productPage = 1;
+  var activeProductCategoryId = 0.obs;
+
+  final ScrollController scrollController = ScrollController();
+
   Future<void> fetchCategories() async {
     try {
       isCategoriesLoading.value = true;
@@ -73,33 +90,68 @@ class HomeController extends GetxController {
     }
   }
 
-  // Future<void> fetchCategories() async {
-  //   try {
-  //     isCategoriesLoading.value = true;
+  Future<void> fetchProductsByCategory(int categoryId) async {
+    try {
+      activeProductCategoryId.value = categoryId;
+      productPage = 1;
+      hasMoreProducts.value = true;
+      isProductsLoading.value = true;
+      products.clear(); // Clear old products
 
-  //     dynamic response =
-  //         await repositories.fetchCategories(page: 1, perPage: 100);
+      // Fetch Page 1
+      dynamic response = await repositories.fetchProductsByCategory(
+        categoryId: activeProductCategoryId.value,
+        page: productPage,
+        perPage: 10,
+      );
 
-  //     List<CategoryModel> fetchedCats = (response as List)
-  //         .map((json) => CategoryModel.fromJson(json))
-  //         .toList();
+      List<ProductListModel> fetchedProducts = (response as List)
+          .map((json) => ProductListModel.fromJson(json))
+          .toList();
 
-  //     allCategories.assignAll(fetchedCats);
+      products.assignAll(fetchedProducts);
 
-  //     // 1. Filter out ONLY the Main Categories (parent == 0)
-  //     mainCategories
-  //         .assignAll(allCategories.where((cat) => cat.parentId == 0).toList());
+      // If we got less than 10, there is no page 2
+      if (fetchedProducts.length < 10) {
+        hasMoreProducts.value = false;
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load products');
+    } finally {
+      isProductsLoading.value = false;
+    }
+  }
 
-  //     // 2. Select the first Main Category automatically (e.g., "Bedroom")
-  //     if (mainCategories.isNotEmpty) {
-  //       selectMainCategory(mainCategories.first.id);
-  //     }
-  //   } catch (e) {
-  //     Get.snackbar('Error', 'Failed to load categories');
-  //   } finally {
-  //     isCategoriesLoading.value = false;
-  //   }
-  // }
+  Future<void> loadMoreProducts() async {
+    // Stop if already fetching or if no more data exists
+    if (isFetchingMoreProducts.value || !hasMoreProducts.value) return;
+
+    try {
+      isFetchingMoreProducts.value = true;
+      productPage++; // Go to next page
+
+      dynamic response = await repositories.fetchProductsByCategory(
+        categoryId: activeProductCategoryId.value,
+        page: productPage,
+        perPage: 10,
+      );
+
+      List<ProductListModel> newProducts = (response as List)
+          .map((json) => ProductListModel.fromJson(json))
+          .toList();
+
+      if (newProducts.isEmpty) {
+        hasMoreProducts.value = false; // We reached the end of the catalog
+      } else {
+        products.addAll(newProducts); // Add new items to the bottom of the list
+      }
+    } catch (e) {
+      productPage--; // Revert page count if the API call fails
+      Get.snackbar('Error', 'Failed to load more products');
+    } finally {
+      isFetchingMoreProducts.value = false;
+    }
+  }
 
   void _startTimer() {
     Future.delayed(const Duration(seconds: 1), () {
@@ -119,15 +171,6 @@ class HomeController extends GetxController {
     });
   }
 
-  // void selectMainCategory(int mainId) {
-  //   selectedMainCatId.value = mainId;
-
-  //   // Use the recursive helper method to find ALL nested subcategories
-  //   List<CategoryModel> allNestedCategories = _getAllDescendants(mainId);
-
-  //   // Assign them all to the flat list
-  //   subCategories.assignAll(allNestedCategories);
-  // }
   void selectMainCategory(int mainId) {
     selectedMainCatId.value = mainId;
 
@@ -143,21 +186,7 @@ class HomeController extends GetxController {
       subCategories.assignAll(allNestedCategories);
     }
   }
-  // List<CategoryModel> _getAllDescendants(int parentId) {
-  //   // 1. Find the direct children of the current parentId
-  //   List<CategoryModel> directChildren =
-  //       allCategories.where((cat) => cat.parentId == parentId).toList(); // Ensure your model uses 'parent' or 'parentId' based on your JSON
 
-  //   // 2. Start a list with these direct children
-  //   List<CategoryModel> result = List.from(directChildren);
-
-  //   // 3. Loop through each child and find ITS children recursively
-  //   for (var child in directChildren) {
-  //     result.addAll(_getAllDescendants(child.id));
-  //   }
-
-  //   return result;
-  // }
   List<CategoryModel> _getAllDescendants(int parentId) {
     List<CategoryModel> directChildren =
         allCategories.where((cat) => cat.parentId == parentId).toList();

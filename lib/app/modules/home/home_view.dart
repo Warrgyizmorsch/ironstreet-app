@@ -28,7 +28,6 @@ class HomeView extends GetView<HomeController> {
     return Scaffold(
       key: controller.scaffoldKey,
       backgroundColor: Colors.white,
-      // backgroundColor: const Color(0xFFF6F6F6),
       appBar: AppHeader(
         onMenuClick: () => controller.openDrawer(),
       ),
@@ -277,8 +276,9 @@ class HomeView extends GetView<HomeController> {
   // --- FLOATING WHATSAPP FAB ---
   Widget _buildWhatsAppFAB() {
     return FloatingActionButton(
-      backgroundColor: const Color(0xFF25D366),
-      child: const Icon(Icons.chat, color: Colors.white),
+      shape: const CircleBorder(eccentricity: BorderSide.strokeAlignCenter),
+      backgroundColor: const Color.fromARGB(255, 19, 122, 16),
+      child: const Icon(Icons.message_rounded, color: Colors.white),
       onPressed: () {
         Get.defaultDialog(
           title: 'Opening WhatsApp',
@@ -319,7 +319,6 @@ class HomeView extends GetView<HomeController> {
     return ListView(
       physics: const BouncingScrollPhysics(),
       children: [
-        // Horizontal subcategories filters scroll tab strip
         _buildSubCategoryTabs(),
 
         // Double row Grid Categories
@@ -486,12 +485,9 @@ class HomeView extends GetView<HomeController> {
 
                   return CategoryCard(
                     category: cat,
-                    // onTap: () {
-                    //   // Navigate to Product list and pass the clicked category ID
-                    //   Get.toNamed('/products', arguments: cat.id);
-                    // },
                     onTap: () {
-                      controller.selectSubCategory('All');
+                      // controller.selectSubCategory('All');
+                      controller.fetchProductsByCategory(cat.id);
                       controller.currentIndex.value = 1;
                     },
                   );

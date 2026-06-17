@@ -12,13 +12,14 @@ import '../routes/app_pages.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
+
   final double width;
 
   const ProductCard({
-    Key? key,
+    super.key,
     required this.product,
     this.width = 160,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +117,8 @@ class ProductCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.green[600],
+                        // color: Colors.green[600],
+                        color: AppColors.dishpriceC,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -201,8 +203,9 @@ class ProductCard extends StatelessWidget {
                             formatCurrency.format(product.price),
                             style: GoogleFonts.poppins(
                               fontSize: 12,
-                              fontWeight: FontWeight.w900,
-                              color: AppColors.primary,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black,
+                              // color: AppColors.blackC,
                             ),
                           ),
                           if (product.oldPrice > product.price)
@@ -224,7 +227,8 @@ class ProductCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
-                            color: AppColors.primary,
+                            // color: AppColors.addCart,
+                            color: Colors.orange.shade700,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
