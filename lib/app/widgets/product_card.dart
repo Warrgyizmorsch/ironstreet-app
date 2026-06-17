@@ -13,14 +13,12 @@ import '../routes/app_pages.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
-  final ProductListModel productListModel;
 
   final double width;
 
   const ProductCard({
     super.key,
     required this.product,
-    required this.productListModel,
     this.width = 160,
   });
 

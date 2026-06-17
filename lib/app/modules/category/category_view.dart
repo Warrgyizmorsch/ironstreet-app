@@ -359,8 +359,6 @@ class CategoryView extends GetView<HomeController> {
                             itemBuilder: (context, index) {
                               final prod = products[index];
                               return ProductCard(
-                                productListModel: prod,
-
                                 product: Product(
                                     id: prod.id.toString(),
                                     name: prod.name,

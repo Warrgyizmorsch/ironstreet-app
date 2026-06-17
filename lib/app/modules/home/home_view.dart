@@ -733,7 +733,6 @@ class HomeView extends GetView<HomeController> {
             padding: const EdgeInsets.only(right: 12),
             child: ProductCard(
               product: prod,
-              productListModel: ProductListModel.fromJson(prod.toJson()),
             ),
           );
         },
