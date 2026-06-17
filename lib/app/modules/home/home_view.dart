@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -26,7 +27,8 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: controller.scaffoldKey,
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: Colors.white,
+      // backgroundColor: const Color(0xFFF6F6F6),
       appBar: AppHeader(
         onMenuClick: () => controller.openDrawer(),
       ),
@@ -383,83 +385,208 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildSubCategoryTabs() {
-    final subcategories = ['All', 'Living', 'Bedroom', 'Dining'];
     return Container(
       height: 48,
       padding: const EdgeInsets.symmetric(vertical: 8),
-      color: Colors.white,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: subcategories.length,
-        itemBuilder: (context, index) {
-          final cat = subcategories[index];
-          final isActive = controller.selectedSubCategory.value == cat;
-          return GestureDetector(
-            onTap: () => controller.selectSubCategory(cat),
-            child: Container(
-              margin: const EdgeInsets.only(right: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              decoration: BoxDecoration(
-                color: isActive ? const Color(0xFFFFF0E6) : Colors.transparent,
-                border: Border.all(
-                  color: isActive ? AppColors.primary : const Color(0xFFE5E5E5),
+      // color: Colors.white,
+      // color: const Color(0xFFF6F6F6),
+
+      // The outer Obx listens to the loading state and the category list length
+      child: Obx(() {
+        if (controller.isCategoriesLoading.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return ListView.builder(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          itemCount: controller.mainCategories.length,
+          itemBuilder: (context, index) {
+            final cat = controller.mainCategories[index];
+
+            // ✅ THE FIX: Wrap the individual item in Obx!
+            // This guarantees the colors recalculate the exact millisecond you tap.
+            return Obx(() {
+              // Check if THIS specific tab is the active one
+              final isActive = controller.selectedMainCatId.value == cat.id;
+
+              return GestureDetector(
+                onTap: () {
+                  // Tell the controller to update the active ID
+                  controller.selectMainCategory(cat.id);
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  decoration: BoxDecoration(
+                    color:
+                        isActive ? const Color(0xFFFFF0E6) : Colors.transparent,
+                    border: Border.all(
+                      color: isActive
+                          ? AppColors.primary
+                          : const Color(0xFFE5E5E5),
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    cat.name,
+                    style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: isActive ? AppColors.primary : Colors.grey[700],
+                    ),
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                cat,
-                style: GoogleFonts.poppins(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: isActive ? AppColors.primary : Colors.grey[700],
-                ),
-              ),
-            ),
-          );
-        },
-      ),
+              );
+            }); // End of inner Obx
+          },
+        );
+      }),
     );
   }
 
   Widget _buildCategoryHorizontalScroll() {
     return Container(
-      height: 175,
-      color: Colors.white,
-      // padding: const EdgeInsets.symmetric(vertical: 12),
+      height: 235, // Adjust this height if your cards are getting cut off
+      // color: Colors.white,
+      color: AppColors.background,
+
       margin: const EdgeInsets.only(bottom: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
           Expanded(
-            child: GridView.builder(
-              scrollDirection: Axis.horizontal,
-              // padding: const EdgeInsets.symmetric(horizontal: 16),
-              physics: const BouncingScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                // mainAxisSpacing: 12,
-                // crossAxisSpacing: 10,
-                // childAspectRatio: 0.9,
-              ),
-              itemCount: categoriesList.length,
-              itemBuilder: (context, index) {
-                final cat = categoriesList[index];
-                return CategoryCard(
-                  category: cat,
-                  onTap: () {
-                    controller.selectSubCategory('All');
-                    controller.currentIndex.value = 1;
-                  },
-                );
-              },
-            ),
+            child: Obx(() {
+              // 1. Show loader while API is fetching
+              if (controller.isCategoriesLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              // 2. Show empty state if no subcategories exist
+              if (controller.subCategories.isEmpty) {
+                return const Center(child: Text("No categories available"));
+              }
+
+              // 3. Render the flat list in a double-row horizontal grid
+              return GridView.builder(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // 2 rows vertically
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 10,
+                  // childAspectRatio: 0.9, // Adjust this to fix image/text ratio
+                ),
+                itemCount: controller.subCategories.length,
+                itemBuilder: (context, index) {
+                  final cat = controller.subCategories[index];
+
+                  return CategoryCard(
+                    category: cat,
+                    // onTap: () {
+                    //   // Navigate to Product list and pass the clicked category ID
+                    //   Get.toNamed('/products', arguments: cat.id);
+                    // },
+                    onTap: () {
+                      controller.selectSubCategory('All');
+                      controller.currentIndex.value = 1;
+                    },
+                  );
+                },
+              );
+            }),
           ),
+          const SizedBox(height: 8),
         ],
       ),
     );
   }
+
+  //////    --------------
+  /*
+  // Widget _buildSubCategoryTabs() {
+  //   final subcategories = ['All', 'Living', 'Bedroom', 'Dining'];
+  //   return Container(
+  //     height: 48,
+  //     padding: const EdgeInsets.symmetric(vertical: 8),
+  //     color: Colors.white,
+  //     child: ListView.builder(
+  //       scrollDirection: Axis.horizontal,
+  //       padding: const EdgeInsets.symmetric(horizontal: 16),
+  //       itemCount: subcategories.length,
+  //       itemBuilder: (context, index) {
+  //         final cat = subcategories[index];
+  //         final isActive = controller.selectedSubCategory.value == cat;
+  //         return GestureDetector(
+  //           onTap: () => controller.selectSubCategory(cat),
+  //           child: Container(
+  //             margin: const EdgeInsets.only(right: 8),
+  //             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+  //             decoration: BoxDecoration(
+  //               color: isActive ? const Color(0xFFFFF0E6) : Colors.transparent,
+  //               border: Border.all(
+  //                 color: isActive ? AppColors.primary : const Color(0xFFE5E5E5),
+  //               ),
+  //               borderRadius: BorderRadius.circular(20),
+  //             ),
+  //             child: Text(
+  //               cat,
+  //               style: GoogleFonts.poppins(
+  //                 fontSize: 11,
+  //                 fontWeight: FontWeight.bold,
+  //                 color: isActive ? AppColors.primary : Colors.grey[700],
+  //               ),
+  //             ),
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildCategoryHorizontalScroll() {
+  //   return Container(
+  //     height: 175,
+  //     color: Colors.white,
+  //     // padding: const EdgeInsets.symmetric(vertical: 12),
+  //     margin: const EdgeInsets.only(bottom: 8),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         const SizedBox(height: 8),
+  //         Expanded(
+  //           child: GridView.builder(
+  //             scrollDirection: Axis.horizontal,
+  //             // padding: const EdgeInsets.symmetric(horizontal: 16),
+  //             physics: const BouncingScrollPhysics(),
+  //             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //               crossAxisCount: 2,
+  //               // mainAxisSpacing: 12,
+  //               // crossAxisSpacing: 10,
+  //               // childAspectRatio: 0.9,
+  //             ),
+  //             itemCount: categoriesList.length,
+  //             itemBuilder: (context, index) {
+  //               final cat = categoriesList[index];
+  //               return CategoryCard(
+  //                 category: cat,
+  //                 onTap: () {
+  //                   controller.selectSubCategory('All');
+  //                   controller.currentIndex.value = 1;
+  //                 },
+  //               );
+  //             },
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  */
 
   Widget _buildDealTimerCard() {
     return Container(

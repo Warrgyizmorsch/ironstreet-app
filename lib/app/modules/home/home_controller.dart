@@ -33,9 +33,9 @@ class HomeController extends GetxController {
   var allCategories = <CategoryModel>[].obs;
   var mainCategories = <CategoryModel>[].obs;
   var subCategories = <CategoryModel>[].obs;
+  // var level2Categories = <CategoryModel>[].obs;
 
   var selectedMainCatId = 0.obs;
-
   Future<void> fetchCategories() async {
     try {
       isCategoriesLoading.value = true;
@@ -49,20 +49,57 @@ class HomeController extends GetxController {
 
       allCategories.assignAll(fetchedCats);
 
-      // 1. Filter out ONLY the Main Categories (parent == 0)
-      mainCategories
-          .assignAll(allCategories.where((cat) => cat.parentId == 0).toList());
+      // 1. Create a custom "All" Category Model
+      final allTab = CategoryModel(
+        id: 0, // Use 0 as the ID for "All"
+        name: 'All',
+        slug: 'all',
+        parentId: -1, // Set to -1 so it doesn't conflict with parent == 0
+        count: 0, description: '',
+      );
 
-      // 2. Select the first Main Category automatically (e.g., "Bedroom")
-      if (mainCategories.isNotEmpty) {
-        selectMainCategory(mainCategories.first.id);
-      }
+      // 2. Build the Main Categories list, starting with the "All" tab
+      List<CategoryModel> mains = [allTab];
+      mains.addAll(allCategories.where((cat) => cat.parentId == 0).toList());
+
+      mainCategories.assignAll(mains);
+
+      // 3. Auto-select the "All" tab (ID: 0) by default
+      selectMainCategory(0);
     } catch (e) {
       Get.snackbar('Error', 'Failed to load categories');
     } finally {
       isCategoriesLoading.value = false;
     }
   }
+
+  // Future<void> fetchCategories() async {
+  //   try {
+  //     isCategoriesLoading.value = true;
+
+  //     dynamic response =
+  //         await repositories.fetchCategories(page: 1, perPage: 100);
+
+  //     List<CategoryModel> fetchedCats = (response as List)
+  //         .map((json) => CategoryModel.fromJson(json))
+  //         .toList();
+
+  //     allCategories.assignAll(fetchedCats);
+
+  //     // 1. Filter out ONLY the Main Categories (parent == 0)
+  //     mainCategories
+  //         .assignAll(allCategories.where((cat) => cat.parentId == 0).toList());
+
+  //     // 2. Select the first Main Category automatically (e.g., "Bedroom")
+  //     if (mainCategories.isNotEmpty) {
+  //       selectMainCategory(mainCategories.first.id);
+  //     }
+  //   } catch (e) {
+  //     Get.snackbar('Error', 'Failed to load categories');
+  //   } finally {
+  //     isCategoriesLoading.value = false;
+  //   }
+  // }
 
   void _startTimer() {
     Future.delayed(const Duration(seconds: 1), () {
@@ -82,12 +119,56 @@ class HomeController extends GetxController {
     });
   }
 
+  // void selectMainCategory(int mainId) {
+  //   selectedMainCatId.value = mainId;
+
+  //   // Use the recursive helper method to find ALL nested subcategories
+  //   List<CategoryModel> allNestedCategories = _getAllDescendants(mainId);
+
+  //   // Assign them all to the flat list
+  //   subCategories.assignAll(allNestedCategories);
+  // }
   void selectMainCategory(int mainId) {
     selectedMainCatId.value = mainId;
 
-    // Find all subcategories where the parent matches the tapped tab
-    subCategories.assignAll(
-        allCategories.where((cat) => cat.parentId == mainId).toList());
+    if (mainId == 0) {
+      // IF "ALL" IS SELECTED:
+      // Show every category that is NOT a main tab (parent != 0)
+      subCategories
+          .assignAll(allCategories.where((cat) => cat.parentId != 0).toList());
+    } else {
+      // IF A SPECIFIC TAB IS SELECTED:
+      // Use the recursive helper method to find its nested subcategories
+      List<CategoryModel> allNestedCategories = _getAllDescendants(mainId);
+      subCategories.assignAll(allNestedCategories);
+    }
+  }
+  // List<CategoryModel> _getAllDescendants(int parentId) {
+  //   // 1. Find the direct children of the current parentId
+  //   List<CategoryModel> directChildren =
+  //       allCategories.where((cat) => cat.parentId == parentId).toList(); // Ensure your model uses 'parent' or 'parentId' based on your JSON
+
+  //   // 2. Start a list with these direct children
+  //   List<CategoryModel> result = List.from(directChildren);
+
+  //   // 3. Loop through each child and find ITS children recursively
+  //   for (var child in directChildren) {
+  //     result.addAll(_getAllDescendants(child.id));
+  //   }
+
+  //   return result;
+  // }
+  List<CategoryModel> _getAllDescendants(int parentId) {
+    List<CategoryModel> directChildren =
+        allCategories.where((cat) => cat.parentId == parentId).toList();
+
+    List<CategoryModel> result = List.from(directChildren);
+
+    for (var child in directChildren) {
+      result.addAll(_getAllDescendants(child.id));
+    }
+
+    return result;
   }
 
   void onTabChanged(int index) {

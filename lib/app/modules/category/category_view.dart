@@ -9,7 +9,7 @@ import '../../widgets/product_card.dart';
 class CategoryView extends GetView<CategoryController> {
   final String? initialSearchQuery;
 
-  const CategoryView({Key? key, this.initialSearchQuery}) : super(key: key);
+  const CategoryView({super.key, this.initialSearchQuery});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class CategoryView extends GetView<CategoryController> {
                     child: Container(
                       margin: const EdgeInsets.only(right: 8),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 4),
+                          horizontal: 16, vertical: 6),
                       decoration: BoxDecoration(
                         color: isActive
                             ? const Color(0xFFFFF0E6)
@@ -58,7 +58,7 @@ class CategoryView extends GetView<CategoryController> {
                               ? AppColors.primary
                               : const Color(0xFFE5E5E5),
                         ),
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
                         cat,
