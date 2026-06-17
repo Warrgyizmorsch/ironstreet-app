@@ -17,7 +17,10 @@ import '../../data/dummy_data.dart';
 import '../../data/models/product_model.dart';
 
 class HomeView extends GetView<HomeController> {
-  const HomeView({Key? key}) : super(key: key);
+  const HomeView({super.key});
+
+  @override
+  HomeController get controller => Get.find<HomeController>();
 
   @override
   Widget build(BuildContext context) {
