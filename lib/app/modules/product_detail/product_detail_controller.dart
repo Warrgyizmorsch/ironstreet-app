@@ -21,6 +21,9 @@
 //   }
 // }
 
+import 'dart:async';
+
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:iron_street_app/app/data/models/product_detail_model.dart';
 import 'package:iron_street_app/app/data/models/related_product_list.dart';
@@ -42,6 +45,10 @@ class ProductDetailController extends GetxController {
 
   int productId = 0;
 
+  final PageController imagePageController = PageController();
+
+  Timer? imageAutoScrollTimer;
+
   @override
   void onInit() {
     super.onInit();
@@ -62,6 +69,13 @@ class ProductDetailController extends GetxController {
     } else {
       Get.snackbar('Error', 'Invalid product id');
     }
+  }
+
+  @override
+  void onClose() {
+    imageAutoScrollTimer?.cancel();
+    imagePageController.dispose();
+    super.onClose();
   }
 
   int _getProductIdFromArguments() {
@@ -103,11 +117,17 @@ class ProductDetailController extends GetxController {
       selectedImageIndex.value = 0;
       relatedProducts.clear();
 
+      imageAutoScrollTimer?.cancel();
+
       dynamic response = await repositories.fetchProductDetail(productId: id);
 
       final detail = ProductDetailModel.fromJson(response);
 
       productDetail.value = detail;
+      if (imagePageController.hasClients) {
+        imagePageController.jumpToPage(0);
+      }
+      _startImageAutoScroll();
 
       // IMPORTANT: Load related products after product detail loaded
       await fetchRelatedProducts(detail.relatedIds);
@@ -116,6 +136,35 @@ class ProductDetailController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void _startImageAutoScroll() {
+    imageAutoScrollTimer?.cancel();
+
+    final int totalImages = productDetail.value?.images.length ?? 0;
+
+    if (totalImages <= 1) return;
+
+    imageAutoScrollTimer = Timer.periodic(
+      const Duration(seconds: 4),
+      (timer) {
+        if (!imagePageController.hasClients) return;
+
+        int nextPage = selectedImageIndex.value + 1;
+
+        if (nextPage >= totalImages) {
+          nextPage = 0;
+        }
+
+        imagePageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 550),
+          curve: Curves.easeInOut,
+        );
+
+        selectedImageIndex.value = nextPage;
+      },
+    );
   }
 
   Future<void> fetchRelatedProducts(List<int> relatedIds) async {

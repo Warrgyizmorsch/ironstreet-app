@@ -476,6 +476,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                         SizedBox(
                           height: 320,
                           child: PageView.builder(
+                            controller: controller.imagePageController,
                             itemCount:
                                 imageUrls.isNotEmpty ? imageUrls.length : 1,
                             onPageChanged: (index) {
