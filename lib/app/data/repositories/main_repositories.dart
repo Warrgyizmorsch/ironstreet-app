@@ -57,14 +57,33 @@ class MainRepositories {
   }
 
   Future<dynamic> fetchProductDetail({required int productId}) async {
-  final String url = '${AppUrls.products}/$productId';
+    final String url = '${AppUrls.products}/$productId';
 
-  try {
-    dynamic response = await _apiService.getApi(url);
-    return response;
-  } catch (e) {
-    rethrow;
+    try {
+      dynamic response = await _apiService.getApi(url);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
-}
 
+  Future<dynamic> fetchRelatedProductsByIds({
+    required List<int> productIds,
+  }) async {
+    if (productIds.isEmpty) {
+      return [];
+    }
+
+    final String ids = productIds.join(',');
+
+    final String url =
+        '${AppUrls.products}?include=$ids&per_page=${productIds.length}&orderby=include';
+
+    try {
+      dynamic response = await _apiService.getApi(url);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

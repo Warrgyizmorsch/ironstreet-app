@@ -1,5 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,7 +33,10 @@ class ProductCard extends StatelessWidget {
         NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
 
     return GestureDetector(
-      onTap: () => Get.toNamed(Routes.PRODUCT_DETAIL, arguments: product),
+      onTap: () {
+        Get.toNamed(Routes.PRODUCT_DETAIL, arguments: int.tryParse(product.id));
+        log('tap to product card');
+      },
       child: Container(
         width: width,
         decoration: BoxDecoration(

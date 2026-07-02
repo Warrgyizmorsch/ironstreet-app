@@ -121,9 +121,8 @@ class ProductAttributeModel {
       name: json['name'] ?? '',
       slug: json['slug'] ?? '',
       visible: json['visible'] ?? false,
-      options: (json['options'] as List? ?? [])
-          .map((e) => e.toString())
-          .toList(),
+      options:
+          (json['options'] as List? ?? []).map((e) => e.toString()).toList(),
     );
   }
 }
