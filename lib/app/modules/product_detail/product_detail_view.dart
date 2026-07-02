@@ -1,7 +1,6 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
+
+
+// ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,7 +14,7 @@ import '../cart/cart_controller.dart';
 import '../wishlist/wishlist_controller.dart';
 
 class ProductDetailView extends GetView<ProductDetailController> {
-  const ProductDetailView({Key? key}) : super(key: key);
+  const ProductDetailView({super.key});
 
   @override
   Widget build(BuildContext context) {

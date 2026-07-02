@@ -55,4 +55,16 @@ class MainRepositories {
       rethrow;
     }
   }
+
+  Future<dynamic> fetchProductDetail({required int productId}) async {
+  final String url = '${AppUrls.products}/$productId';
+
+  try {
+    dynamic response = await _apiService.getApi(url);
+    return response;
+  } catch (e) {
+    rethrow;
+  }
+}
+
 }

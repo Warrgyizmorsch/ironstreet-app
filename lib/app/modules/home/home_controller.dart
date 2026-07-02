@@ -90,6 +90,7 @@ class HomeController extends GetxController {
     }
   }
 
+// 1.when a user taps a CategoryCard
   Future<void> fetchProductsByCategory(int categoryId) async {
     try {
       activeProductCategoryId.value = categoryId;

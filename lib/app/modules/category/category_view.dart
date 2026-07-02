@@ -150,6 +150,8 @@
 //                     )
 //                   : GridView.builder(
 
+// ignore_for_file: unrelated_type_equality_checks
+
 //                       padding: const EdgeInsets.symmetric(
 //                           horizontal: 16, vertical: 8),
 //                       physics: const BouncingScrollPhysics(),

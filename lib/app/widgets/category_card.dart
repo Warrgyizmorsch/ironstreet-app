@@ -15,6 +15,8 @@
 //     required this.onTap,
 //   }) : super(key: key);
 
+// ignore_for_file: deprecated_member_use
+
 //   @override
 //   Widget build(BuildContext context) {
 //     return GestureDetector(
@@ -79,10 +81,10 @@ class CategoryCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const CategoryCard({
-    Key? key,
+    super.key,
     required this.category,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

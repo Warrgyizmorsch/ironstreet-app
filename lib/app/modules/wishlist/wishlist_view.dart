@@ -1,7 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,7 +9,7 @@ import 'wishlist_controller.dart';
 import '../cart/cart_controller.dart';
 
 class WishlistView extends GetView<WishlistController> {
-  const WishlistView({Key? key}) : super(key: key);
+  const WishlistView({super.key});
 
   @override
   Widget build(BuildContext context) {

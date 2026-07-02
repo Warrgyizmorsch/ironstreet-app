@@ -10,7 +10,7 @@ import '../routes/app_pages.dart';
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onMenuClick;
 
-  const AppHeader({Key? key, required this.onMenuClick}) : super(key: key);
+  const AppHeader({super.key, required this.onMenuClick});
 
   @override
   Widget build(BuildContext context) {

@@ -1,7 +1,3 @@
-/**
- * @license
- * SPDX-License-Identifier: Apache-2.5
- */
 
 import 'package:get/get.dart';
 import 'product_detail_controller.dart';

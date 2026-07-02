@@ -119,10 +119,7 @@ List<String> parseFundManagers(String? raw) {
   return managers;
 }
 
-int? _cacheSize(double size, double pixelRatio) {
-  // Multiply by pixel ratio to maintain high quality on retina screens
-  return (size * pixelRatio).toInt();
-}
+
 
 class PanCardFormatter extends TextInputFormatter {
   @override
