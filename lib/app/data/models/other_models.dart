@@ -46,7 +46,7 @@ class BannerItem {
 }
 
 class GridCategory {
-  final String id;
+  final int id;
   final String title;
   final String image;
 

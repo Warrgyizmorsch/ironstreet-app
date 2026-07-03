@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import 'home_controller.dart';
@@ -341,30 +342,103 @@ class HomeView extends GetView<HomeController> {
         _buildBrandGridSection(),
 
         // Discover what's new horizontal list
-        if (displayDiscover.isNotEmpty) ...[
-          SectionHeader(
-            title: 'Discover what’s new',
-            subtitle: 'Exquisite woodcraft & premium finishes',
-            actionText: 'View All',
-            onActionTap: () {
-              controller.currentIndex.value = 1;
-            },
-          ),
-          _buildHorizontalProductsList(displayDiscover),
-        ],
+        // if (displayDiscover.isNotEmpty) ...[
+        //   SectionHeader(
+        //     title: 'Customer Favorites',
+        //     subtitle: 'Exquisite woodcraft & premium finishes',
+        //     // actionText: 'View All',
+        //     onActionTap: () {
+        //       controller.currentIndex.value = 1;
+        //     },
+        //   ),
+        //   _buildHorizontalProductsList(displayDiscover),
+        // ],
+        Obx(() {
+          if (controller.isCustomerFavoritesLoading.value) {
+            return const SizedBox(
+              height: 290,
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
 
-        // Top-Rated by Indian Homes list
-        if (displayTopRated.isNotEmpty) ...[
-          SectionHeader(
-            title: 'Top-Rated by Indian Homes',
-            subtitle: 'Universally loved designs',
-            actionText: 'View All',
-            onActionTap: () {
-              controller.currentIndex.value = 1;
-            },
-          ),
-          _buildHorizontalProductsList(displayTopRated),
-        ],
+          if (controller.customerFavoriteProducts.isEmpty) {
+            return const SizedBox.shrink();
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SectionHeader(
+                title: 'Customer Favorites',
+                subtitle: 'Exquisite woodcraft & premium finishes',
+                // actionText: "View All",
+                onActionTap: () {
+                  // controller.currentIndex.value = 1;
+                },
+              ),
+              _buildHorizontalProductsList(
+                controller.customerFavoriteProducts.toList(),
+              ),
+            ],
+          );
+        }),
+
+        Obx(() {
+          if (controller.isBestSellingChairsLoading.value) {
+            return const SizedBox(
+              height: 290,
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          if (controller.bestSellingChairs.isEmpty) {
+            return const SizedBox.shrink();
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SectionHeader(
+                title: 'Best Selling Chairs',
+                subtitle: 'Universally loved designs',
+                onActionTap: () {
+                  // optional view all action
+                },
+              ),
+              _buildHorizontalProductsList(
+                controller.bestSellingChairs.toList(),
+              ),
+            ],
+          );
+        }),
+        Obx(() {
+          if (controller.isOutdoorFurnitureLoading.value) {
+            return const SizedBox(
+              height: 290,
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          if (controller.outdoorFurnitureProducts.isEmpty) {
+            return const SizedBox.shrink();
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SectionHeader(
+                title: 'Outdoor Furniture',
+                subtitle: 'Stylish and durable outdoor furniture',
+                onActionTap: () {
+                  // optional view all action
+                },
+              ),
+              _buildHorizontalProductsList(
+                controller.outdoorFurnitureProducts.toList(),
+              ),
+            ],
+          );
+        }),
 
         // Home Furnishing Section
         _buildFurnishingGridSection(),
@@ -373,11 +447,11 @@ class HomeView extends GetView<HomeController> {
         _buildDecorGridSection(),
 
         // Recently Viewed items
-        const SectionHeader(
-          title: 'Recently Viewed',
-          subtitle: 'Items you inspected recently',
-        ),
-        _buildHorizontalProductsList(recentProducts),
+        // const SectionHeader(
+        //   title: 'Recently Viewed',
+        //   subtitle: 'Items you inspected recently',
+        // ),
+        // _buildHorizontalProductsList(recentProducts),
 
         const SizedBox(height: 30),
       ],
@@ -689,6 +763,7 @@ class HomeView extends GetView<HomeController> {
               return GestureDetector(
                 onTap: () {
                   controller.selectSubCategory('All');
+                  controller.fetchProductsByCategory(item.id);
                   controller.currentIndex.value = 1;
                 },
                 child: Column(
@@ -720,7 +795,7 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildHorizontalProductsList(List<Product> list) {
+  Widget _buildHorizontalProductsList(List<ProductListModel> list) {
     return SizedBox(
       height: 290,
       child: ListView.builder(

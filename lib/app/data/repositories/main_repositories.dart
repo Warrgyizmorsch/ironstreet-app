@@ -17,8 +17,11 @@ class MainRepositories {
 
   Future<dynamic> fetchProductsByCategory(
       {required int categoryId, int page = 1, int perPage = 10}) async {
-    final String url =
-        '${AppUrls.products}?category=${categoryId == 0 ? '' : categoryId}&per_page=$perPage&page=$page';
+    // final String url =
+    //     '${AppUrls.products}?category=${categoryId == 0 ? '' : categoryId}&per_page=$perPage&page=$page';
+    final String url = categoryId == 0
+        ? '${AppUrls.products}?per_page=$perPage&page=$page'
+        : '${AppUrls.products}?category=$categoryId&per_page=$perPage&page=$page';
 
     try {
       dynamic response = await _apiService.getApi(url);

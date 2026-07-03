@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:iron_street_app/app/data/models/category_model.dart';
@@ -12,6 +14,10 @@ class HomeController extends GetxController {
     super.onInit();
     _startTimer();
     fetchCategories();
+    fetchCustomerFavoriteProducts();
+    fetchBestSellingChairs();
+    fetchOutdoorFurnitureProducts();
+
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
@@ -38,9 +44,16 @@ class HomeController extends GetxController {
   var seconds = 59.obs;
 
   var isCategoriesLoading = true.obs;
+  var isCustomerFavoritesLoading = false.obs;
+  var isBestSellingChairsLoading = false.obs;
+  var isOutdoorFurnitureLoading = false.obs;
+
   var allCategories = <CategoryModel>[].obs;
   var mainCategories = <CategoryModel>[].obs;
   var subCategories = <CategoryModel>[].obs;
+  var customerFavoriteProducts = <ProductListModel>[].obs;
+  var bestSellingChairs = <ProductListModel>[].obs;
+  var outdoorFurnitureProducts = <ProductListModel>[].obs;
 
   var selectedMainCatId = 0.obs;
 
@@ -52,6 +65,18 @@ class HomeController extends GetxController {
   var activeProductCategoryId = 0.obs;
 
   final ScrollController scrollController = ScrollController();
+  final List<int> customerFavoriteIds = [
+    13813,
+    13808,
+    15697,
+    16313,
+    16190,
+    // 13835,
+    // 13836,
+    // 13816,
+    // 13839,
+    // 13837,
+  ];
 
   Future<void> fetchCategories() async {
     try {
@@ -151,6 +176,67 @@ class HomeController extends GetxController {
       Get.snackbar('Error', 'Failed to load more products');
     } finally {
       isFetchingMoreProducts.value = false;
+    }
+  }
+
+  Future<void> fetchCustomerFavoriteProducts() async {
+    try {
+      isCustomerFavoritesLoading.value = true;
+
+      final response = await repositories.fetchRelatedProductsByIds(
+        productIds: customerFavoriteIds,
+      );
+
+      final products =
+          (response as List).map((e) => ProductListModel.fromJson(e)).toList();
+
+      customerFavoriteProducts.assignAll(products);
+    } catch (e) {
+      log('Customer favorite products error: $e');
+    } finally {
+      isCustomerFavoritesLoading.value = false;
+    }
+  }
+
+  Future<void> fetchBestSellingChairs() async {
+    try {
+      isBestSellingChairsLoading.value = true;
+
+      final response = await repositories.fetchProductsByCategory(
+        categoryId: 203,
+        perPage: 10,
+        page: 1,
+      );
+
+      final products =
+          (response as List).map((e) => ProductListModel.fromJson(e)).toList();
+
+      bestSellingChairs.assignAll(products);
+    } catch (e) {
+      log('Best Selling Chairs error: $e');
+    } finally {
+      isBestSellingChairsLoading.value = false;
+    }
+  }
+
+  Future<void> fetchOutdoorFurnitureProducts() async {
+    try {
+      isOutdoorFurnitureLoading.value = true;
+
+      final response = await repositories.fetchProductsByCategory(
+        categoryId: 141,
+        perPage: 10,
+        page: 1,
+      );
+
+      final products =
+          (response as List).map((e) => ProductListModel.fromJson(e)).toList();
+
+      outdoorFurnitureProducts.assignAll(products);
+    } catch (e) {
+      log('Outdoor furniture error: $e');
+    } finally {
+      isOutdoorFurnitureLoading.value = false;
     }
   }
 
