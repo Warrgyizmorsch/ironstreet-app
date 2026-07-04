@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:iron_street_app/app/data/models/category_model.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
+import 'package:iron_street_app/app/data/models/product_tag_model.dart';
 import 'package:iron_street_app/app/data/repositories/main_repositories.dart';
 
 class HomeController extends GetxController {
@@ -17,6 +18,7 @@ class HomeController extends GetxController {
     fetchCustomerFavoriteProducts();
     fetchBestSellingChairs();
     fetchOutdoorFurnitureProducts();
+    fetchAllTagProductSections();
 
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
@@ -47,6 +49,12 @@ class HomeController extends GetxController {
   var isCustomerFavoritesLoading = false.obs;
   var isBestSellingChairsLoading = false.obs;
   var isOutdoorFurnitureLoading = false.obs;
+  final isSearchLoading = false.obs;
+
+  var isTagsLoading = false.obs;
+  var productTags = <ProductTagModel>[].obs;
+  final tagProductsMap = <int, List<ProductListModel>>{}.obs;
+  final tagLoadingMap = <int, bool>{}.obs;
 
   var allCategories = <CategoryModel>[].obs;
   var mainCategories = <CategoryModel>[].obs;
@@ -54,6 +62,7 @@ class HomeController extends GetxController {
   var customerFavoriteProducts = <ProductListModel>[].obs;
   var bestSellingChairs = <ProductListModel>[].obs;
   var outdoorFurnitureProducts = <ProductListModel>[].obs;
+  final searchProductsList = <ProductListModel>[].obs;
 
   var selectedMainCatId = 0.obs;
 
@@ -63,6 +72,8 @@ class HomeController extends GetxController {
   var hasMoreProducts = true.obs;
   int productPage = 1;
   var activeProductCategoryId = 0.obs;
+
+  final searchText = ''.obs;
 
   final ScrollController scrollController = ScrollController();
   final List<int> customerFavoriteIds = [
@@ -82,38 +93,122 @@ class HomeController extends GetxController {
     try {
       isCategoriesLoading.value = true;
 
-      dynamic response =
-          await repositories.fetchCategories(page: 1, perPage: 100);
+      dynamic response = await repositories.fetchCategories(
+        page: 1,
+        perPage: 100,
+      );
 
       List<CategoryModel> fetchedCats = (response as List)
           .map((json) => CategoryModel.fromJson(json))
+          .where((cat) => cat.count > 0)
           .toList();
 
       allCategories.assignAll(fetchedCats);
 
-      // 1. Create a custom "All" Category Model
       final allTab = CategoryModel(
-        id: 0, // Use 0 as the ID for "All"
+        id: 0,
         name: 'All',
         slug: 'all',
-        parentId: -1, // Set to -1 so it doesn't conflict with parent == 0
-        count: 0, description: '',
+        parentId: -1,
+        count: 0,
+        image: '',
       );
 
-      // 2. Build the Main Categories list, starting with the "All" tab
       List<CategoryModel> mains = [allTab];
-      mains.addAll(allCategories.where((cat) => cat.parentId == 0).toList());
+
+      mains.addAll(
+        allCategories.where((cat) => cat.parentId == 0).toList(),
+      );
 
       mainCategories.assignAll(mains);
 
-      // 3. Auto-select the "All" tab (ID: 0) by default
       selectMainCategory(0);
     } catch (e) {
+      log('Error fetching categories: $e');
       Get.snackbar('Error', 'Failed to load categories');
     } finally {
       isCategoriesLoading.value = false;
     }
   }
+  // Future<void> fetchCategories() async {
+  //   try {
+  //     isCategoriesLoading.value = true;
+
+  //     final response = await repositories.fetchCategories(
+  //       page: 1,
+  //       perPage: 100,
+  //     );
+
+  //     List<CategoryModel> fetchedCats = (response as List)
+  //         .map((json) => CategoryModel.fromJson(json))
+  //         .where((cat) => cat.count > 0)
+  //         .toList();
+
+  //     // Sort locally because WooCommerce API does not allow orderby=menu_order
+
+  //     allCategories.assignAll(fetchedCats);
+
+  //     final allTab = CategoryModel(
+  //       id: 0,
+  //       name: 'All',
+  //       slug: 'all',
+  //       parentId: -1,
+  //       count: 0,
+  //       image: '',
+  //     );
+
+  //     final List<CategoryModel> mains = [
+  //       allTab,
+  //       ...allCategories.where((cat) => cat.parentId == 0).toList(),
+  //     ];
+
+  //     mainCategories.assignAll(mains);
+
+  //     selectMainCategory(0);
+  //   } catch (e) {
+  //     log('Error fetching categories: $e');
+  //     Get.snackbar('Error', 'Failed to load categories');
+  //   } finally {
+  //     isCategoriesLoading.value = false;
+  //   }
+  // }
+
+  // Future<void> fetchCategories() async {
+  //   try {
+  //     isCategoriesLoading.value = true;
+
+  //     dynamic response =
+  //         await repositories.fetchCategories(page: 1, perPage: 100);
+
+  //     List<CategoryModel> fetchedCats = (response as List)
+  //         .map((json) => CategoryModel.fromJson(json))
+  //         .toList();
+
+  //     allCategories.assignAll(fetchedCats);
+
+  //     // 1. Create a custom "All" Category Model
+  //     final allTab = CategoryModel(
+  //       id: 0, // Use 0 as the ID for "All"
+  //       name: 'All',
+  //       slug: 'all',
+  //       parentId: -1, // Set to -1 so it doesn't conflict with parent == 0
+  //       count: 0,
+  //     );
+
+  //     // 2. Build the Main Categories list, starting with the "All" tab
+  //     List<CategoryModel> mains = [allTab];
+  //     mains.addAll(allCategories.where((cat) => cat.parentId == 0).toList());
+
+  //     mainCategories.assignAll(mains);
+
+  //     // 3. Auto-select the "All" tab (ID: 0) by default
+  //     selectMainCategory(0);
+  //   } catch (e) {
+  //     Get.snackbar('Error', 'Failed to load categories');
+  //   } finally {
+  //     isCategoriesLoading.value = false;
+  //   }
+  // }
 
 // 1.when a user taps a CategoryCard
   Future<void> fetchProductsByCategory(int categoryId) async {
@@ -237,6 +332,51 @@ class HomeController extends GetxController {
       log('Outdoor furniture error: $e');
     } finally {
       isOutdoorFurnitureLoading.value = false;
+    }
+  }
+
+  Future<void> fetchAllTagProductSections() async {
+    try {
+      isTagsLoading.value = true;
+
+      final tags = await repositories.getProductTags();
+
+      // only tags that have products
+      final activeTags = tags.where((tag) => tag.count > 1).toList();
+      productTags.assignAll(activeTags);
+
+      log('Fetched tags: ${productTags.length}');
+
+      // fetch products for every tag
+      await Future.wait(
+        activeTags.map((tag) => fetchProductsForTag(tag.id)),
+      );
+    } catch (e) {
+      log('Error fetching tag sections: $e');
+    } finally {
+      isTagsLoading.value = false;
+    }
+  }
+
+  Future<void> fetchProductsForTag(int tagId) async {
+    try {
+      tagLoadingMap[tagId] = true;
+      tagLoadingMap.refresh();
+
+      final products = await repositories.getProductsByTag(
+        tagId: tagId,
+        perPage: 10,
+      );
+
+      tagProductsMap[tagId] = products;
+      tagProductsMap.refresh();
+
+      log('Tag $tagId products: ${products.length}');
+    } catch (e) {
+      log('Error fetching products for tag $tagId: $e');
+    } finally {
+      tagLoadingMap[tagId] = false;
+      tagLoadingMap.refresh();
     }
   }
 

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
+import 'package:iron_street_app/app/utills/helpers/helpers.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import 'home_controller.dart';
@@ -17,7 +18,6 @@ import '../../widgets/product_card.dart';
 import '../../widgets/banner_slider.dart';
 import '../../widgets/section_header.dart';
 import '../../data/dummy_data.dart';
-import '../../data/models/product_model.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -253,7 +253,7 @@ class HomeView extends GetView<HomeController> {
           BottomNavigationBarItem(
             icon: Icon(Icons.grid_view_outlined),
             activeIcon: Icon(Icons.grid_view),
-            label: 'Catalog',
+            label: 'Products',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.phone_callback_outlined),
@@ -301,23 +301,6 @@ class HomeView extends GetView<HomeController> {
 
   // --- INDEX 0: SUB VIEW HOME PANEL ---
   Widget _buildHomeSubView() {
-    // Filter Discover and Top Rated list items based on active subcategory select
-    List<Product> displayDiscover = discoverNewProducts;
-    List<Product> displayTopRated = topRatedProducts;
-
-    if (controller.selectedSubCategory.value != 'All') {
-      displayDiscover = discoverNewProducts
-          .where((p) =>
-              p.category.toLowerCase() ==
-              controller.selectedSubCategory.value.toLowerCase())
-          .toList();
-      displayTopRated = topRatedProducts
-          .where((p) =>
-              p.category.toLowerCase() ==
-              controller.selectedSubCategory.value.toLowerCase())
-          .toList();
-    }
-
     return ListView(
       physics: const BouncingScrollPhysics(),
       children: [
@@ -336,23 +319,69 @@ class HomeView extends GetView<HomeController> {
         ),
 
         // Deal Timer Lightning Deals Card
-        _buildDealTimerCard(),
+        // _buildDealTimerCard(),
 
         // 3x2 Brand Categories Grid
         _buildBrandGridSection(),
 
-        // Discover what's new horizontal list
-        // if (displayDiscover.isNotEmpty) ...[
-        //   SectionHeader(
-        //     title: 'Customer Favorites',
-        //     subtitle: 'Exquisite woodcraft & premium finishes',
-        //     // actionText: 'View All',
-        //     onActionTap: () {
-        //       controller.currentIndex.value = 1;
-        //     },
-        //   ),
-        //   _buildHorizontalProductsList(displayDiscover),
-        // ],
+        Obx(() {
+          if (controller.isTagsLoading.value &&
+              controller.productTags.isEmpty) {
+            return const SizedBox(
+              height: 290,
+              child: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          if (controller.productTags.isEmpty) {
+            return const SizedBox.shrink();
+          }
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: controller.productTags.map((tag) {
+              if (tag.count <= 1) {
+                return const SizedBox.shrink();
+              }
+              final isLoading = controller.tagLoadingMap[tag.id] ?? false;
+              final products = controller.tagProductsMap[tag.id] ?? [];
+
+              if (isLoading) {
+                return const SizedBox(
+                  height: 290,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              if (products.isEmpty) {
+                return const SizedBox.shrink();
+              }
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SectionHeader(
+                    title: formatTagTitle(tag.name),
+                    subtitle: 'Explore ${formatTagTitle(tag.name)} products',
+                    onActionTap: () {
+                      // Optional: view all page by tag
+                      // Get.toNamed(
+                      //   Routes.PRODUCT_LIST,
+                      //   arguments: {
+                      //     'tagId': tag.id,
+                      //     'title': formatTagTitle(tag.name),
+                      //   },
+                      // );
+                    },
+                  ),
+                  _buildHorizontalProductsList(products),
+                  const SizedBox(height: 18),
+                ],
+              );
+            }).toList(),
+          );
+        }),
+
         Obx(() {
           if (controller.isCustomerFavoritesLoading.value) {
             return const SizedBox(
@@ -439,12 +468,6 @@ class HomeView extends GetView<HomeController> {
             ],
           );
         }),
-
-        // Home Furnishing Section
-        _buildFurnishingGridSection(),
-
-        // Home Decor Section
-        _buildDecorGridSection(),
 
         // Recently Viewed items
         // const SectionHeader(
@@ -811,162 +834,6 @@ class HomeView extends GetView<HomeController> {
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildFurnishingGridSection() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      color: Colors.white,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Luxe Home Furnishings',
-            style: GoogleFonts.poppins(
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
-              color: const Color(0xFF222222),
-            ),
-          ),
-          const SizedBox(height: 12),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-              childAspectRatio: 0.85,
-            ),
-            itemCount: homeFurnishingGrid.length,
-            itemBuilder: (context, index) {
-              final item = homeFurnishingGrid[index];
-              return Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFAF9F6),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(12)),
-                        child: CachedNetworkImage(
-                          imageUrl: item.image,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: Column(
-                        children: [
-                          Text(
-                            item.title,
-                            maxLines: 1,
-                            style: GoogleFonts.poppins(
-                                fontSize: 9, fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            item.priceText,
-                            style: GoogleFonts.poppins(
-                              fontSize: 8,
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDecorGridSection() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      color: Colors.white,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Designer Home Decors',
-            style: GoogleFonts.poppins(
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
-              color: const Color(0xFF222222),
-            ),
-          ),
-          const SizedBox(height: 12),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-              childAspectRatio: 0.85,
-            ),
-            itemCount: homeDecorGrid.length,
-            itemBuilder: (context, index) {
-              final item = homeDecorGrid[index];
-              return Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFF7F7),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(12)),
-                        child: CachedNetworkImage(
-                          imageUrl: item.image,
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: Column(
-                        children: [
-                          Text(
-                            item.title,
-                            maxLines: 1,
-                            style: GoogleFonts.poppins(
-                                fontSize: 9, fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            item.priceText,
-                            style: GoogleFonts.poppins(
-                              fontSize: 8,
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
       ),
     );
   }

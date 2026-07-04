@@ -1375,43 +1375,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
     );
   }
 
-  Widget _buildRelatedIdsSection(List<int> relatedIds) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: const BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Color(0xFFF5F5F5)),
-        ),
-      ),
-      child: ExpansionTile(
-        tilePadding: EdgeInsets.zero,
-        childrenPadding: const EdgeInsets.only(bottom: 12),
-        title: Text(
-          'Related Products',
-          style: GoogleFonts.poppins(
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF444444),
-          ),
-        ),
-        children: [
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: relatedIds
-                  .map(
-                    (id) => _buildSmallChip('Product #$id'),
-                  )
-                  .toList(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildSectionExpandable(String head, String detail) {
     if (detail.trim().isEmpty) {
       return const SizedBox.shrink();

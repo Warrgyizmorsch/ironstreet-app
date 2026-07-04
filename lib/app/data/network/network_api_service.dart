@@ -15,7 +15,7 @@ class NetworkApiServices extends BaseApiServices {
         receiveTimeout: const Duration(seconds: 15),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': AppUrls.basicAuthHeader, // Your WooCommerce Auth
+          'Authorization': AppUrls.basicAuthHeader, 
         },
       ),
     );
@@ -29,9 +29,12 @@ class NetworkApiServices extends BaseApiServices {
   }
 
   @override
-  Future<dynamic> getApi(String url) async {
+  Future<dynamic> getApi(String url,{
+    Map<String, dynamic>? queryParameters,
+
+  }) async {
     try {
-      final response = await _dio.get(url);
+      final response = await _dio.get(url,queryParameters: queryParameters);
       return returnResponse(response);
     } on DioException catch (e) {
       return _handleDioError(e);

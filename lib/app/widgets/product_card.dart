@@ -353,7 +353,6 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 Positioned(
                   top: 8,
                   right: 8,
@@ -364,7 +363,7 @@ class ProductCard extends StatelessWidget {
 
                     return GestureDetector(
                       onTap: () {
-                        // wishlistController.toggleWishlist(product);
+                        // wishlistController.toggleWishlist(P);
                       },
                       child: Container(
                         padding: const EdgeInsets.all(6),
@@ -380,9 +379,7 @@ class ProductCard extends StatelessWidget {
                           ],
                         ),
                         child: Icon(
-                          isHearted
-                              ? Icons.favorite
-                              : Icons.favorite_border,
+                          isHearted ? Icons.favorite : Icons.favorite_border,
                           size: 15,
                           color: isHearted ? Colors.red : Colors.grey[700],
                         ),
@@ -390,7 +387,6 @@ class ProductCard extends StatelessWidget {
                     );
                   }),
                 ),
-
                 if (product.discount > 0)
                   Positioned(
                     bottom: 8,
@@ -417,7 +413,6 @@ class ProductCard extends StatelessWidget {
                   ),
               ],
             ),
-
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -432,9 +427,7 @@ class ProductCard extends StatelessWidget {
                       letterSpacing: 0.8,
                     ),
                   ),
-
                   const SizedBox(height: 2),
-
                   SizedBox(
                     height: 32,
                     child: Text(
@@ -449,9 +442,7 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 4),
-
                   Row(
                     children: [
                       const Icon(
@@ -478,9 +469,7 @@ class ProductCard extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 8),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -506,7 +495,6 @@ class ProductCard extends StatelessWidget {
                             ),
                         ],
                       ),
-
                       GestureDetector(
                         onTap: () {
                           // cartController.addToCart(product);

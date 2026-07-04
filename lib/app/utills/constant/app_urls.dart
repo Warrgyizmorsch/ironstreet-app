@@ -20,6 +20,7 @@ class AppUrls {
   static const String categories = '$baseUrl/products/categories';
   static const String orders = '$baseUrl/orders';
   static const String customers = '$baseUrl/customers';
+  static const String tags = '$baseUrl/products/tags';
 
   // YITH Wishlist endpoint (from previous setup)
   static const String wishlist =

@@ -48,6 +48,17 @@ void createLog(dynamic message) {
   }
 }
 
+String formatTagTitle(String value) {
+  return value
+      .replaceAll('-', ' ')
+      .split(' ')
+      .map((word) {
+        if (word.isEmpty) return word;
+        return word[0].toUpperCase() + word.substring(1).toLowerCase();
+      })
+      .join(' ');
+}
+
 class UHelperFunction {
   static String getGreetingMsg() {
     final hour = DateTime.now().hour;

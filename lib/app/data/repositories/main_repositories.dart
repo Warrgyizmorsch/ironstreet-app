@@ -1,14 +1,35 @@
+import 'package:iron_street_app/app/data/models/product_list_model.dart';
+import 'package:iron_street_app/app/data/models/product_tag_model.dart';
 import 'package:iron_street_app/app/data/network/network_api_service.dart';
 import 'package:iron_street_app/app/utills/constant/app_urls.dart';
 
 class MainRepositories {
   final NetworkApiServices _apiService = NetworkApiServices();
 
-  Future<dynamic> fetchCategories({int page = 1, int perPage = 100}) async {
-    final String url = '${AppUrls.categories}?page=$page&per_page=$perPage';
+  // Future<dynamic> fetchCategories({int page = 1, int perPage = 100}) async {
+  //   final String url = '${AppUrls.categories}?page=$page&per_page=$perPage';
+
+  //   try {
+  //     dynamic response = await _apiService.getApi(url);
+  //     return response;
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
+  Future<dynamic> fetchCategories({
+    int page = 1,
+    int perPage = 100,
+  }) async {
+    final String url = '${AppUrls.categories}'
+        '?page=$page'
+        '&per_page=$perPage'
+        '&hide_empty=true'
+        '&_fields=id,name,slug,parent,image,count'
+        '&orderby=count'
+        '&order=desc';
 
     try {
-      dynamic response = await _apiService.getApi(url);
+      final response = await _apiService.getApi(url);
       return response;
     } catch (e) {
       rethrow;
@@ -31,18 +52,6 @@ class MainRepositories {
     }
   }
 
-  // Fetch products by page
-  // Future<dynamic> fetchProducts({required int page, int perPage = 10}) async {
-  //   final String url =
-  //       '${AppUrls.baseUrl}/products?page=$page&per_page=$perPage';
-
-  //   try {
-  //     dynamic response = await _apiService.getApi(url);
-  //     return response;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
   Future<dynamic> fetchProducts({
     required int categoryId,
     int page = 1,
@@ -89,4 +98,43 @@ class MainRepositories {
       rethrow;
     }
   }
+
+  Future<List<ProductTagModel>> getProductTags() async {
+    try {
+      final response = await _apiService.getApi(
+        AppUrls.tags,
+        queryParameters: {
+          'per_page': 100,
+          'hide_empty': true,
+          '_fields': 'id,name,slug,description,count',
+          'orderby': 'count',
+          'order': 'desc',
+        },
+      );
+      final List data = response;
+      return data.map((json) => ProductTagModel.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch product tags: $e');
+    }
+  }
+
+  Future<List<ProductListModel>> getProductsByTag({
+    required int tagId,
+    int perPage = 10,
+  }) async {
+    try {
+      final response = await _apiService.getApi(
+          '${AppUrls.products}/?tag=$tagId&per_page=$perPage'
+          // &_fields=id,name,price,regular_price,sale_price,on_sale,average_rating,rating_count,short_description,images,categories,tags',
+          );
+
+      final List data = response;
+
+      return data.map((json) => ProductListModel.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch products by tag: $e');
+    }
+  }
+
+  
 }

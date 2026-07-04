@@ -118,7 +118,7 @@ class CategoryCard extends StatelessWidget {
                   color: const Color(
                       0xFFF9F9F9), // Light background for transparent images
                   child: CachedNetworkImage(
-                    imageUrl: category.imageUrl ?? '',
+                    imageUrl: category.image ?? '',
                     fit: BoxFit.cover,
                     placeholder: (context, url) => const Center(
                       child: SizedBox(
