@@ -14,18 +14,20 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     _startTimer();
+    debounce<String>(
+      searchQuery,
+      (value) {
+        handleSearch(value);
+      },
+      time: const Duration(milliseconds: 500),
+    );
+    setupScrollListener();
     fetchCategories();
     fetchCustomerFavoriteProducts();
     fetchBestSellingChairs();
     fetchOutdoorFurnitureProducts();
     fetchAllTagProductSections();
 
-    scrollController.addListener(() {
-      if (scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent) {
-        loadMoreProducts();
-      }
-    });
     fetchProductsByCategory(0);
   }
 
@@ -34,9 +36,6 @@ class HomeController extends GetxController {
 
   // Selected subcategory for filtering (All, Living, Bedroom, Dining)
   var selectedSubCategory = 'All'.obs;
-
-  // Search filter query
-  var searchQuery = ''.obs;
 
   // Scaffold key for drawer
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -50,6 +49,14 @@ class HomeController extends GetxController {
   var isBestSellingChairsLoading = false.obs;
   var isOutdoorFurnitureLoading = false.obs;
   final isSearchLoading = false.obs;
+  var isProductsLoading = false.obs; // For the initial page 1 load
+  var isFetchingMoreProducts = false.obs; // For loading page 2, 3...
+  var hasMoreProducts = true.obs;
+  final searchQuery = ''.obs;
+  final isSearchMode = false.obs;
+  int searchPage = 1;
+  bool hasMoreSearchProducts = true;
+  final int searchPerPage = 20;
 
   var isTagsLoading = false.obs;
   var productTags = <ProductTagModel>[].obs;
@@ -63,13 +70,10 @@ class HomeController extends GetxController {
   var bestSellingChairs = <ProductListModel>[].obs;
   var outdoorFurnitureProducts = <ProductListModel>[].obs;
   final searchProductsList = <ProductListModel>[].obs;
+  var products = <ProductListModel>[].obs;
 
   var selectedMainCatId = 0.obs;
 
-  var products = <ProductListModel>[].obs;
-  var isProductsLoading = false.obs; // For the initial page 1 load
-  var isFetchingMoreProducts = false.obs; // For loading page 2, 3...
-  var hasMoreProducts = true.obs;
   int productPage = 1;
   var activeProductCategoryId = 0.obs;
 
@@ -82,12 +86,96 @@ class HomeController extends GetxController {
     15697,
     16313,
     16190,
-    // 13835,
-    // 13836,
-    // 13816,
-    // 13839,
-    // 13837,
   ];
+
+  void setupScrollListener() {
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 250) {
+        if (isSearchMode.value) {
+          fetchSearchProducts(reset: false);
+        } else {
+          loadMoreProducts();
+        }
+      }
+    });
+  }
+
+  Future<void> handleSearch(String value) async {
+    final query = value.trim();
+
+    if (query.isEmpty) {
+      if (isSearchMode.value) {
+        isSearchMode.value = false;
+
+        // Back to selected category products
+        await fetchProductsByCategory(activeProductCategoryId.value);
+      }
+      return;
+    }
+
+    isSearchMode.value = true;
+    await fetchSearchProducts(reset: true);
+  }
+
+  Future<void> fetchSearchProducts({bool reset = false}) async {
+    try {
+      final query = searchQuery.value.trim();
+
+      if (query.isEmpty) return;
+
+      if (reset) {
+        searchPage = 1;
+        hasMoreSearchProducts = true;
+        products.clear();
+        isProductsLoading.value = true;
+      } else {
+        if (!hasMoreSearchProducts || isFetchingMoreProducts.value) return;
+        isFetchingMoreProducts.value = true;
+      }
+
+      final result = await repositories.searchProducts(
+        query: query,
+        page: searchPage,
+        perPage: searchPerPage,
+      );
+
+      if (reset) {
+        products.assignAll(result);
+      } else {
+        products.addAll(result);
+      }
+
+      if (result.length < searchPerPage) {
+        hasMoreSearchProducts = false;
+      } else {
+        searchPage++;
+      }
+    } catch (e) {
+      log('Search products error: $e');
+    } finally {
+      isProductsLoading.value = false;
+      isFetchingMoreProducts.value = false;
+    }
+  }
+
+  void onSearchChanged(String value) {
+    searchQuery.value = value;
+
+    if (value.trim().isNotEmpty) {
+      currentIndex.value = 1;
+    }
+  }
+
+  void onCategoryTap(int categoryId) {
+    isSearchMode.value = false;
+
+    if (searchQuery.value.isNotEmpty) {
+      searchQuery.value = '';
+    }
+
+    fetchProductsByCategory(categoryId);
+  }
 
   Future<void> fetchCategories() async {
     try {
@@ -130,85 +218,6 @@ class HomeController extends GetxController {
       isCategoriesLoading.value = false;
     }
   }
-  // Future<void> fetchCategories() async {
-  //   try {
-  //     isCategoriesLoading.value = true;
-
-  //     final response = await repositories.fetchCategories(
-  //       page: 1,
-  //       perPage: 100,
-  //     );
-
-  //     List<CategoryModel> fetchedCats = (response as List)
-  //         .map((json) => CategoryModel.fromJson(json))
-  //         .where((cat) => cat.count > 0)
-  //         .toList();
-
-  //     // Sort locally because WooCommerce API does not allow orderby=menu_order
-
-  //     allCategories.assignAll(fetchedCats);
-
-  //     final allTab = CategoryModel(
-  //       id: 0,
-  //       name: 'All',
-  //       slug: 'all',
-  //       parentId: -1,
-  //       count: 0,
-  //       image: '',
-  //     );
-
-  //     final List<CategoryModel> mains = [
-  //       allTab,
-  //       ...allCategories.where((cat) => cat.parentId == 0).toList(),
-  //     ];
-
-  //     mainCategories.assignAll(mains);
-
-  //     selectMainCategory(0);
-  //   } catch (e) {
-  //     log('Error fetching categories: $e');
-  //     Get.snackbar('Error', 'Failed to load categories');
-  //   } finally {
-  //     isCategoriesLoading.value = false;
-  //   }
-  // }
-
-  // Future<void> fetchCategories() async {
-  //   try {
-  //     isCategoriesLoading.value = true;
-
-  //     dynamic response =
-  //         await repositories.fetchCategories(page: 1, perPage: 100);
-
-  //     List<CategoryModel> fetchedCats = (response as List)
-  //         .map((json) => CategoryModel.fromJson(json))
-  //         .toList();
-
-  //     allCategories.assignAll(fetchedCats);
-
-  //     // 1. Create a custom "All" Category Model
-  //     final allTab = CategoryModel(
-  //       id: 0, // Use 0 as the ID for "All"
-  //       name: 'All',
-  //       slug: 'all',
-  //       parentId: -1, // Set to -1 so it doesn't conflict with parent == 0
-  //       count: 0,
-  //     );
-
-  //     // 2. Build the Main Categories list, starting with the "All" tab
-  //     List<CategoryModel> mains = [allTab];
-  //     mains.addAll(allCategories.where((cat) => cat.parentId == 0).toList());
-
-  //     mainCategories.assignAll(mains);
-
-  //     // 3. Auto-select the "All" tab (ID: 0) by default
-  //     selectMainCategory(0);
-  //   } catch (e) {
-  //     Get.snackbar('Error', 'Failed to load categories');
-  //   } finally {
-  //     isCategoriesLoading.value = false;
-  //   }
-  // }
 
 // 1.when a user taps a CategoryCard
   Future<void> fetchProductsByCategory(int categoryId) async {
@@ -443,5 +452,11 @@ class HomeController extends GetxController {
 
   void closeDrawer() {
     scaffoldKey.currentState?.openEndDrawer();
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
   }
 }

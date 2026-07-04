@@ -6,16 +6,20 @@ import 'package:iron_street_app/app/utills/constant/app_urls.dart';
 class MainRepositories {
   final NetworkApiServices _apiService = NetworkApiServices();
 
-  // Future<dynamic> fetchCategories({int page = 1, int perPage = 100}) async {
-  //   final String url = '${AppUrls.categories}?page=$page&per_page=$perPage';
+  // Product list field
+  final fields = [
+    'id',
+    'name',
+    'price',
+    'regular_price',
+    'sale_price',
+    'on_sale',
+    'average_rating',
+    'rating_count',
+    'images',
+    'attributes',
+  ].join(',');
 
-  //   try {
-  //     dynamic response = await _apiService.getApi(url);
-  //     return response;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
   Future<dynamic> fetchCategories({
     int page = 1,
     int perPage = 100,
@@ -36,13 +40,27 @@ class MainRepositories {
     }
   }
 
-  Future<dynamic> fetchProductsByCategory(
-      {required int categoryId, int page = 1, int perPage = 10}) async {
-    // final String url =
-    //     '${AppUrls.products}?category=${categoryId == 0 ? '' : categoryId}&per_page=$perPage&page=$page';
+  Future<dynamic> fetchProductsByCategory({
+    required int categoryId,
+    int page = 1,
+    int perPage = 10,
+  }) async {
+    final fields = [
+      'id',
+      'name',
+      'price',
+      'regular_price',
+      'sale_price',
+      'on_sale',
+      'average_rating',
+      'rating_count',
+      'images',
+      'attributes',
+    ].join(',');
+
     final String url = categoryId == 0
-        ? '${AppUrls.products}?per_page=$perPage&page=$page'
-        : '${AppUrls.products}?category=$categoryId&per_page=$perPage&page=$page';
+        ? '${AppUrls.products}?per_page=$perPage&page=$page&_fields=$fields'
+        : '${AppUrls.products}?category=$categoryId&per_page=$perPage&page=$page&_fields=$fields';
 
     try {
       dynamic response = await _apiService.getApi(url);
@@ -58,7 +76,7 @@ class MainRepositories {
     int perPage = 10,
   }) async {
     final String url =
-        '${AppUrls.baseUrl}/products?category=$categoryId&per_page=$perPage&page=$page';
+        '${AppUrls.baseUrl}/products?category=$categoryId&per_page=$perPage&page=$page&_fields=$fields';
 
     try {
       dynamic response = await _apiService.getApi(url);
@@ -68,8 +86,58 @@ class MainRepositories {
     }
   }
 
+  // Future<dynamic> fetchProductDetail({required int productId}) async {
+  //   final String url = '${AppUrls.products}/$productId';
+
+  //   try {
+  //     dynamic response = await _apiService.getApi(url);
+  //     return response;
+  //   } catch (e) {
+  //     rethrow;
+  //   }
+  // }
   Future<dynamic> fetchProductDetail({required int productId}) async {
-    final String url = '${AppUrls.products}/$productId';
+    // final fields = [
+    //   'id',
+    //   'name',
+    //   'description',
+    //   'short_description',
+    //   'sku',
+    //   'price',
+    //   'regular_price',
+    //   'sale_price',
+    //   'on_sale',
+    //   'stock_status',
+    //   'average_rating',
+    //   'rating_count',
+    //   'images',
+    //   'attributes',
+    //   'categories',
+    //   'related_ids',
+    // ].join(',');
+    final fields = [
+      'id',
+      'name',
+      'slug',
+      'permalink',
+      'description',
+      'short_description',
+      'sku',
+      'price',
+      'regular_price',
+      'sale_price',
+      'on_sale',
+      'purchasable',
+      'stock_status',
+      'average_rating',
+      'rating_count',
+      'images',
+      'attributes',
+      'categories',
+      'related_ids',
+    ].join(',');
+
+    final String url = '${AppUrls.products}/$productId?_fields=$fields';
 
     try {
       dynamic response = await _apiService.getApi(url);
@@ -89,7 +157,7 @@ class MainRepositories {
     final String ids = productIds.join(',');
 
     final String url =
-        '${AppUrls.products}?include=$ids&per_page=${productIds.length}&orderby=include';
+        '${AppUrls.products}?include=$ids&per_page=${productIds.length}&_fields=$fields&orderby=include';
 
     try {
       dynamic response = await _apiService.getApi(url);
@@ -124,9 +192,7 @@ class MainRepositories {
   }) async {
     try {
       final response = await _apiService.getApi(
-          '${AppUrls.products}/?tag=$tagId&per_page=$perPage'
-          // &_fields=id,name,price,regular_price,sale_price,on_sale,average_rating,rating_count,short_description,images,categories,tags',
-          );
+          '${AppUrls.products}/?tag=$tagId&per_page=$perPage&_fields=$fields');
 
       final List data = response;
 
@@ -136,5 +202,30 @@ class MainRepositories {
     }
   }
 
-  
+  Future<List<ProductListModel>> searchProducts({
+    required String query,
+    int page = 1,
+    int perPage = 20,
+  }) async {
+    try {
+      final encodedQuery = Uri.encodeComponent(query.trim());
+
+      final String url = '${AppUrls.products}'
+          '?search=$encodedQuery'
+          '&search_fields=name,sku'
+          '&page=$page'
+          '&per_page=$perPage'
+          '&_fields=id,name,price,regular_price,sale_price,on_sale,'
+          'average_rating,rating_count,short_description,images,categories,tags';
+
+      final response = await _apiService.getApi(url);
+
+      // Your API service already returns decoded List
+      final List data = response;
+
+      return data.map((json) => ProductListModel.fromJson(json)).toList();
+    } catch (e) {
+      throw Exception('Failed to search products: $e');
+    }
+  }
 }

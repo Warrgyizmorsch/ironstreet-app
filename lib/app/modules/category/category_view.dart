@@ -45,13 +45,19 @@ class CategoryView extends GetView<HomeController> {
                   final cat = controller.mainCategories[index];
 
                   // Check if this tab is the active one
-                  final isActive = controller.activeProductCategoryId == cat.id;
+                  // final isActive = controller.activeProductCategoryId == cat.id;
+                  final isActive = !controller.isSearchMode.value &&
+                      controller.activeProductCategoryId.value == cat.id;
 
                   return GestureDetector(
+                    // onTap: () {
+                    //   // 4. Trigger the API to fetch products for this Category!
+                    //   controller.fetchProductsByCategory(cat.id);
+                    //   log('message tab hit');
+                    // },
                     onTap: () {
-                      // 4. Trigger the API to fetch products for this Category!
-                      controller.fetchProductsByCategory(cat.id);
-                      log('message tab hit');
+                      controller.onCategoryTap(cat.id);
+                      log('category tab id is ${cat.id}');
                     },
                     child: Container(
                       margin: const EdgeInsets.only(right: 8),

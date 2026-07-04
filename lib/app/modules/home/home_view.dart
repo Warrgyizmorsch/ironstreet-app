@@ -40,13 +40,16 @@ class HomeView extends GetView<HomeController> {
           Obx(() {
             return CustomSearchBar(
               value: controller.searchQuery.value,
-              onChanged: (val) {
-                controller.searchQuery.value = val;
-                if (val.trim().isNotEmpty) {
-                  controller.currentIndex.value =
-                      1; // Auto switch to Catalog/Search
-                }
-              },
+              onChanged: controller.onSearchChanged,
+              
+              // onChanged: (val) {
+              //   controller.searchQuery.value = val;
+              //   if (val.trim().isNotEmpty) {
+              //     controller.currentIndex.value =
+              //         1; // Auto switch to Catalog/Search
+              //   }
+              // },
+           
             );
           }),
 

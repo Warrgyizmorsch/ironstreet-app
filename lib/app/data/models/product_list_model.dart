@@ -8,7 +8,6 @@ class ProductListModel {
   final String brand;
   final double rating;
   final int reviewsCount;
-  final String description;
 
   ProductListModel({
     required this.id,
@@ -20,7 +19,6 @@ class ProductListModel {
     required this.brand,
     required this.rating,
     required this.reviewsCount,
-    required this.description,
   });
 
   factory ProductListModel.fromJson(Map<String, dynamic> json) {
@@ -72,7 +70,6 @@ class ProductListModel {
       brand: brandName,
       rating: ratingVal,
       reviewsCount: json['rating_count'] ?? 0,
-      description: json['short_description'] ?? json['description'] ?? '',
     );
   }
 }
