@@ -22,13 +22,15 @@ class HomeController extends GetxController {
       time: const Duration(milliseconds: 500),
     );
     setupScrollListener();
-    fetchCategories();
-    fetchCustomerFavoriteProducts();
-    fetchBestSellingChairs();
-    fetchOutdoorFurnitureProducts();
-    fetchAllTagProductSections();
 
-    fetchProductsByCategory(0);
+    // fetchCategories();
+    // fetchCustomerFavoriteProducts();
+    // fetchBestSellingChairs();
+    // fetchOutdoorFurnitureProducts();
+    // fetchAllTagProductSections();
+
+    // fetchProductsByCategory(0);
+    loadInitialData();
   }
 
   // Navigation State
@@ -99,6 +101,22 @@ class HomeController extends GetxController {
         }
       }
     });
+  }
+
+  Future<void> loadInitialData() async {
+    try {
+      await Future.wait([
+        fetchCategories(),
+        fetchCustomerFavoriteProducts(),
+        fetchBestSellingChairs(),
+        fetchOutdoorFurnitureProducts(),
+        fetchAllTagProductSections(),
+      ]);
+
+      await fetchProductsByCategory(0);
+    } catch (e) {
+      print('Home init error: $e');
+    }
   }
 
   Future<void> handleSearch(String value) async {

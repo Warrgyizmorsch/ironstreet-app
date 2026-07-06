@@ -1,4 +1,3 @@
-
 import 'package:get/get.dart';
 import '../../data/models/product_model.dart';
 
@@ -12,11 +11,14 @@ class CartItem {
 class CartController extends GetxController {
   var cartItems = <CartItem>[].obs;
 
-  int get totalCount => cartItems.fold(0, (sum, item) => sum + item.quantity.value);
+  int get totalCount =>
+      cartItems.fold(0, (sum, item) => sum + item.quantity.value);
 
-  double get subtotal => cartItems.fold(0.0, (sum, item) => sum + (item.product.price * item.quantity.value));
+  double get subtotal => cartItems.fold(
+      0.0, (sum, item) => sum + (item.product.price * item.quantity.value));
 
-  double get oldSubtotal => cartItems.fold(0.0, (sum, item) => sum + (item.product.oldPrice * item.quantity.value));
+  double get oldSubtotal => cartItems.fold(
+      0.0, (sum, item) => sum + (item.product.oldPrice * item.quantity.value));
 
   double get discountAmount => oldSubtotal - subtotal;
 
@@ -25,7 +27,8 @@ class CartController extends GetxController {
   double get totalAmount => subtotal + deliveryPrice;
 
   void addToCart(Product product) {
-    var existingItem = cartItems.firstWhereOrNull((item) => item.product.id == product.id);
+    var existingItem =
+        cartItems.firstWhereOrNull((item) => item.product.id == product.id);
     if (existingItem != null) {
       existingItem.quantity.value++;
     } else {
@@ -40,7 +43,8 @@ class CartController extends GetxController {
   }
 
   void updateQuantity(String productId, int delta) {
-    var item = cartItems.firstWhereOrNull((item) => item.product.id == productId);
+    var item =
+        cartItems.firstWhereOrNull((item) => item.product.id == productId);
     if (item != null) {
       int nextQty = item.quantity.value + delta;
       if (nextQty <= 0) {
@@ -57,5 +61,9 @@ class CartController extends GetxController {
 
   void clearCart() {
     cartItems.clear();
+  }
+
+  bool isInCart(String productId) {
+    return cartItems.any((item) => item.product.id == productId);
   }
 }
