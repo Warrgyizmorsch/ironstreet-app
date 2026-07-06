@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import 'account_controller.dart';
+import '../../routes/app_pages.dart';
+import '../orders/order_detail_view.dart';
 
 class AccountView extends GetView<AccountController> {
   const AccountView({super.key});
@@ -140,7 +142,12 @@ class AccountView extends GetView<AccountController> {
           ),
           child: Column(
             children: [
-              _buildSettingsRow('Your Address Book'),
+              _buildSettingsRow('Profile details', targetRoute: Routes.PROFILE),
+              const Divider(height: 1),
+              _buildSettingsRow('My Orders', targetRoute: Routes.ORDERS),
+              const Divider(height: 1),
+              _buildSettingsRow('Your Address Book',
+                  targetRoute: Routes.ADDRESS_LIST),
               const Divider(height: 1),
               _buildSettingsRow('My Reviews & Ratings'),
               const Divider(height: 1),
@@ -199,89 +206,93 @@ class AccountView extends GetView<AccountController> {
   }
 
   Widget _buildActiveTrackingSection() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF1F1F1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.local_shipping,
-                      color: AppColors.primary, size: 18),
-                  const SizedBox(width: 6),
-                  Text(
-                    'RECENT ORDER',
-                    style: GoogleFonts.poppins(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.grey),
-                  ),
-                ],
-              ),
-              Text(
-                '#IS-7341-ORDER',
-                style: GoogleFonts.poppins(
-                    fontSize: 9,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: SizedBox(
-                  width: 38,
-                  height: 38,
-                  child: CachedNetworkImage(
-                    imageUrl:
-                        'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=100&auto=format&fit=crop&q=80',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      // onTap: () => Get.to(() => const OrderDetailView(orderId: 'ord_recent_1')),
+      onTap: () => Get.toNamed(Routes.ORDER_DETAIL, arguments: 'ord_recent_1'),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFF1F1F1)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
                   children: [
+                    const Icon(Icons.local_shipping,
+                        color: AppColors.primary, size: 18),
+                    const SizedBox(width: 6),
                     Text(
-                      'Ayaana Sheesham Wood Sofa Cum Bed',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      'RECENT ORDER',
                       style: GoogleFonts.poppins(
-                          fontSize: 11, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      'Quantity: 1 | Honey Finish',
-                      style:
-                          GoogleFonts.poppins(fontSize: 9, color: Colors.grey),
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-          const Divider(height: 24),
+                Text(
+                  '#IS-7341-ORDER',
+                  style: GoogleFonts.poppins(
+                      fontSize: 9,
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: SizedBox(
+                    width: 38,
+                    height: 38,
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=100&auto=format&fit=crop&q=80',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Ayaana Sheesham Wood Sofa Cum Bed',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.poppins(
+                            fontSize: 11, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'Quantity: 1 | Honey Finish',
+                        style: GoogleFonts.poppins(
+                            fontSize: 9, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const Divider(height: 24),
 
-          // Simple dynamic timeline steps tracking
-          _buildTimelineStep(
-              'Order Dispatched from Bengaluru Hub', 'June 12, 10:14 AM',
-              isCompleted: true),
-          _buildTimelineStep(
-              'In-Transit: Nearing Delivery City', 'June 13, 08:30 AM',
-              isCurrent: true),
-        ],
+            // Simple dynamic timeline steps tracking
+            _buildTimelineStep(
+                'Order Dispatched from Bengaluru Hub', 'June 12, 10:14 AM',
+                isCompleted: true),
+            _buildTimelineStep(
+                'In-Transit: Nearing Delivery City', 'June 13, 08:30 AM',
+                isCurrent: true),
+          ],
+        ),
       ),
     );
   }
@@ -335,7 +346,7 @@ class AccountView extends GetView<AccountController> {
     );
   }
 
-  Widget _buildSettingsRow(String text) {
+  Widget _buildSettingsRow(String text, {String? targetRoute}) {
     return ListTile(
       title: Text(
         text,
@@ -347,7 +358,11 @@ class AccountView extends GetView<AccountController> {
       trailing: const Icon(Icons.arrow_forward_ios, size: 12),
       dense: true,
       onTap: () {
-        Get.snackbar('Console', 'Opening customized configurations: "$text"');
+        if (targetRoute != null) {
+          Get.toNamed(targetRoute);
+        } else {
+          Get.snackbar('Console', 'Opening customized configurations: "$text"');
+        }
       },
     );
   }

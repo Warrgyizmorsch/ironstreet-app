@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 
 import 'cart_controller.dart';
+import '../../routes/app_pages.dart';
 
 class CartView extends GetView<CartController> {
   const CartView({super.key});
@@ -221,27 +222,7 @@ class CartView extends GetView<CartController> {
                         backgroundColor: const Color(0xFFF37021),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      onPressed: () {
-                        Get.defaultDialog(
-                          title: 'Confirming Order',
-                          middleText: 'Are you sure you want to complete this purchase and schedules delivery?',
-                          textConfirm: 'Place Order',
-                          textCancel: 'Cancel',
-                          confirmTextColor: Colors.white,
-                          buttonColor: const Color(0xFFF37021),
-                          onConfirm: () {
-                            controller.clearCart();
-                            Get.back(); // close modal
-                            Get.back(); // close cart view
-                            Get.snackbar(
-                              'Order Confirmed!',
-                              'Check your registered mobile / email for tracking details.',
-                              backgroundColor: Colors.green[50],
-                              colorText: Colors.green[800],
-                            );
-                          },
-                        );
-                      },
+                      onPressed: () => Get.toNamed(Routes.CHECKOUT),
                       child: Text(
                         'Proceed to Checkout',
                         style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),

@@ -121,7 +121,7 @@ class WishlistView extends GetView<WishlistController> {
                               children: [
                                 // Add to Cart bag
                                 GestureDetector(
-                                  onTap: () => cartController.addToCart(prod),
+                                  // onTap: () => cartController.addToCart(prod),
                                   child: Container(
                                     padding: const EdgeInsets.all(6),
                                     decoration: BoxDecoration(color: const Color(0xFFFFF0E6), borderRadius: BorderRadius.circular(8)),

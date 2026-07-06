@@ -13,6 +13,15 @@ abstract class Routes {
   static const ACCOUNT = _Paths.ACCOUNT;
   static const STORES = _Paths.STORES;
   static const CALLBACK = _Paths.CALLBACK;
+  static const PROFILE = _Paths.PROFILE;
+  static const ORDERS = _Paths.ORDERS;
+  static const ORDER_DETAIL = _Paths.ORDER_DETAIL;
+  static const ADDRESS_LIST = _Paths.ADDRESS_LIST;
+  static const ADD_EDIT_ADDRESS = _Paths.ADD_EDIT_ADDRESS;
+  static const CHECKOUT = _Paths.CHECKOUT;
+  static const PAYMENT = _Paths.PAYMENT;
+  static const PAYMENT_SUCCESS = _Paths.PAYMENT_SUCCESS;
+  static const PAYMENT_FAILED = _Paths.PAYMENT_FAILED;
 }
 
 abstract class _Paths {
@@ -25,4 +34,14 @@ abstract class _Paths {
   static const ACCOUNT = '/account';
   static const STORES = '/stores';
   static const CALLBACK = '/callback';
+  static const PROFILE = '/profile';
+  static const ORDERS = '/orders';
+  static const ORDER_DETAIL = '/order-detail';
+  static const ADDRESS_LIST = '/address-list';
+  static const ADD_EDIT_ADDRESS = '/add-edit-address';
+  static const CHECKOUT = '/checkout';
+  static const PAYMENT = '/payment';
+  static const PAYMENT_SUCCESS = '/payment-success';
+  static const PAYMENT_FAILED = '/payment-failed';
 }
+

@@ -43,14 +43,6 @@ class HomeView extends GetView<HomeController> {
               return CustomSearchBar(
                 value: controller.searchQuery.value,
                 onChanged: controller.onSearchChanged,
-
-                // onChanged: (val) {
-                //   controller.searchQuery.value = val;
-                //   if (val.trim().isNotEmpty) {
-                //     controller.currentIndex.value =
-                //         1; // Auto switch to Catalog/Search
-                //   }
-                // },
               );
             } else {
               return const SizedBox.shrink();

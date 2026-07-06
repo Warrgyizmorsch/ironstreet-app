@@ -354,6 +354,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
+import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/data/models/product_model.dart';
 import 'package:iron_street_app/app/data/models/related_product_list.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
@@ -880,25 +881,20 @@ class ProductDetailView extends GetView<ProductDetailController> {
                 children: [
                   Obx(() {
                     final bool isHearted =
-                        wishlistController.isWishlisted(prod.id.toString());
+                        wishlistController.isInWishlist(prod.id);
 
                     return GestureDetector(
-                      onTap: () => wishlistController.toggleWishlist(Product(
-                          id: prod.id.toString(),
-                          name: prod.name,
-                          brand: "LuxeLiving by Iron Street",
-                          price: price,
-                          oldPrice: oldPrice,
-                          discount: discount,
-                          rating: prod.ratingCount.toDouble(),
-                          reviewsCount: prod.ratingCount,
-                          image: prod.images.first.src,
-                          images: [prod.images.first.src],
-                          description: prod.description,
-                          deliveryText: 'Available',
-                          dimensions: dimensions,
-                          material: material,
-                          category: prod.categories.first.name)),
+                      onTap: () => wishlistController.toggleWishlist(
+                          ProductListModel(
+                              id: prod.id,
+                              name: prod.name,
+                              price: price,
+                              oldPrice: oldPrice,
+                              discount: discount,
+                              image: prod.images.first.src,
+                              brand: _getAttributeValue(prod, 'Brand Name'),
+                              rating: prod.ratingCount.toDouble(),
+                              reviewsCount: prod.ratingCount)),
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -932,7 +928,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                         ),
                         onPressed:
                             prod.purchasable && prod.stockStatus == 'instock'
-                                ? () => cartController.addToCart(Product(
+                                ? () => cartController.addToCart(
+                                  Product(
                                     id: prod.id.toString(),
                                     name: prod.name,
                                     brand: "LuxeLiving by Iron Street",
@@ -947,7 +944,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                     deliveryText: 'Available',
                                     dimensions: dimensions,
                                     material: material,
-                                    category: prod.categories.first.name))
+                                    category: prod.categories.first.name)
+                                    )
                                 : null,
                         icon: const Icon(
                           Icons.shopping_bag_outlined,
