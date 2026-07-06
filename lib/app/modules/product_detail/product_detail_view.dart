@@ -1,7 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -12,6 +11,7 @@ import 'package:iron_street_app/app/data/models/related_product_list.dart';
 import 'package:iron_street_app/app/modules/product_detail/widget/full_screen_image.dart';
 import 'package:iron_street_app/app/routes/app_pages.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'product_detail_controller.dart';
 import '../cart/cart_controller.dart';
@@ -105,14 +105,30 @@ class ProductDetailView extends GetView<ProductDetailController> {
             ),
           ),
           actions: [
+            // IconButton(
+            //   icon: const Icon(Icons.share_outlined, color: Colors.black87),
+            //   onPressed: () async {
+            //     await Clipboard.setData(ClipboardData(text: prod.permalink));
+            //     Get.snackbar(
+            //       'Share',
+            //       'Product link copied to clipboard',
+            //       snackPosition: SnackPosition.BOTTOM,
+            //     );
+            //   },
+            // ),
             IconButton(
               icon: const Icon(Icons.share_outlined, color: Colors.black87),
               onPressed: () async {
-                await Clipboard.setData(ClipboardData(text: prod.permalink));
-                Get.snackbar(
-                  'Share',
-                  'Product link copied to clipboard',
-                  snackPosition: SnackPosition.BOTTOM,
+                final box = context.findRenderObject() as RenderBox?;
+                await SharePlus.instance.share(
+                  ShareParams(
+                    text: prod.permalink,
+                    title: 'Share Via',
+                    subject: prod.name,
+                    sharePositionOrigin: box == null
+                        ? null
+                        : box.localToGlobal(Offset.zero) & box.size,
+                  ),
                 );
               },
             ),
