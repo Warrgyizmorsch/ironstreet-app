@@ -357,6 +357,7 @@ import 'package:intl/intl.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/data/models/product_model.dart';
 import 'package:iron_street_app/app/data/models/related_product_list.dart';
+import 'package:iron_street_app/app/modules/product_detail/widget/full_screen_image.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import 'product_detail_controller.dart';
@@ -500,23 +501,56 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                 );
                               }
 
-                              return CachedNetworkImage(
-                                imageUrl: imageUrl,
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                placeholder: (context, url) => Container(
-                                  color: const Color(0xFFF7F7F7),
-                                  child: const Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) => Container(
-                                  color: const Color(0xFFF7F7F7),
-                                  child: const Center(
-                                    child: Icon(
-                                      Icons.broken_image_outlined,
-                                      size: 50,
-                                      color: Colors.grey,
+                              // return CachedNetworkImage(
+                              //   imageUrl: imageUrl,
+                              //   fit: BoxFit.cover,
+                              //   width: double.infinity,
+                              //   placeholder: (context, url) => Container(
+                              //     color: const Color(0xFFF7F7F7),
+                              //     child: const Center(
+                              //       child: CircularProgressIndicator(),
+                              //     ),
+                              //   ),
+                              //   errorWidget: (context, url, error) => Container(
+                              //     color: const Color(0xFFF7F7F7),
+                              //     child: const Center(
+                              //       child: Icon(
+                              //         Icons.broken_image_outlined,
+                              //         size: 50,
+                              //         color: Colors.grey,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // );
+                              return GestureDetector(
+                                onTap: () {
+                                  _openImagePreview(
+                                    images: imageUrls,
+                                    initialIndex: index,
+                                  );
+                                },
+                                child: Hero(
+                                  tag: 'product-image-$index',
+                                  child: CachedNetworkImage(
+                                    imageUrl: imageUrl,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    placeholder: (context, url) => Container(
+                                      color: const Color(0xFFF7F7F7),
+                                      child: const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Container(
+                                      color: const Color(0xFFF7F7F7),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.broken_image_outlined,
+                                          size: 50,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -605,6 +639,10 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               return GestureDetector(
                                 onTap: () {
                                   controller.changeImage(index);
+                                  _openImagePreview(
+                                    images: imageUrls,
+                                    initialIndex: index,
+                                  );
                                 },
                                 child: Container(
                                   width: 54,
@@ -928,8 +966,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                         ),
                         onPressed:
                             prod.purchasable && prod.stockStatus == 'instock'
-                                ? () => cartController.addToCart(
-                                  Product(
+                                ? () => cartController.addToCart(Product(
                                     id: prod.id.toString(),
                                     name: prod.name,
                                     brand: "LuxeLiving by Iron Street",
@@ -944,8 +981,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                     deliveryText: 'Available',
                                     dimensions: dimensions,
                                     material: material,
-                                    category: prod.categories.first.name)
-                                    )
+                                    category: prod.categories.first.name))
                                 : null,
                         icon: const Icon(
                           Icons.shopping_bag_outlined,
@@ -971,6 +1007,22 @@ class ProductDetailView extends GetView<ProductDetailController> {
         ),
       );
     });
+  }
+
+  void _openImagePreview({
+    required List<String> images,
+    required int initialIndex,
+  }) {
+    if (images.isEmpty) return;
+
+    Get.to(
+      () => FullScreenImageViewer(
+        images: images,
+        initialIndex: initialIndex,
+      ),
+      transition: Transition.fadeIn,
+      duration: const Duration(milliseconds: 250),
+    );
   }
 
   Widget _buildRelatedProductsSection(ProductDetailController controller) {
