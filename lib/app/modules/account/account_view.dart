@@ -6,7 +6,6 @@ import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import 'account_controller.dart';
 import '../../routes/app_pages.dart';
-import '../orders/order_detail_view.dart';
 
 class AccountView extends GetView<AccountController> {
   const AccountView({super.key});
@@ -80,7 +79,7 @@ class AccountView extends GetView<AccountController> {
                     Text(
                       accCtrl.email.value.isNotEmpty
                           ? accCtrl.email.value
-                          : 'ananya.sharma@gmail.com',
+                          : 'imam123@gmail.com',
                       style:
                           GoogleFonts.poppins(fontSize: 10, color: Colors.grey),
                     ),

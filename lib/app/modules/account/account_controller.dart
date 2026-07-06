@@ -1,12 +1,10 @@
-
-
 import 'package:get/get.dart';
 
 class AccountController extends GetxController {
   var isLoggedIn = false.obs;
   var email = ''.obs;
   var password = ''.obs;
-  var name = 'Ananya Sharma'.obs;
+  var name = 'Imam'.obs;
 
   void login(String emailAddress, String pass) {
     if (emailAddress.trim().isEmpty) {
