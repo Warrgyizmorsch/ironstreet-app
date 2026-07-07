@@ -9,6 +9,7 @@ abstract class BaseApiServices {
     String url, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
   });
 
   Future<dynamic> putApi(String url, dynamic data);

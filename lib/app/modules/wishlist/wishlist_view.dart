@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,7 +16,8 @@ class WishlistView extends GetView<WishlistController> {
         ? Get.find<WishlistController>()
         : Get.put(WishlistController());
     final cartController = Get.find<CartController>();
-    final formatCurrency = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+    final formatCurrency =
+        NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
@@ -30,7 +30,8 @@ class WishlistView extends GetView<WishlistController> {
         ),
         title: Text(
           'My Wishlist',
-          style: GoogleFonts.poppins(color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 15),
+          style: GoogleFonts.poppins(
+              color: Colors.black87, fontWeight: FontWeight.bold, fontSize: 15),
         ),
       ),
       body: Obx(() {
@@ -43,17 +44,22 @@ class WishlistView extends GetView<WishlistController> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.favorite_border, size: 68, color: Colors.grey),
+                  const Icon(Icons.favorite_border,
+                      size: 68, color: Colors.grey),
                   const SizedBox(height: 12),
                   Text(
                     'No Wishlisted Items yet',
-                    style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey[700]),
+                    style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700]),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     'Tap the heart icon on any sofa, dining table or accessories to view them here.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey[400]),
+                    style: GoogleFonts.poppins(
+                        fontSize: 10, color: Colors.grey[400]),
                   ),
                 ],
               ),
@@ -98,14 +104,20 @@ class WishlistView extends GetView<WishlistController> {
                       children: [
                         Text(
                           prod.brand.toUpperCase(),
-                          style: GoogleFonts.poppins(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.grey),
+                          style: GoogleFonts.poppins(
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           prod.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFF222222)),
+                          style: GoogleFonts.poppins(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: const Color(0xFF222222)),
                         ),
                         const SizedBox(height: 6),
                         Row(
@@ -113,7 +125,10 @@ class WishlistView extends GetView<WishlistController> {
                           children: [
                             Text(
                               formatCurrency.format(prod.price),
-                              style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w900, color: const Color(0xFFF37021)),
+                              style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w900,
+                                  color: const Color(0xFFF37021)),
                             ),
 
                             // Actions
@@ -124,19 +139,26 @@ class WishlistView extends GetView<WishlistController> {
                                   // onTap: () => cartController.addToCart(prod),
                                   child: Container(
                                     padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(color: const Color(0xFFFFF0E6), borderRadius: BorderRadius.circular(8)),
-                                    child: const Icon(Icons.add_shopping_cart, size: 14, color: Color(0xFFF37021)),
+                                    decoration: BoxDecoration(
+                                        color: const Color(0xFFFFF0E6),
+                                        borderRadius: BorderRadius.circular(8)),
+                                    child: const Icon(Icons.add_shopping_cart,
+                                        size: 14, color: Color(0xFFF37021)),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
 
                                 // Delete
                                 GestureDetector(
-                                  onTap: () => wishlistCtrl.toggleWishlist(prod),
+                                  onTap: () =>
+                                      wishlistCtrl.toggleWishlist(prod),
                                   child: Container(
                                     padding: const EdgeInsets.all(6),
-                                    decoration: BoxDecoration(color: Colors.red[50], borderRadius: BorderRadius.circular(8)),
-                                    child: Icon(Icons.close, size: 14, color: Colors.red[600]),
+                                    decoration: BoxDecoration(
+                                        color: Colors.red[50],
+                                        borderRadius: BorderRadius.circular(8)),
+                                    child: Icon(Icons.close,
+                                        size: 14, color: Colors.red[600]),
                                   ),
                                 ),
                               ],

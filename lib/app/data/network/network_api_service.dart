@@ -46,12 +46,14 @@ class NetworkApiServices extends BaseApiServices {
     String url, {
     dynamic data,
     Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
   }) async {
     try {
       final response = await _dio.post(
         url,
         data: data,
         queryParameters: queryParameters,
+        options: headers != null ? Options(headers: headers) : null,
       );
       return returnResponse(response);
     } on DioException catch (e) {
@@ -155,6 +157,16 @@ class NetworkApiServices extends BaseApiServices {
         throw FetchDataException('Bad Request: ${response.data}');
       case 401:
       case 403:
+        if (response.requestOptions.path.contains('/jwt-auth/') ||
+            response.requestOptions.path.contains('/register')) {
+          String msg = 'Authentication failed';
+          if (response.data is Map) {
+            msg = response.data['message'] ?? response.data['code'] ?? msg;
+          } else if (response.data is String) {
+            msg = response.data;
+          }
+          throw FetchDataException(msg);
+        }
         throw FetchDataException(
             'Unauthorized: Please check WooCommerce API Keys');
       case 404:

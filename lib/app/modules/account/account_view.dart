@@ -16,8 +16,16 @@ class AccountView extends GetView<AccountController> {
         ? Get.find<AccountController>()
         : Get.put(AccountController());
 
-    final emailFieldController = TextEditingController();
-    final passFieldController = TextEditingController();
+    final loginUsernameController = TextEditingController();
+    final loginPassController = TextEditingController();
+
+    final regUsernameController = TextEditingController();
+    final regEmailController = TextEditingController();
+    final regPassController = TextEditingController();
+    final regFirstController = TextEditingController();
+    final regLastController = TextEditingController();
+
+    final RxBool isLoginTab = true.obs;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),
@@ -25,8 +33,17 @@ class AccountView extends GetView<AccountController> {
         if (accCtrl.isLoggedIn.value) {
           return _buildProfileDashboard(accCtrl);
         } else {
-          return _buildLoginForm(
-              accCtrl, emailFieldController, passFieldController);
+          return _buildAuthContainer(
+            accCtrl: accCtrl,
+            isLoginTab: isLoginTab,
+            loginUsernameCtrl: loginUsernameController,
+            loginPassCtrl: loginPassController,
+            regUsernameCtrl: regUsernameController,
+            regEmailCtrl: regEmailController,
+            regPassCtrl: regPassController,
+            regFirstCtrl: regFirstController,
+            regLastCtrl: regLastController,
+          );
         }
       }),
     );
@@ -57,7 +74,15 @@ class AccountView extends GetView<AccountController> {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  accCtrl.name.value.split(' ').map((n) => n[0]).join(''),
+                  accCtrl.name.value.isNotEmpty
+                      ? accCtrl.name.value
+                          .trim()
+                          .split(' ')
+                          .where((w) => w.isNotEmpty)
+                          .map((n) => n[0])
+                          .join('')
+                          .toUpperCase()
+                      : 'U',
                   style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
@@ -148,8 +173,8 @@ class AccountView extends GetView<AccountController> {
               _buildSettingsRow('Your Address Book',
                   targetRoute: Routes.ADDRESS_LIST),
               const Divider(height: 1),
-              _buildSettingsRow('My Reviews & Ratings'),
-              const Divider(height: 1),
+              // _buildSettingsRow('My Reviews & Ratings'),
+              // const Divider(height: 1),
               _buildSettingsRow('Help Desk & Support Center'),
               const Divider(height: 1),
               _buildSettingsRow('Terms & Conditions'),
@@ -367,124 +392,466 @@ class AccountView extends GetView<AccountController> {
   }
 
   // --- LOG IN SIGN IN CONSOLE FORM STATE ---
-  Widget _buildLoginForm(AccountController accCtrl,
-      TextEditingController emailCtrl, TextEditingController passCtrl) {
+  Widget _buildAuthContainer({
+    required AccountController accCtrl,
+    required RxBool isLoginTab,
+    required TextEditingController loginUsernameCtrl,
+    required TextEditingController loginPassCtrl,
+    required TextEditingController regUsernameCtrl,
+    required TextEditingController regEmailCtrl,
+    required TextEditingController regPassCtrl,
+    required TextEditingController regFirstCtrl,
+    required TextEditingController regLastCtrl,
+  }) {
     return Center(
       child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Container(
           margin: const EdgeInsets.all(20),
-          padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: const Color(0xFFF1F1F1)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'SIGN IN TO IRON STREET',
-                style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primary),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Access orders, secure receipts & receive exclusive Gold Club Coupons.',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(fontSize: 9, color: Colors.grey),
-              ),
-              const SizedBox(height: 16),
-
-              // Email Address
-              Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text('Email Address',
-                      style: GoogleFonts.poppins(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey))),
-              const SizedBox(height: 6),
-              TextField(
-                controller: emailCtrl,
-                decoration: InputDecoration(
-                  hintText: 'Enter Guest Email e.g. guest@ironstreet.com',
-                  isDense: true,
-                  filled: true,
-                  hintStyle: const TextStyle(fontSize: 11),
-                  prefixIcon: const Icon(Icons.mail_outline, size: 16),
-                  fillColor: const Color(0xFFF6F6F6),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none),
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // Password
-              Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text('Password',
-                      style: GoogleFonts.poppins(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey))),
-              const SizedBox(height: 6),
-              TextField(
-                controller: passCtrl,
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: 'Password',
-                  isDense: true,
-                  filled: true,
-                  prefixIcon: const Icon(Icons.lock_outline, size: 16),
-                  fillColor: const Color(0xFFF6F6F6),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide.none),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Login Button
-              SizedBox(
-                width: double.infinity,
-                height: 46,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+              // Tabs Header
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => isLoginTab.value = true,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: isLoginTab.value
+                                  ? AppColors.primary
+                                  : Colors.transparent,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'SIGN IN',
+                            style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: isLoginTab.value
+                                  ? AppColors.primary
+                                  : Colors.grey[400],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  onPressed: () => accCtrl.login(emailCtrl.text, passCtrl.text),
-                  child: Text(
-                    'Log In Securely',
-                    style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => isLoginTab.value = false,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: !isLoginTab.value
+                                  ? AppColors.primary
+                                  : Colors.transparent,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'SIGN UP',
+                            style: GoogleFonts.poppins(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                              color: !isLoginTab.value
+                                  ? AppColors.primary
+                                  : Colors.grey[400],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-              const SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(8),
-                color: const Color(0xFFFFF0E6),
-                child: Text(
-                  '💡 Enter any user email to complete instantaneous login!',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                      fontSize: 8,
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold),
-                ),
-              )
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: isLoginTab.value
+                    ? _buildSignInForm(
+                        accCtrl, loginUsernameCtrl, loginPassCtrl)
+                    : _buildSignUpForm(
+                        accCtrl,
+                        regUsernameCtrl,
+                        regEmailCtrl,
+                        regPassCtrl,
+                        regFirstCtrl,
+                        regLastCtrl,
+                        isLoginTab,
+                      ),
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSignInForm(
+    AccountController accCtrl,
+    TextEditingController usernameCtrl,
+    TextEditingController passCtrl,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Welcome Back',
+          style: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF222222),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Sign in to access your orders, account profile, and benefits.',
+          style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey[500]),
+        ),
+        const SizedBox(height: 20),
+
+        // Username or Email
+        Text(
+          'Username or Email',
+          style: GoogleFonts.poppins(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[600],
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: usernameCtrl,
+          decoration: InputDecoration(
+            hintText: 'Enter username or email',
+            isDense: true,
+            filled: true,
+            hintStyle:
+                GoogleFonts.poppins(fontSize: 11, color: Colors.grey[400]),
+            prefixIcon: const Icon(Icons.person_outline, size: 16),
+            fillColor: const Color(0xFFF6F6F6),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Password
+        Text(
+          'Password',
+          style: GoogleFonts.poppins(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[600],
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: passCtrl,
+          obscureText: true,
+          decoration: InputDecoration(
+            hintText: 'Enter password',
+            isDense: true,
+            filled: true,
+            hintStyle:
+                GoogleFonts.poppins(fontSize: 11, color: Colors.grey[400]),
+            prefixIcon: const Icon(Icons.lock_outline, size: 16),
+            fillColor: const Color(0xFFF6F6F6),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // Login Button
+        SizedBox(
+          width: double.infinity,
+          height: 46,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              elevation: 0,
+            ),
+            onPressed: accCtrl.isLoading.value
+                ? null
+                : () => accCtrl.login(usernameCtrl.text, passCtrl.text),
+            child: accCtrl.isLoading.value
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Text(
+                    'Log In Securely',
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSignUpForm(
+    AccountController accCtrl,
+    TextEditingController usernameCtrl,
+    TextEditingController emailCtrl,
+    TextEditingController passCtrl,
+    TextEditingController firstCtrl,
+    TextEditingController lastCtrl,
+    RxBool isLoginTab,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Create Account',
+          style: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: const Color(0xFF222222),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Join Iron Street to unlock exclusive catalogs, coupons, and secure orders.',
+          style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey[500]),
+        ),
+        const SizedBox(height: 20),
+
+        // Name fields side by side
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'First Name',
+                    style: GoogleFonts.poppins(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: firstCtrl,
+                    decoration: InputDecoration(
+                      hintText: 'First name',
+                      isDense: true,
+                      filled: true,
+                      hintStyle: GoogleFonts.poppins(
+                          fontSize: 11, color: Colors.grey[400]),
+                      fillColor: const Color(0xFFF6F6F6),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Last Name',
+                    style: GoogleFonts.poppins(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: lastCtrl,
+                    decoration: InputDecoration(
+                      hintText: 'Last name',
+                      isDense: true,
+                      filled: true,
+                      hintStyle: GoogleFonts.poppins(
+                          fontSize: 11, color: Colors.grey[400]),
+                      fillColor: const Color(0xFFF6F6F6),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+
+        // Username
+        Text(
+          'Username',
+          style: GoogleFonts.poppins(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[600],
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: usernameCtrl,
+          decoration: InputDecoration(
+            hintText: 'Choose username',
+            isDense: true,
+            filled: true,
+            hintStyle:
+                GoogleFonts.poppins(fontSize: 11, color: Colors.grey[400]),
+            prefixIcon: const Icon(Icons.person_outline, size: 16),
+            fillColor: const Color(0xFFF6F6F6),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Email Address
+        Text(
+          'Email Address',
+          style: GoogleFonts.poppins(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[600],
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: emailCtrl,
+          keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(
+            hintText: 'Enter email address',
+            isDense: true,
+            filled: true,
+            hintStyle:
+                GoogleFonts.poppins(fontSize: 11, color: Colors.grey[400]),
+            prefixIcon: const Icon(Icons.mail_outline, size: 16),
+            fillColor: const Color(0xFFF6F6F6),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Password
+        Text(
+          'Password',
+          style: GoogleFonts.poppins(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey[600],
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: passCtrl,
+          obscureText: true,
+          decoration: InputDecoration(
+            hintText: 'Choose secure password',
+            isDense: true,
+            filled: true,
+            hintStyle:
+                GoogleFonts.poppins(fontSize: 11, color: Colors.grey[400]),
+            prefixIcon: const Icon(Icons.lock_outline, size: 16),
+            fillColor: const Color(0xFFF6F6F6),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+
+        // Register Button
+        SizedBox(
+          width: double.infinity,
+          height: 46,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              elevation: 0,
+            ),
+            onPressed: accCtrl.isRegisterLoading.value
+                ? null
+                : () => accCtrl.register(
+                      username: usernameCtrl.text,
+                      emailAddress: emailCtrl.text,
+                      pass: passCtrl.text,
+                      firstName: firstCtrl.text,
+                      lastName: lastCtrl.text,
+                    ),
+            child: accCtrl.isRegisterLoading.value
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Text(
+                    'Create Account',
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  ),
+          ),
+        ),
+      ],
     );
   }
 }
