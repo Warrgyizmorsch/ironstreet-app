@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/data/models/product_model.dart';
+import 'package:iron_street_app/app/data/models/product_review_model.dart';
 import 'package:iron_street_app/app/data/models/related_product_list.dart';
 import 'package:iron_street_app/app/modules/product_detail/widget/full_screen_image.dart';
 import 'package:iron_street_app/app/routes/app_pages.dart';
@@ -520,11 +521,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               tableTopMaterial: tableTopMaterial,
                               dimensions: dimensions,
                             ),
-                          const SizedBox(height: 20),
-                          _buildSectionExpandable(
-                            'Product Description',
-                            _cleanHtml(prod.description),
-                          ),
+                          // const SizedBox(height: 20),
+                          // _buildSectionExpandable(
+                          //   'Product Description',
+                          //   _cleanHtml(prod.description),
+                          // ),
                           if (prod.shortDescription.isNotEmpty)
                             _buildSectionExpandable(
                               'Short Description',
@@ -540,6 +541,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                           _buildProductInfoSection(prod),
                           // if (prod.relatedIds.isNotEmpty)
                           //   _buildRelatedIdsSection(prod.relatedIds),
+                          _buildReviewsSection(controller),
                           _buildRelatedProductsSection(controller),
                         ],
                       ),
@@ -775,7 +777,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                 top: Radius.circular(14),
               ),
               child: Container(
-                height: 125,
+                // height: 125,
                 width: double.infinity,
                 color: const Color(0xFFF7F7F7),
                 child: imageUrl.isEmpty
@@ -839,26 +841,26 @@ class ProductDetailView extends GetView<ProductDetailController> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFAF9F6),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: const Color(0xFFF1F1F1)),
-                    ),
-                    child: Text(
-                      'View Details',
-                      style: GoogleFonts.poppins(
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ),
+                  // const SizedBox(height: 8),n
+                  // Container(
+                  //   padding: const EdgeInsets.symmetric(
+                  //     horizontal: 8,
+                  //     vertical: 4,
+                  //   ),
+                  //   decoration: BoxDecoration(
+                  //     color: const Color(0xFFFAF9F6),
+                  //     borderRadius: BorderRadius.circular(20),
+                  //     border: Border.all(color: const Color(0xFFF1F1F1)),
+                  //   ),
+                  //   child: Text(
+                  //     'View Details',
+                  //     style: GoogleFonts.poppins(
+                  //       fontSize: 9,
+                  //       fontWeight: FontWeight.bold,
+                  //       color: AppColors.primary,
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -1231,5 +1233,425 @@ class ProductDetailView extends GetView<ProductDetailController> {
     }
 
     return ((oldPrice - newPrice) / oldPrice) * 100;
+  }
+
+  Widget _buildReviewsSection(ProductDetailController controller) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24, top: 12),
+      decoration: const BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Color(0xFFF5F5F5)),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Customer Reviews',
+                style: GoogleFonts.poppins(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF222222),
+                ),
+              ),
+              Obx(() {
+                final count = controller.reviewsList.length;
+                return Text(
+                  count > 0 ? '$count Review${count > 1 ? 's' : ''}' : '',
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[600],
+                  ),
+                );
+              }),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Obx(() {
+            if (controller.isReviewsLoading.value) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: Center(
+                  child: Column(
+                    children: [
+                      const CircularProgressIndicator(
+                        strokeWidth: 3,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(AppColors.primary),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Loading reviews...',
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+
+            if (controller.reviewsList.isEmpty) {
+              return Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFAF9F6),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFF1F1F1)),
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.rate_review_outlined,
+                      size: 36,
+                      color: Colors.grey[400],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      'No Reviews Yet',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Be the first to share your experience with this product.',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(
+                        fontSize: 11,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            // Calculations for overview
+            final reviews = controller.reviewsList;
+            final int total = reviews.length;
+            double sum = 0;
+            final Map<int, int> ratingCounts = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0};
+            for (var r in reviews) {
+              sum += r.rating;
+              ratingCounts[r.rating] = (ratingCounts[r.rating] ?? 0) + 1;
+            }
+            final double average = total > 0 ? sum / total : 0.0;
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Overview Card
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFAF9F6),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: const Color(0xFFF1F1F1)),
+                  ),
+                  child: Row(
+                    children: [
+                      // Average Rating Column
+                      Expanded(
+                        flex: 4,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              average.toStringAsFixed(1),
+                              style: GoogleFonts.poppins(
+                                fontSize: 40,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            _buildReviewStars(average, size: 16),
+                            const SizedBox(height: 6),
+                            Text(
+                              'Based on $total review${total > 1 ? 's' : ''}',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                fontSize: 10,
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Divider
+                      Container(
+                        height: 70,
+                        width: 1,
+                        color: const Color(0xFFE5E5E5),
+                        margin: const EdgeInsets.symmetric(horizontal: 12),
+                      ),
+                      // Rating bars column
+                      Expanded(
+                        flex: 6,
+                        child: Column(
+                          children: [5, 4, 3, 2, 1].map((stars) {
+                            final count = ratingCounts[stars] ?? 0;
+                            final double pct = total > 0 ? count / total : 0.0;
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    '$stars ★',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(4),
+                                      child: LinearProgressIndicator(
+                                        value: pct,
+                                        minHeight: 6,
+                                        backgroundColor:
+                                            const Color(0xFFE5E5E5),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                          stars >= 4
+                                              ? Colors.green[600]!
+                                              : stars == 3
+                                                  ? Colors.amber[600]!
+                                                  : Colors.orange[600]!,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  SizedBox(
+                                    width: 16,
+                                    child: Text(
+                                      count.toString(),
+                                      textAlign: TextAlign.end,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 10,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Display the first review
+                _buildReviewItem(reviews.first),
+                if (total > 1) ...[
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 44,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: AppColors.primary),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () => Get.toNamed(Routes.PRODUCT_REVIEWS),
+                      child: Text(
+                        'See All $total Reviews',
+                        style: GoogleFonts.poppins(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 12),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReviewStars(double rating, {double size = 14}) {
+    int fullStars = rating.floor();
+    bool hasHalf = (rating - fullStars) >= 0.5;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(5, (index) {
+        if (index < fullStars) {
+          return Icon(Icons.star, size: size, color: Colors.amber[700]);
+        } else if (index == fullStars && hasHalf) {
+          return Icon(Icons.star_half, size: size, color: Colors.amber[700]);
+        } else {
+          return Icon(Icons.star_border, size: size, color: Colors.amber[700]);
+        }
+      }),
+    );
+  }
+
+  Widget _buildReviewItem(ProductReviewModel review) {
+    // Format date
+    String dateStr = review.dateCreated;
+    try {
+      final DateTime parsed = DateTime.parse(review.dateCreated);
+      dateStr = DateFormat('MMM dd, yyyy').format(parsed);
+    } catch (_) {}
+
+    final avatarUrl = review.reviewerAvatarUrls.size96.isNotEmpty
+        ? review.reviewerAvatarUrls.size96
+        : (review.reviewerAvatarUrls.size48.isNotEmpty
+            ? review.reviewerAvatarUrls.size48
+            : review.reviewerAvatarUrls.size24);
+
+    final initial = review.reviewer.isNotEmpty
+        ? review.reviewer.trim().substring(0, 1).toUpperCase()
+        : '?';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            // Avatar
+            ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: Container(
+                width: 36,
+                height: 36,
+                color: Colors.grey[200],
+                child: avatarUrl.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: avatarUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Center(
+                          child: Text(
+                            initial,
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[700],
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        errorWidget: (context, url, error) => Center(
+                          child: Text(
+                            initial,
+                            style: GoogleFonts.poppins(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[700],
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: Text(
+                          initial,
+                          style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[700],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            // Reviewer info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          review.reviewer,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                      if (review.verified) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.green[50],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.verified,
+                                  size: 10, color: Colors.green[700]),
+                              const SizedBox(width: 2),
+                              Text(
+                                'Verified',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green[700],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    dateStr,
+                    style: GoogleFonts.poppins(
+                      fontSize: 10,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Stars
+            _buildReviewStars(review.rating.toDouble(), size: 12),
+          ],
+        ),
+        const SizedBox(height: 10),
+        // Review Text
+        Text(
+          _cleanHtml(review.review),
+          style: GoogleFonts.poppins(
+            fontSize: 12,
+            color: Colors.grey[800],
+            height: 1.5,
+          ),
+        ),
+      ],
+    );
   }
 }

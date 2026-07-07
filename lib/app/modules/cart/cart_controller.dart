@@ -34,12 +34,12 @@ class CartController extends GetxController {
     } else {
       cartItems.add(CartItem(product: product, qty: 1));
     }
-    Get.snackbar(
-      'Added to Cart',
-      '${product.name} is added to your shopping bag!',
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 1),
-    );
+    // Get.snackbar(
+    //   'Added to Cart',
+    //   '${product.name} is added to your shopping bag!',
+    //   snackPosition: SnackPosition.BOTTOM,
+    //   duration: const Duration(seconds: 1),
+    // );
   }
 
   void updateQuantity(String productId, int delta) {

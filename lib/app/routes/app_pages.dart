@@ -8,6 +8,7 @@ import '../modules/category/category_binding.dart';
 import '../modules/category/category_view.dart';
 import '../modules/product_detail/product_detail_binding.dart';
 import '../modules/product_detail/product_detail_view.dart';
+import '../modules/product_detail/product_reviews_view.dart';
 import '../modules/wishlist/wishlist_binding.dart';
 import '../modules/wishlist/wishlist_view.dart';
 import '../modules/cart/cart_binding.dart';
@@ -127,6 +128,11 @@ class AppPages {
       name: _Paths.PAYMENT_FAILED,
       page: () => const PaymentFailedView(),
       transition: Transition.zoom,
+    ),
+    GetPage(
+      name: _Paths.PRODUCT_REVIEWS,
+      page: () => const ProductReviewsView(),
+      transition: Transition.rightToLeftWithFade,
     ),
   ];
 }

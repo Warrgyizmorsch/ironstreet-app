@@ -22,6 +22,7 @@ abstract class Routes {
   static const PAYMENT = _Paths.PAYMENT;
   static const PAYMENT_SUCCESS = _Paths.PAYMENT_SUCCESS;
   static const PAYMENT_FAILED = _Paths.PAYMENT_FAILED;
+  static const PRODUCT_REVIEWS = _Paths.PRODUCT_REVIEWS;
 }
 
 abstract class _Paths {
@@ -43,5 +44,6 @@ abstract class _Paths {
   static const PAYMENT = '/payment';
   static const PAYMENT_SUCCESS = '/payment-success';
   static const PAYMENT_FAILED = '/payment-failed';
+  static const PRODUCT_REVIEWS = '/product-reviews';
 }
 

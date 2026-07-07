@@ -86,35 +86,7 @@ class MainRepositories {
     }
   }
 
-  // Future<dynamic> fetchProductDetail({required int productId}) async {
-  //   final String url = '${AppUrls.products}/$productId';
-
-  //   try {
-  //     dynamic response = await _apiService.getApi(url);
-  //     return response;
-  //   } catch (e) {
-  //     rethrow;
-  //   }
-  // }
   Future<dynamic> fetchProductDetail({required int productId}) async {
-    // final fields = [
-    //   'id',
-    //   'name',
-    //   'description',
-    //   'short_description',
-    //   'sku',
-    //   'price',
-    //   'regular_price',
-    //   'sale_price',
-    //   'on_sale',
-    //   'stock_status',
-    //   'average_rating',
-    //   'rating_count',
-    //   'images',
-    //   'attributes',
-    //   'categories',
-    //   'related_ids',
-    // ].join(',');
     final fields = [
       'id',
       'name',
@@ -138,6 +110,37 @@ class MainRepositories {
     ].join(',');
 
     final String url = '${AppUrls.products}/$productId?_fields=$fields';
+
+    try {
+      dynamic response = await _apiService.getApi(url);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<dynamic> fetchProductReviews({
+    required int productId,
+    int page = 1,
+    int perPage = 20,
+  }) async {
+    final fields = [
+      'id',
+      'product_id',
+      'product_name',
+      'reviewer',
+      'review',
+      'rating',
+      'date_created',
+      'verified',
+      'reviewer_avatar_urls',
+    ].join(',');
+
+    final String url = '${AppUrls.baseUrl}/products/reviews'
+        '?product=$productId'
+        '&page=$page'
+        '&per_page=$perPage'
+        '&_fields=$fields';
 
     try {
       dynamic response = await _apiService.getApi(url);

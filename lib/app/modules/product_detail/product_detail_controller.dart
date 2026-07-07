@@ -26,6 +26,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:iron_street_app/app/data/models/product_detail_model.dart';
+import 'package:iron_street_app/app/data/models/product_review_model.dart';
 import 'package:iron_street_app/app/data/models/related_product_list.dart';
 import 'package:iron_street_app/app/data/repositories/main_repositories.dart';
 
@@ -36,9 +37,11 @@ class ProductDetailController extends GetxController {
 
   var isLoading = false.obs;
   var isRelatedProductsLoading = false.obs;
+  var isReviewsLoading = false.obs;
 
   var productDetail = Rxn<ProductDetailModel>();
   var relatedProducts = <ProductRelatedListModel>[].obs;
+  var reviewsList = <ProductReviewModel>[].obs;
 
   var selectedImageIndex = 0.obs;
   var quantity = 1.obs;
@@ -116,6 +119,7 @@ class ProductDetailController extends GetxController {
       isLoading.value = true;
       selectedImageIndex.value = 0;
       relatedProducts.clear();
+      reviewsList.clear();
 
       imageAutoScrollTimer?.cancel();
 
@@ -129,12 +133,30 @@ class ProductDetailController extends GetxController {
       }
       _startImageAutoScroll();
 
-      // IMPORTANT: Load related products after product detail loaded
-      await fetchRelatedProducts(detail.relatedIds);
+      // IMPORTANT: Load related products and reviews after product detail loaded
+      await Future.wait([
+        fetchRelatedProducts(detail.relatedIds),
+        fetchProductReviews(id),
+      ]);
     } catch (e) {
       Get.snackbar('Error', 'Failed to load product detail');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchProductReviews(int id) async {
+    try {
+      isReviewsLoading.value = true;
+      dynamic response = await repositories.fetchProductReviews(productId: id);
+      List<ProductReviewModel> fetchedReviews = (response as List)
+          .map((json) => ProductReviewModel.fromJson(json))
+          .toList();
+      reviewsList.assignAll(fetchedReviews);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to load reviews');
+    } finally {
+      isReviewsLoading.value = false;
     }
   }
 
