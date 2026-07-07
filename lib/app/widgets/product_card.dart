@@ -5,11 +5,9 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
-import 'package:iron_street_app/app/data/models/product_model.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import '../data/models/product_list_model.dart';
-import '../modules/cart/cart_controller.dart';
 import '../modules/wishlist/wishlist_controller.dart';
 import '../routes/app_pages.dart';
 
@@ -26,7 +24,6 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final wishlistController = Get.find<WishlistController>();
-    final cartController = Get.find<CartController>();
 
     final formatCurrency = NumberFormat.currency(
       locale: 'en_IN',
@@ -145,6 +142,57 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                Positioned(
+                  bottom: 8,
+                  right: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 2,
+                          offset: Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                          size: 10,
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          product.rating.toStringAsFixed(1),
+                          style: GoogleFonts.poppins(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey[800],
+                          ),
+                        ),
+                        if (product.reviewsCount > 0) ...[
+                          const SizedBox(width: 2),
+                          Text(
+                            '(${product.reviewsCount})',
+                            style: GoogleFonts.poppins(
+                              fontSize: 7,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
             Padding(
@@ -170,103 +218,36 @@ class ProductCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.poppins(
                         fontSize: 10,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: const Color(0xFF222222),
                         height: 1.25,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  // const SizedBox(height: 1),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
                     children: [
-                      const Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                        size: 10,
-                      ),
-                      const SizedBox(width: 2),
                       Text(
-                        product.rating.toStringAsFixed(1),
+                        formatCurrency.format(product.price),
                         style: GoogleFonts.poppins(
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey[600],
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '(${product.reviewsCount})',
-                        style: GoogleFonts.poppins(
-                          fontSize: 8,
-                          color: Colors.grey[400],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            formatCurrency.format(product.price),
-                            style: GoogleFonts.poppins(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black,
-                            ),
-                          ),
-                          if (product.oldPrice > product.price)
-                            Text(
-                              formatCurrency.format(product.oldPrice),
-                              style: GoogleFonts.poppins(
-                                fontSize: 9,
-                                color: Colors.grey,
-                                decoration: TextDecoration.lineThrough,
-                              ),
-                            ),
-                        ],
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          cartController.addToCart(Product(
-                              id: product.id.toString(),
-                              name: product.name,
-                              brand: "LuxeLiving by Iron Street",
-                              price: product.price,
-                              oldPrice: product.oldPrice,
-                              discount: product.discount,
-                              rating: product.rating,
-                              reviewsCount: product.rating.toInt(),
-                              image: product.image,
-                              images: [],
-                              description: '',
-                              deliveryText: 'Available',
-                              dimensions: '',
-                              material: '',
-                              category: ''));
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.orange.shade700,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            'Add',
-                            style: GoogleFonts.poppins(
-                              fontSize: 9,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                            ),
+                      if (product.oldPrice > product.price) ...[
+                        const SizedBox(width: 6),
+                        Text(
+                          formatCurrency.format(product.oldPrice),
+                          style: GoogleFonts.poppins(
+                            fontSize: 9,
+                            color: Colors.grey,
+                            decoration: TextDecoration.lineThrough,
                           ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ],

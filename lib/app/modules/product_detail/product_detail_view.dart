@@ -840,6 +840,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                           ),
                         ),
                     ],
+                    
                   ),
                   // const SizedBox(height: 8),n
                   // Container(

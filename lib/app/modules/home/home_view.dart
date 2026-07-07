@@ -819,7 +819,7 @@ class HomeView extends GetView<HomeController> {
 
   Widget _buildHorizontalProductsList(List<ProductListModel> list) {
     return SizedBox(
-      height: 290,
+      height: 240,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),

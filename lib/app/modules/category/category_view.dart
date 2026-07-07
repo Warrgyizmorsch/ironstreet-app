@@ -181,7 +181,7 @@ class CategoryView extends GetView<HomeController> {
                               crossAxisCount: 2,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
-                              childAspectRatio: 0.60,
+                              childAspectRatio: 0.68,
                             ),
                             itemCount: products.length,
                             itemBuilder: (context, index) {
