@@ -111,6 +111,7 @@ class ExperienceStore {
   final String timings;
   final String phone;
   final String image;
+  final String mapUrl;
 
   ExperienceStore({
     required this.id,
@@ -120,6 +121,7 @@ class ExperienceStore {
     required this.timings,
     required this.phone,
     required this.image,
+    required this.mapUrl,
   });
 
   factory ExperienceStore.fromJson(Map<String, dynamic> json) {
@@ -131,6 +133,7 @@ class ExperienceStore {
       timings: json['timings'] ?? '',
       phone: json['phone'] ?? '',
       image: json['image'] ?? '',
+      mapUrl: json['mapUrl'] ?? ''
     );
   }
 }

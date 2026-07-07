@@ -416,6 +416,7 @@ final List<ExperienceStore> experienceStores = [
         'Hawa Magri Industrial Area, Sukher, Sapetiya, Udaipur, Rajasthan 313001',
     city: 'Udaipur',
     timings: '10:00 AM - 7:00 PM',
+    mapUrl: 'https://maps.app.goo.gl/Jzk21v4gGXjXkykr9',
     phone: '+91 8690154568',
     image:
         'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format&fit=crop&q=80',

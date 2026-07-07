@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/utills/helpers/helpers.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
@@ -1252,10 +1253,7 @@ class HomeView extends GetView<HomeController> {
                                         foregroundColor: Colors.grey[800],
                                         side: BorderSide(
                                             color: Colors.grey[300]!)),
-                                    onPressed: () {
-                                      // Get.snackbar('GPS',
-                                      //     'Opening directions in maps to ${store.name}');
-                                    },
+                                    onPressed: () => _openMap(store.mapUrl, store.address),
                                     icon: const Icon(Icons.navigation,
                                         size: 14, color: AppColors.primary),
                                     label: const Text('Directions',
@@ -1267,10 +1265,7 @@ class HomeView extends GetView<HomeController> {
                                   child: ElevatedButton.icon(
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.primary),
-                                    onPressed: () {
-                                      // Get.snackbar('Calling',
-                                      //     'Showroom coordinators dial line diallers: ${store.phone}');
-                                    },
+                                    onPressed: () => _makeCall(store.phone),
                                     icon: const Icon(Icons.phone,
                                         size: 14, color: Colors.white),
                                     label: const Text('Call Store',
@@ -1292,5 +1287,31 @@ class HomeView extends GetView<HomeController> {
         ],
       );
     });
+  }
+
+  Future<void> _openMap(String mapUrl, String address) async {
+    final String urlString = mapUrl.isNotEmpty
+        ? mapUrl
+        : 'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}';
+    final Uri url = Uri.parse(urlString);
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      Get.snackbar('Error', 'Could not open map: $e');
+    }
+  }
+
+  Future<void> _makeCall(String phoneNumber) async {
+    final cleanPhone = phoneNumber.replaceAll(RegExp(r'\s+'), '');
+    final Uri url = Uri.parse('tel:$cleanPhone');
+    try {
+      await launchUrl(url);
+    } catch (e) {
+      Get.snackbar(
+        'Call Failed',
+        'This device does not support phone calls or dialer is unavailable.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 }
