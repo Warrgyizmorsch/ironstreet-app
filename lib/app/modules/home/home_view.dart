@@ -1102,7 +1102,10 @@ class HomeView extends GetView<HomeController> {
   // --- INDEX 3: STORES VIEW ---
   Widget _buildStoresView() {
     var selectedCity = 'All'.obs;
-    final cities = ['All', 'Bangalore', 'Mumbai', 'New Delhi'];
+    final cities = [
+      'All',
+      'Udaipur',
+    ];
 
     return Obx(() {
       final filteredList = selectedCity.value == 'All'
@@ -1131,7 +1134,7 @@ class HomeView extends GetView<HomeController> {
                   child: Container(
                     margin: const EdgeInsets.only(right: 8),
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     decoration: BoxDecoration(
                       color: isActive
                           ? const Color(0xFFFFF0E6)
@@ -1141,7 +1144,7 @@ class HomeView extends GetView<HomeController> {
                             ? AppColors.primary
                             : const Color(0xFFE5E5E5),
                       ),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       city,
@@ -1250,8 +1253,8 @@ class HomeView extends GetView<HomeController> {
                                         side: BorderSide(
                                             color: Colors.grey[300]!)),
                                     onPressed: () {
-                                      Get.snackbar('GPS',
-                                          'Opening directions in maps to ${store.name}');
+                                      // Get.snackbar('GPS',
+                                      //     'Opening directions in maps to ${store.name}');
                                     },
                                     icon: const Icon(Icons.navigation,
                                         size: 14, color: AppColors.primary),
@@ -1265,8 +1268,8 @@ class HomeView extends GetView<HomeController> {
                                     style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.primary),
                                     onPressed: () {
-                                      Get.snackbar('Calling',
-                                          'Showroom coordinators dial line diallers: ${store.phone}');
+                                      // Get.snackbar('Calling',
+                                      //     'Showroom coordinators dial line diallers: ${store.phone}');
                                     },
                                     icon: const Icon(Icons.phone,
                                         size: 14, color: Colors.white),

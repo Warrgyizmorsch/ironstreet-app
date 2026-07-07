@@ -410,35 +410,36 @@ final List<Product> allAvailableProducts = [
 final List<ExperienceStore> experienceStores = [
   ExperienceStore(
     id: 's1',
-    name: 'Iron Street Experience Store - Bangalore Outer Ring Rd',
+    name:
+        'Iron Street - Best Iron Furniture Manufacturer, Udaipur | Online Metal Furniture Showroom/Store in India',
     address:
-        'Survey No. 70, Outer Ring Rd, Marathahalli, Devarabisanahalli, Bengaluru, Karnataka 560103',
-    city: 'Bangalore',
-    timings: '11:00 AM - 9:00 PM',
-    phone: '+91 80 1234 5678',
+        'Hawa Magri Industrial Area, Sukher, Sapetiya, Udaipur, Rajasthan 313001',
+    city: 'Udaipur',
+    timings: '10:00 AM - 7:00 PM',
+    phone: '+91 8690154568',
     image:
         'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format&fit=crop&q=80',
   ),
-  ExperienceStore(
-    id: 's2',
-    name: 'Iron Street Experience Store - Mumbai Kherwadi',
-    address:
-        'Ground Floor, Signature Towers, Kherwadi Road, Bandra East, Mumbai, Maharashtra 400051',
-    city: 'Mumbai',
-    timings: '11:00 AM - 9:00 PM',
-    phone: '+91 22 8765 4321',
-    image:
-        'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&auto=format&fit=crop&q=80',
-  ),
-  ExperienceStore(
-    id: 's3',
-    name: 'Iron Street Experience Store - New Delhi Kirti Nagar',
-    address:
-        'Plot No. 12, Kirti Nagar Industrial Area, Near Metro Pillar 321, New Delhi 110015',
-    city: 'New Delhi',
-    timings: '11:00 AM - 9:00 PM',
-    phone: '+91 11 4455 6677',
-    image:
-        'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=400&auto=format&fit=crop&q=80',
-  ),
+  // ExperienceStore(
+  //   id: 's2',
+  //   name: 'Iron Street Experience Store - Mumbai Kherwadi',
+  //   address:
+  //       'Ground Floor, Signature Towers, Kherwadi Road, Bandra East, Mumbai, Maharashtra 400051',
+  //   city: 'Mumbai',
+  //   timings: '11:00 AM - 9:00 PM',
+  //   phone: '+91 22 8765 4321',
+  //   image:
+  //       'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&auto=format&fit=crop&q=80',
+  // ),
+  // ExperienceStore(
+  //   id: 's3',
+  //   name: 'Iron Street Experience Store - New Delhi Kirti Nagar',
+  //   address:
+  //       'Plot No. 12, Kirti Nagar Industrial Area, Near Metro Pillar 321, New Delhi 110015',
+  //   city: 'New Delhi',
+  //   timings: '11:00 AM - 9:00 PM',
+  //   phone: '+91 11 4455 6677',
+  //   image:
+  //       'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=400&auto=format&fit=crop&q=80',
+  // ),
 ];
