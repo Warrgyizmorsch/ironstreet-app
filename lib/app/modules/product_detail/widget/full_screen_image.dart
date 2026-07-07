@@ -50,13 +50,17 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
             itemBuilder: (context, index) {
               return Center(
                 child: InteractiveViewer(
-                  minScale: 0.8,
-                  maxScale: 4.0,
+                  minScale: 1.0,
+                  maxScale: 5.0,
+                  panEnabled: true,
+                  scaleEnabled: true,
                   child: Hero(
                     tag: 'product-image-$index',
                     child: CachedNetworkImage(
                       imageUrl: widget.images[index],
                       fit: BoxFit.contain,
+                      width: double.infinity,
+                      height: double.infinity,
                       placeholder: (context, url) => const Center(
                         child: CircularProgressIndicator(color: Colors.white),
                       ),
@@ -69,6 +73,27 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
                   ),
                 ),
               );
+              // return Center(
+              //   child: InteractiveViewer(
+              //     minScale: 0.8,
+              //     maxScale: 4.0,
+              //     child: Hero(
+              //       tag: 'product-image-$index',
+              //       child: CachedNetworkImage(
+              //         imageUrl: widget.images[index],
+              //         fit: BoxFit.contain,
+              //         placeholder: (context, url) => const Center(
+              //           child: CircularProgressIndicator(color: Colors.white),
+              //         ),
+              //         errorWidget: (context, url, error) => const Icon(
+              //           Icons.broken_image_outlined,
+              //           color: Colors.white,
+              //           size: 60,
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // );
             },
           ),
 
