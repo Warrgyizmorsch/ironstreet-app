@@ -127,17 +127,22 @@ class HomeView extends GetView<HomeController> {
               children: [
                 _buildDrawerSectionTitle('COLLECTIONS'),
                 _buildDrawerItem(Icons.chair, 'Living Room Furniture', () {
-                  controller.selectSubCategory('Living');
+                  // controller.selectSubCategory('Living');
+                  controller.fetchProductsByCategory(139);
                   controller.currentIndex.value = 1;
                   Get.back();
                 }),
                 _buildDrawerItem(Icons.bed, 'Bedroom Furniture', () {
-                  controller.selectSubCategory('Bedroom');
+                  // controller.selectSubCategory('Bedroom');
+                  controller.fetchProductsByCategory(142);
+
                   controller.currentIndex.value = 1;
                   Get.back();
                 }),
                 _buildDrawerItem(Icons.restaurant, 'Dining & Kitchen', () {
-                  controller.selectSubCategory('Dining');
+                  // controller.selectSubCategory('Dining');
+                  controller.fetchProductsByCategory(140);
+
                   controller.currentIndex.value = 1;
                   Get.back();
                 }),
@@ -1253,7 +1258,8 @@ class HomeView extends GetView<HomeController> {
                                         foregroundColor: Colors.grey[800],
                                         side: BorderSide(
                                             color: Colors.grey[300]!)),
-                                    onPressed: () => _openMap(store.mapUrl, store.address),
+                                    onPressed: () =>
+                                        _openMap(store.mapUrl, store.address),
                                     icon: const Icon(Icons.navigation,
                                         size: 14, color: AppColors.primary),
                                     label: const Text('Directions',
