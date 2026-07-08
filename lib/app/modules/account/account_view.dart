@@ -178,8 +178,8 @@ class AccountView extends GetView<AccountController> {
               const Divider(height: 1),
               // _buildSettingsRow('My Reviews & Ratings'),
               // const Divider(height: 1),
-              _buildSettingsRow('Help Desk & Support Center'),
-              const Divider(height: 1),
+              // _buildSettingsRow('Help Desk & Support Center'),
+              // const Divider(height: 1),
               _buildSettingsRow(
                 'Legal, Terms & Conditions',
                 onTap: () => Get.to(() => const LegalPoliciesView()),
