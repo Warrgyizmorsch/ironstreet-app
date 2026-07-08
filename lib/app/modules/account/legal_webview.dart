@@ -2,14 +2,21 @@
 // import 'package:webview_flutter/webview_flutter.dart';
 // import 'package:google_fonts/google_fonts.dart';
 
-// class TermsWebView extends StatefulWidget {
-//   const TermsWebView({super.key});
+// class LegalWebView extends StatefulWidget {
+//   final String title;
+//   final String url;
+
+//   const LegalWebView({
+//     super.key,
+//     required this.title,
+//     required this.url,
+//   });
 
 //   @override
-//   State<TermsWebView> createState() => _TermsWebViewState();
+//   State<LegalWebView> createState() => _LegalWebViewState();
 // }
 
-// class _TermsWebViewState extends State<TermsWebView> {
+// class _LegalWebViewState extends State<LegalWebView> {
 //   late final WebViewController _controller;
 //   bool _isLoading = true;
 
@@ -30,7 +37,7 @@
 //             setState(() {
 //               _isLoading = false;
 //             });
-//             // Inject JavaScript to hide headers, footers, and other site wrapping elements
+//             // Inject JavaScript to hide website headers, footers, and topbar elements
 //             _controller.runJavaScript('''
 //               (function() {
 //                 const selectors = [
@@ -45,7 +52,7 @@
 //                   });
 //                 });
 
-//                 // Adjust content container margins/padding if header removal leaves whitespace
+//                 // Adjust content container padding or margin for clean layout
 //                 const contentSelectors = ['#content', '.site-content', '.main-content-wrapper'];
 //                 contentSelectors.forEach(sel => {
 //                   document.querySelectorAll(sel).forEach(el => {
@@ -59,7 +66,7 @@
 //           onWebResourceError: (WebResourceError error) {},
 //         ),
 //       )
-//       ..loadRequest(Uri.parse('https://ironstreets.com/terms-conditions/'));
+//       ..loadRequest(Uri.parse(widget.url));
 //   }
 
 //   @override
@@ -74,7 +81,7 @@
 //           onPressed: () => Navigator.of(context).pop(),
 //         ),
 //         title: Text(
-//           'Terms & Conditions',
+//           widget.title,
 //           style: GoogleFonts.poppins(
 //             color: Colors.black87,
 //             fontWeight: FontWeight.bold,
@@ -97,17 +104,24 @@
 //   }
 // }
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class TermsWebView extends StatefulWidget {
-  const TermsWebView({super.key});
+class LegalWebView extends StatefulWidget {
+  final String title;
+  final String url;
+
+  const LegalWebView({
+    super.key,
+    required this.title,
+    required this.url,
+  });
 
   @override
-  State<TermsWebView> createState() => _TermsWebViewState();
+  State<LegalWebView> createState() => _LegalWebViewState();
 }
 
-class _TermsWebViewState extends State<TermsWebView> {
+class _LegalWebViewState extends State<LegalWebView> {
   late final WebViewController _controller;
   bool _isLoading = true;
 
@@ -137,26 +151,15 @@ class _TermsWebViewState extends State<TermsWebView> {
           },
         ),
       )
-      ..loadRequest(Uri.parse('https://ironstreets.com/terms-conditions/'));
+      ..loadRequest(Uri.parse(widget.url));
   }
 
   Future<void> _removeWebsiteHeaderFooter() async {
     await _controller.runJavaScript('''
       (function() {
-        const selectors = [
-          '.header-container',
-          '.footer',
-          '.title-breadcrumb',
-          '#simple-chat-button--container',
-          '.pum-overlay',
-          '#back-top'
-        ];
-
-        selectors.forEach(selector => {
-          document.querySelectorAll(selector).forEach(element => {
-            element.remove();
-          });
-        });
+        document.querySelectorAll(
+          '.header-container, .footer, .title-breadcrumb, #simple-chat-button--container, .pum-overlay, #back-top'
+        ).forEach(el => el.remove());
 
         document.body.style.margin = '0';
         document.body.style.padding = '0';
@@ -208,7 +211,7 @@ class _TermsWebViewState extends State<TermsWebView> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Terms & Conditions',
+          widget.title,
           style: GoogleFonts.poppins(
             color: Colors.black87,
             fontWeight: FontWeight.bold,

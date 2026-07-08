@@ -8,7 +8,7 @@ import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import 'account_controller.dart';
 import '../../routes/app_pages.dart';
-import 'terms_webview.dart';
+import 'legal_policies_view.dart';
 
 class AccountView extends GetView<AccountController> {
   const AccountView({super.key});
@@ -182,7 +182,7 @@ class AccountView extends GetView<AccountController> {
               const Divider(height: 1),
               _buildSettingsRow(
                 'Legal, Terms & Conditions',
-                onTap: () => Get.to(() => const TermsWebView()),
+                onTap: () => Get.to(() => const LegalPoliciesView()),
               ),
             ],
           ),
