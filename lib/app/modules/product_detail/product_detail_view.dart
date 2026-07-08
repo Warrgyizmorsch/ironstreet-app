@@ -264,88 +264,84 @@ class ProductDetailView extends GetView<ProductDetailController> {
                         Positioned(
                           top: 12,
                           right: 12,
-                          child: Row(
-                            children: [
-                              // Floating Share Button
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.9),
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 4,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.9),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
                                 ),
-                                child: IconButton(
-                                  icon: const Icon(Icons.share_outlined,
-                                      size: 20, color: Colors.black87),
-                                  onPressed: () async {
-                                    final box = context.findRenderObject()
-                                        as RenderBox?;
-                                    await SharePlus.instance.share(
-                                      ShareParams(
-                                        text: prod.permalink,
-                                        title: 'Share Via',
-                                        subject: prod.name,
-                                        sharePositionOrigin: box == null
-                                            ? null
-                                            : box.localToGlobal(Offset.zero) &
-                                                box.size,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              // Floating Wishlist Button
-                              Obx(() {
-                                final isHearted =
-                                    wishlistController.isInWishlist(prod.id);
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.9),
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: IconButton(
-                                    icon: Icon(
-                                      isHearted
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      size: 20,
-                                      color: isHearted
-                                          ? Colors.red
-                                          : Colors.black87,
-                                    ),
-                                    onPressed: () =>
-                                        wishlistController.toggleWishlist(
-                                      ProductListModel(
-                                        id: prod.id,
-                                        name: prod.name,
-                                        price: price,
-                                        oldPrice: oldPrice,
-                                        discount: discount,
-                                        image: prod.images.first.src,
-                                        brand: _getAttributeValue(
-                                            prod, 'Brand Name'),
-                                        rating: prod.ratingCount.toDouble(),
-                                        reviewsCount: prod.ratingCount,
-                                      ),
-                                    ),
+                              ],
+                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.share_outlined,
+                                  size: 20, color: Colors.black87),
+                              onPressed: () async {
+                                final box =
+                                    context.findRenderObject() as RenderBox?;
+                                await SharePlus.instance.share(
+                                  ShareParams(
+                                    text: prod.permalink,
+                                    title: 'Share Via',
+                                    subject: prod.name,
+                                    sharePositionOrigin: box == null
+                                        ? null
+                                        : box.localToGlobal(Offset.zero) &
+                                            box.size,
                                   ),
                                 );
-                              }),
-                            ],
+                              },
+                            ),
                           ),
+                        ),
+                        Positioned(
+                          bottom: 12,
+                          right: 12,
+                          child: Obx(() {
+                            final isHearted =
+                                wishlistController.isInWishlist(prod.id);
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.9),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: IconButton(
+                                icon: Icon(
+                                  isHearted
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  size: 20,
+                                  color:
+                                      isHearted ? Colors.red : Colors.black87,
+                                ),
+                                onPressed: () =>
+                                    wishlistController.toggleWishlist(
+                                  ProductListModel(
+                                    id: prod.id,
+                                    name: prod.name,
+                                    price: price,
+                                    oldPrice: oldPrice,
+                                    discount: discount,
+                                    image: prod.images.first.src,
+                                    brand:
+                                        _getAttributeValue(prod, 'Brand Name'),
+                                    rating: prod.ratingCount.toDouble(),
+                                    reviewsCount: prod.ratingCount,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
                         ),
                         Positioned(
                           bottom: 12,
