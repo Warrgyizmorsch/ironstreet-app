@@ -35,6 +35,20 @@ class CheckoutView extends GetView<CheckoutController> {
           icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
           onPressed: () => Get.back(),
         ),
+        actions: [
+          Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.only(right: 16),
+            child: Text(
+              'STEP 2/3',
+              style: GoogleFonts.poppins(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Obx(() {
         if (checkCtrl.cartCtrl.cartItems.isEmpty) {

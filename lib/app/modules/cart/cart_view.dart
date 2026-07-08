@@ -11,6 +11,9 @@ import '../../routes/app_pages.dart';
 import '../wishlist/wishlist_controller.dart';
 import '../../data/models/product_list_model.dart';
 import '../../utills/theme/app_colors.dart';
+import '../checkout/checkout_controller.dart';
+import '../address/address_controller.dart';
+import '../address/add_edit_address_view.dart';
 
 class CartView extends GetView<CartController> {
   const CartView({super.key});
@@ -18,6 +21,14 @@ class CartView extends GetView<CartController> {
   @override
   Widget build(BuildContext context) {
     final wishlistController = Get.find<WishlistController>();
+    if (!Get.isRegistered<AddressController>()) {
+      Get.put(AddressController());
+    }
+
+    final checkoutController = Get.isRegistered<CheckoutController>()
+        ? Get.find<CheckoutController>()
+        : Get.put(CheckoutController());
+
     final formatCurrency = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
@@ -69,7 +80,7 @@ class CartView extends GetView<CartController> {
         return Column(
           children: [
             // Delivery Location Section
-            const DeliveryLocationSection(),
+            DeliveryLocationSection(checkoutController: checkoutController),
 
             // List of cart items
             Expanded(
@@ -102,7 +113,12 @@ class CartView extends GetView<CartController> {
 }
 
 class DeliveryLocationSection extends StatelessWidget {
-  const DeliveryLocationSection({super.key});
+  final CheckoutController checkoutController;
+
+  const DeliveryLocationSection({
+    super.key,
+    required this.checkoutController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -126,22 +142,23 @@ class DeliveryLocationSection extends StatelessWidget {
           Icon(Icons.location_on_outlined, color: Colors.grey[600], size: 18),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(
-              'Delivery at Udaipur - 313001',
-              style: GoogleFonts.poppins(
-                fontSize: 11,
-                color: Colors.grey[700],
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            child: Obx(() {
+              final addr = checkoutController.selectedAddress.value;
+              return Text(
+                addr != null
+                    ? 'Delivery at ${addr.city} - ${addr.postalCode}'
+                    : 'Select Delivery Address',
+                style: GoogleFonts.poppins(
+                  fontSize: 11,
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.w500,
+                ),
+              );
+            }),
           ),
           TextButton(
             onPressed: () {
-              Get.snackbar(
-                'Delivery Location',
-                'Changing delivery locations is currently unavailable.',
-                snackPosition: SnackPosition.BOTTOM,
-              );
+              _showAddressSelectionBottomSheet(context, checkoutController);
             },
             style: TextButton.styleFrom(
               minimumSize: Size.zero,
@@ -159,6 +176,127 @@ class DeliveryLocationSection extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showAddressSelectionBottomSheet(
+      BuildContext context, CheckoutController checkCtrl) {
+    Get.bottomSheet(
+      Container(
+        padding: const EdgeInsets.all(16),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Select Delivery Address',
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF222222),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close, size: 18),
+                  onPressed: () => Get.back(),
+                ),
+              ],
+            ),
+            const Divider(),
+            const SizedBox(height: 8),
+            Flexible(
+              child: Obx(() {
+                final list = checkCtrl.addrCtrl.addresses;
+                if (list.isEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24),
+                      child: Text(
+                        'No saved addresses',
+                        style: GoogleFonts.poppins(
+                            fontSize: 11, color: Colors.grey),
+                      ),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: list.length,
+                  itemBuilder: (context, index) {
+                    final addr = list[index];
+                    final isSelected =
+                        checkCtrl.selectedAddress.value?.id == addr.id;
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: isSelected
+                              ? AppColors.primary
+                              : const Color(0xFFF1F1F1),
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        onTap: () {
+                          checkCtrl.updateSelectedAddress(addr);
+                          Get.back();
+                        },
+                        title: Text(
+                          '${addr.name} (${addr.addressType})',
+                          style: GoogleFonts.poppins(
+                              fontSize: 11, fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          addr.fullAddress,
+                          style: GoogleFonts.poppins(
+                              fontSize: 9, color: Colors.grey),
+                        ),
+                        trailing: isSelected
+                            ? const Icon(Icons.check_circle,
+                                color: AppColors.primary, size: 18)
+                            : null,
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              height: 44,
+              child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.primary,
+                  side: const BorderSide(color: AppColors.primary),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: () {
+                  Get.back();
+                  Get.to(() => const AddEditAddressView());
+                },
+                child: Text(
+                  'ADD NEW ADDRESS',
+                  style: GoogleFonts.poppins(
+                      fontSize: 11, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+      isScrollControlled: true,
     );
   }
 }
@@ -233,7 +371,7 @@ class CartItemCard extends StatelessWidget {
                             formatCurrency.format(prod.price),
                             style: GoogleFonts.poppins(
                               fontSize: 15,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w600,
                               color: AppColors.blackC,
                             ),
                           ),
@@ -296,7 +434,6 @@ class CartItemCard extends StatelessWidget {
             ),
           ),
           Divider(
-            
             height: 1,
             thickness: 1,
             color: Colors.grey.shade300,
