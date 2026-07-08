@@ -210,8 +210,9 @@ class _LegalWebViewState extends State<LegalWebView> {
           icon: const Icon(Icons.arrow_back, color: Colors.black87),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        centerTitle: true,
         title: Text(
-          widget.title,
+          'Iron Street',
           style: GoogleFonts.poppins(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
