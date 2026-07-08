@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,6 +8,7 @@ import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import 'account_controller.dart';
 import '../../routes/app_pages.dart';
+import 'terms_webview.dart';
 
 class AccountView extends GetView<AccountController> {
   const AccountView({super.key});
@@ -177,7 +180,10 @@ class AccountView extends GetView<AccountController> {
               // const Divider(height: 1),
               _buildSettingsRow('Help Desk & Support Center'),
               const Divider(height: 1),
-              _buildSettingsRow('Terms & Conditions'),
+              _buildSettingsRow(
+                'Legal, Terms & Conditions',
+                onTap: () => Get.to(() => const TermsWebView()),
+              ),
             ],
           ),
         ),
@@ -370,7 +376,8 @@ class AccountView extends GetView<AccountController> {
     );
   }
 
-  Widget _buildSettingsRow(String text, {String? targetRoute}) {
+  Widget _buildSettingsRow(String text,
+      {String? targetRoute, VoidCallback? onTap}) {
     return ListTile(
       title: Text(
         text,
@@ -382,7 +389,9 @@ class AccountView extends GetView<AccountController> {
       trailing: const Icon(Icons.arrow_forward_ios, size: 12),
       dense: true,
       onTap: () {
-        if (targetRoute != null) {
+        if (onTap != null) {
+          onTap();
+        } else if (targetRoute != null) {
           Get.toNamed(targetRoute);
         } else {
           Get.snackbar('Console', 'Opening customized configurations: "$text"');

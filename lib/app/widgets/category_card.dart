@@ -15,7 +15,7 @@
 //     required this.onTap,
 //   }) : super(key: key);
 
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: dead_null_aware_expression, deprecated_member_use
 
 //   @override
 //   Widget build(BuildContext context) {
