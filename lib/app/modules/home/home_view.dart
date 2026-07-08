@@ -18,6 +18,7 @@ import '../../widgets/category_card.dart';
 import '../../widgets/product_card.dart';
 import '../../widgets/banner_slider.dart';
 import '../../widgets/section_header.dart';
+import '../../widgets/why_choose_iron_street_section.dart';
 import '../../data/dummy_data.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -328,6 +329,7 @@ class HomeView extends GetView<HomeController> {
 
         // 3x2 Brand Categories Grid
         _buildBrandGridSection(),
+        const WhyChooseIronStreetSection(),
 
         Obx(() {
           if (controller.isTagsLoading.value &&
@@ -603,89 +605,6 @@ class HomeView extends GetView<HomeController> {
       ),
     );
   }
-
-  //////    --------------
-  /*
-  // Widget _buildSubCategoryTabs() {
-  //   final subcategories = ['All', 'Living', 'Bedroom', 'Dining'];
-  //   return Container(
-  //     height: 48,
-  //     padding: const EdgeInsets.symmetric(vertical: 8),
-  //     color: Colors.white,
-  //     child: ListView.builder(
-  //       scrollDirection: Axis.horizontal,
-  //       padding: const EdgeInsets.symmetric(horizontal: 16),
-  //       itemCount: subcategories.length,
-  //       itemBuilder: (context, index) {
-  //         final cat = subcategories[index];
-  //         final isActive = controller.selectedSubCategory.value == cat;
-  //         return GestureDetector(
-  //           onTap: () => controller.selectSubCategory(cat),
-  //           child: Container(
-  //             margin: const EdgeInsets.only(right: 8),
-  //             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-  //             decoration: BoxDecoration(
-  //               color: isActive ? const Color(0xFFFFF0E6) : Colors.transparent,
-  //               border: Border.all(
-  //                 color: isActive ? AppColors.primary : const Color(0xFFE5E5E5),
-  //               ),
-  //               borderRadius: BorderRadius.circular(20),
-  //             ),
-  //             child: Text(
-  //               cat,
-  //               style: GoogleFonts.poppins(
-  //                 fontSize: 11,
-  //                 fontWeight: FontWeight.bold,
-  //                 color: isActive ? AppColors.primary : Colors.grey[700],
-  //               ),
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildCategoryHorizontalScroll() {
-  //   return Container(
-  //     height: 175,
-  //     color: Colors.white,
-  //     // padding: const EdgeInsets.symmetric(vertical: 12),
-  //     margin: const EdgeInsets.only(bottom: 8),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         const SizedBox(height: 8),
-  //         Expanded(
-  //           child: GridView.builder(
-  //             scrollDirection: Axis.horizontal,
-  //             // padding: const EdgeInsets.symmetric(horizontal: 16),
-  //             physics: const BouncingScrollPhysics(),
-  //             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-  //               crossAxisCount: 2,
-  //               // mainAxisSpacing: 12,
-  //               // crossAxisSpacing: 10,
-  //               // childAspectRatio: 0.9,
-  //             ),
-  //             itemCount: categoriesList.length,
-  //             itemBuilder: (context, index) {
-  //               final cat = categoriesList[index];
-  //               return CategoryCard(
-  //                 category: cat,
-  //                 onTap: () {
-  //                   controller.selectSubCategory('All');
-  //                   controller.currentIndex.value = 1;
-  //                 },
-  //               );
-  //             },
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  */
 
   Widget _buildDealTimerCard() {
     return Container(
