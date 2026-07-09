@@ -7,6 +7,7 @@ import 'package:iron_street_app/app/modules/home/home_controller.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import '../../widgets/product_card.dart';
+import '../../widgets/shimmer.dart';
 
 class CategoryView extends GetView<HomeController> {
   final String? initialSearchQuery;
@@ -145,10 +146,17 @@ class CategoryView extends GetView<HomeController> {
             // --- Products Grid ---
             Expanded(
               child: isLoading
-                  ? const Center(
-                      // Show loading spinner when fetching new category products
-                      child:
-                          CircularProgressIndicator(color: AppColors.primary),
+                  ? GridView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        childAspectRatio: 0.66,
+                      ),
+                      itemCount: 6,
+                      itemBuilder: (context, index) => const ProductCardShimmer(width: double.infinity),
                     )
                   : products.isEmpty
                       ? Center(

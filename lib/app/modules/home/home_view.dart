@@ -19,6 +19,7 @@ import '../../widgets/product_card.dart';
 import '../../widgets/banner_slider.dart';
 import '../../widgets/section_header.dart';
 import '../../widgets/why_choose_iron_street_section.dart';
+import '../../widgets/shimmer.dart';
 import '../../data/dummy_data.dart';
 
 class HomeView extends GetView<HomeController> {
@@ -354,9 +355,17 @@ class HomeView extends GetView<HomeController> {
               final products = controller.tagProductsMap[tag.id] ?? [];
 
               if (isLoading) {
-                return const SizedBox(
-                  height: 290,
-                  child: Center(child: CircularProgressIndicator()),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SectionHeader(
+                      title: formatTagTitle(tag.name),
+                      subtitle: 'Explore ${formatTagTitle(tag.name)} products',
+                      onActionTap: () {},
+                    ),
+                    _buildHorizontalProductsListShimmer(),
+                    const SizedBox(height: 18),
+                  ],
                 );
               }
 
@@ -391,9 +400,17 @@ class HomeView extends GetView<HomeController> {
 
         Obx(() {
           if (controller.isCustomerFavoritesLoading.value) {
-            return const SizedBox(
-              height: 290,
-              child: Center(child: CircularProgressIndicator()),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SectionHeader(
+                  title: 'Customer Favorites',
+                  subtitle: 'Exquisite woodcraft & premium finishes',
+                  onActionTap: () {},
+                ),
+                _buildHorizontalProductsListShimmer(),
+                const SizedBox(height: 18),
+              ],
             );
           }
 
@@ -421,9 +438,17 @@ class HomeView extends GetView<HomeController> {
 
         Obx(() {
           if (controller.isBestSellingChairsLoading.value) {
-            return const SizedBox(
-              height: 290,
-              child: Center(child: CircularProgressIndicator()),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SectionHeader(
+                  title: 'Best Selling Chairs',
+                  subtitle: 'Universally loved designs',
+                  onActionTap: () {},
+                ),
+                _buildHorizontalProductsListShimmer(),
+                const SizedBox(height: 18),
+              ],
             );
           }
 
@@ -449,9 +474,17 @@ class HomeView extends GetView<HomeController> {
         }),
         Obx(() {
           if (controller.isOutdoorFurnitureLoading.value) {
-            return const SizedBox(
-              height: 290,
-              child: Center(child: CircularProgressIndicator()),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SectionHeader(
+                  title: 'Outdoor Furniture',
+                  subtitle: 'Stylish and durable outdoor furniture',
+                  onActionTap: () {},
+                ),
+                _buildHorizontalProductsListShimmer(),
+                const SizedBox(height: 18),
+              ],
             );
           }
 
@@ -498,7 +531,20 @@ class HomeView extends GetView<HomeController> {
       // The outer Obx listens to the loading state and the category list length
       child: Obx(() {
         if (controller.isCategoriesLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: List.generate(
+                5,
+                (index) => const Padding(
+                  padding: EdgeInsets.only(right: 8),
+                  child: CategoryTabShimmer(),
+                ),
+              ),
+            ),
+          );
         }
 
         return ListView.builder(
@@ -565,7 +611,18 @@ class HomeView extends GetView<HomeController> {
             child: Obx(() {
               // 1. Show loader while API is fetching
               if (controller.isCategoriesLoading.value) {
-                return const Center(child: CircularProgressIndicator());
+                return GridView.builder(
+                  scrollDirection: Axis.horizontal,
+                  physics: const NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 10,
+                  ),
+                  itemCount: 6,
+                  itemBuilder: (context, index) => const CategoryCardShimmer(),
+                );
               }
 
               // 2. Show empty state if no subcategories exist
@@ -738,6 +795,24 @@ class HomeView extends GetView<HomeController> {
             },
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildHorizontalProductsListShimmer() {
+    return SizedBox(
+      height: 240,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: 4,
+        itemBuilder: (context, index) {
+          return const Padding(
+            padding: EdgeInsets.only(right: 12),
+            child: ProductCardShimmer(),
+          );
+        },
       ),
     );
   }
