@@ -335,9 +335,16 @@ class HomeView extends GetView<HomeController> {
         Obx(() {
           if (controller.isTagsLoading.value &&
               controller.productTags.isEmpty) {
-            return const SizedBox(
-              height: 290,
-              child: Center(child: CircularProgressIndicator()),
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SectionHeader(
+                  title: 'Loading Products...',
+                  subtitle: 'Fetching the best furniture tags',
+                ),
+                _buildHorizontalProductsListShimmer(),
+                const SizedBox(height: 18),
+              ],
             );
           }
 

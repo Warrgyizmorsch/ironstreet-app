@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import '../data/models/other_models.dart';
+import 'shimmer.dart';
 
 class BannerSlider extends StatefulWidget {
   final List<BannerItem> banners;
@@ -98,11 +99,12 @@ class _BannerSliderState extends State<BannerSlider> {
                           width: double.infinity,
                           height: double.infinity,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: Colors.grey[200],
-                            // align: Alignment.center,
-                            child: const CircularProgressIndicator(
-                                color: AppColors.primary),
+                          placeholder: (context, url) => Shimmer(
+                            child: Container(
+                              color: Colors.black,
+                              width: double.infinity,
+                              height: double.infinity,
+                            ),
                           ),
                           errorWidget: (context, url, error) => Container(
                             color: Colors.grey[350],

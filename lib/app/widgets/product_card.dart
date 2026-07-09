@@ -10,6 +10,7 @@ import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 import '../data/models/product_list_model.dart';
 import '../modules/wishlist/wishlist_controller.dart';
 import '../routes/app_pages.dart';
+import 'shimmer.dart';
 
 class ProductCard extends StatelessWidget {
   final ProductListModel product;
@@ -66,13 +67,11 @@ class ProductCard extends StatelessWidget {
                     child: CachedNetworkImage(
                       imageUrl: product.image,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: const Color(0xFFFAF9F6),
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Color(0xFFF37021),
-                          ),
+                      placeholder: (context, url) => Shimmer(
+                        child: Container(
+                          color: Colors.black,
+                          width: double.infinity,
+                          height: double.infinity,
                         ),
                       ),
                       errorWidget: (context, url, error) => Container(

@@ -12,6 +12,7 @@ import 'package:iron_street_app/app/data/models/related_product_list.dart';
 import 'package:iron_street_app/app/modules/product_detail/widget/full_screen_image.dart';
 import 'package:iron_street_app/app/routes/app_pages.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
+import '../../widgets/shimmer.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'product_detail_controller.dart';
@@ -233,10 +234,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                     imageUrl: imageUrl,
                                     fit: BoxFit.cover,
                                     width: double.infinity,
-                                    placeholder: (context, url) => Container(
-                                      color: const Color(0xFFF7F7F7),
-                                      child: const Center(
-                                        child: CircularProgressIndicator(),
+                                    placeholder: (context, url) => Shimmer(
+                                      child: Container(
+                                        color: Colors.black,
+                                        width: double.infinity,
+                                        height: double.infinity,
                                       ),
                                     ),
                                     errorWidget: (context, url, error) =>

@@ -75,6 +75,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:iron_street_app/app/data/models/category_model.dart';
+import 'shimmer.dart';
 
 class CategoryCard extends StatelessWidget {
   final CategoryModel category;
@@ -120,14 +121,11 @@ class CategoryCard extends StatelessWidget {
                   child: CachedNetworkImage(
                     imageUrl: category.image ?? '',
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => const Center(
-                      child: SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Color(0xFFF37021),
-                        ),
+                    placeholder: (context, url) => Shimmer(
+                      child: Container(
+                        color: Colors.black,
+                        width: double.infinity,
+                        height: double.infinity,
                       ),
                     ),
                     errorWidget: (context, url, error) => Center(
