@@ -240,6 +240,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                         width: double.infinity,
                                         height: double.infinity,
                                       ),
+                                      
                                     ),
                                     errorWidget: (context, url, error) =>
                                         Container(
