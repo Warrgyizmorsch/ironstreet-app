@@ -35,9 +35,25 @@ class ProductDetailView extends GetView<ProductDetailController> {
 
     return Obx(() {
       if (controller.isLoading.value) {
-        return const Scaffold(
+        return Scaffold(
           backgroundColor: Colors.white,
-          body: Center(child: CircularProgressIndicator()),
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black87),
+              onPressed: () => Get.back(),
+            ),
+            title: Text(
+              'Product Details',
+              style: GoogleFonts.poppins(
+                color: Colors.black87,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          body: const ProductDetailShimmer(),
         );
       }
 
@@ -240,7 +256,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                         width: double.infinity,
                                         height: double.infinity,
                                       ),
-                                      
                                     ),
                                     errorWidget: (context, url, error) =>
                                         Container(
@@ -336,9 +351,12 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                     oldPrice: oldPrice,
                                     discount: discount,
                                     image: prod.images.first.src,
-                                    brand:
-                                        _getAttributeValue(prod, 'Brand Name'),
-                                    rating: prod.ratingCount.toDouble(),
+                                    brand: brandName.isNotEmpty
+                                        ? brandName
+                                        : "LuxeLiving by Iron Street",
+                                    rating:
+                                        double.tryParse(prod.averageRating) ??
+                                            0.0,
                                     reviewsCount: prod.ratingCount,
                                   ),
                                 ),
@@ -699,27 +717,33 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          onPressed:
-                              prod.purchasable && prod.stockStatus == 'instock'
-                                  ? () => productInCart
-                                      ? Get.toNamed(Routes.CART)
-                                      : cartController.addToCart(Product(
-                                          id: prod.id.toString(),
-                                          name: prod.name,
-                                          brand: "LuxeLiving by Iron Street",
-                                          price: price,
-                                          oldPrice: oldPrice,
-                                          discount: discount,
-                                          rating: prod.ratingCount.toDouble(),
-                                          reviewsCount: prod.ratingCount,
-                                          image: prod.images.first.src,
-                                          images: [prod.images.first.src],
-                                          description: prod.description,
-                                          deliveryText: 'Available',
-                                          dimensions: dimensions,
-                                          material: material,
-                                          category: prod.categories.first.name))
-                                  : null,
+                          onPressed: prod.purchasable &&
+                                  prod.stockStatus == 'instock'
+                              ? () => productInCart
+                                  ? Get.toNamed(Routes.CART)
+                                  : cartController.addToCart(Product(
+                                      id: prod.id.toString(),
+                                      name: prod.name,
+                                      brand: brandName.isNotEmpty
+                                          ? brandName
+                                          : "LuxeLiving by Iron Street",
+                                      price: price,
+                                      oldPrice: oldPrice,
+                                      discount: discount,
+                                      rating:
+                                          double.tryParse(prod.averageRating) ??
+                                              0.0,
+                                      reviewsCount: prod.ratingCount,
+                                      image: prod.images.first.src,
+                                      images: [prod.images.first.src],
+                                      description: prod.description,
+                                      deliveryText: 'Available',
+                                      dimensions: dimensions,
+                                      material: material,
+                                      category: prod.categories.isNotEmpty
+                                          ? prod.categories.first.name
+                                          : 'Furniture'))
+                              : null,
                           icon: Icon(
                             productInCart
                                 ? Icons.shopping_cart_checkout
@@ -759,18 +783,22 @@ class ProductDetailView extends GetView<ProductDetailController> {
                         ),
                         onPressed: prod.purchasable &&
                                 prod.stockStatus == 'instock'
-                            ? () {
+                            ? () async {
                                 final bool productInCart =
                                     cartController.isInCart(prod.id.toString());
                                 if (!productInCart) {
                                   cartController.addToCart(Product(
                                       id: prod.id.toString(),
                                       name: prod.name,
-                                      brand: "LuxeLiving by Iron Street",
+                                      brand: brandName.isNotEmpty
+                                          ? brandName
+                                          : "LuxeLiving by Iron Street",
                                       price: price,
                                       oldPrice: oldPrice,
                                       discount: discount,
-                                      rating: prod.ratingCount.toDouble(),
+                                      rating:
+                                          double.tryParse(prod.averageRating) ??
+                                              0.0,
                                       reviewsCount: prod.ratingCount,
                                       image: prod.images.first.src,
                                       images: [prod.images.first.src],
@@ -778,8 +806,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                       deliveryText: 'Available',
                                       dimensions: dimensions,
                                       material: material,
-                                      category: prod.categories.first.name));
+                                      category: prod.categories.isNotEmpty
+                                          ? prod.categories.first.name
+                                          : 'Furniture'));
                                 }
+                                await Future.delayed(Duration.zero);
                                 Get.toNamed(Routes.CHECKOUT);
                               }
                             : null,
@@ -822,12 +853,32 @@ class ProductDetailView extends GetView<ProductDetailController> {
   Widget _buildRelatedProductsSection(ProductDetailController controller) {
     return Obx(() {
       if (controller.isRelatedProductsLoading.value) {
-        return Container(
-          margin: const EdgeInsets.only(top: 8, bottom: 20),
-          height: 210,
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8),
+            Container(
+              width: 140,
+              height: 14,
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            SizedBox(
+              height: 235,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 3,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  return const ProductCardShimmer(width: 155);
+                },
+              ),
+            ),
+          ],
         );
       }
 
@@ -921,8 +972,12 @@ class ProductDetailView extends GetView<ProductDetailController> {
                     : CachedNetworkImage(
                         imageUrl: imageUrl,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                        placeholder: (context, url) => Shimmer(
+                          child: Container(
+                            color: Colors.black,
+                            width: double.infinity,
+                            height: 155,
+                          ),
                         ),
                         errorWidget: (context, url, error) => const Icon(
                           Icons.broken_image_outlined,
