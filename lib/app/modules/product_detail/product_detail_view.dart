@@ -895,23 +895,38 @@ class ProductDetailView extends GetView<ProductDetailController> {
   }
 
   Widget _buildSmallChip(String title, int categoryId) {
-    return GestureDetector(
-      onTap: () {
-        Get.toNamed(Routes.CATEGORY, arguments: categoryId);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF7F7F7),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFEDEDED)),
-        ),
-        child: Text(
-          title,
-          style: GoogleFonts.poppins(
-            fontSize: 10,
-            color: Colors.grey[700],
-            fontWeight: FontWeight.w500,
+    return Material(
+      color: const Color(0xFFF7F7F7),
+      borderRadius: BorderRadius.circular(20),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () {
+          Get.toNamed(Routes.CATEGORY, arguments: categoryId);
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFFE5E5E5)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.poppins(
+                  fontSize: 10,
+                  color: const Color(0xFF222222),
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const SizedBox(width: 4),
+              const Icon(
+                Icons.chevron_right,
+                size: 11,
+                color: Color(0xFF888888),
+              ),
+            ],
           ),
         ),
       ),
