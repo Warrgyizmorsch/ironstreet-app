@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/utills/helpers/helpers.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
+import 'package:iron_street_app/app/routes/app_pages.dart';
 
 import 'home_controller.dart';
 import '../category/category_view.dart';
@@ -129,24 +130,16 @@ class HomeView extends GetView<HomeController> {
               children: [
                 _buildDrawerSectionTitle('COLLECTIONS'),
                 _buildDrawerItem(Icons.chair, 'Living Room Furniture', () {
-                  // controller.selectSubCategory('Living');
-                  controller.fetchProductsByCategory(139);
-                  controller.currentIndex.value = 1;
                   Get.back();
+                  Get.toNamed(Routes.CATEGORY, arguments: 139);
                 }),
                 _buildDrawerItem(Icons.bed, 'Bedroom Furniture', () {
-                  // controller.selectSubCategory('Bedroom');
-                  controller.fetchProductsByCategory(142);
-
-                  controller.currentIndex.value = 1;
                   Get.back();
+                  Get.toNamed(Routes.CATEGORY, arguments: 142);
                 }),
                 _buildDrawerItem(Icons.restaurant, 'Dining & Kitchen', () {
-                  // controller.selectSubCategory('Dining');
-                  controller.fetchProductsByCategory(140);
-
-                  controller.currentIndex.value = 1;
                   Get.back();
+                  Get.toNamed(Routes.CATEGORY, arguments: 140);
                 }),
                 const Divider(),
                 _buildDrawerSectionTitle('BENEFITS & EXPLORE'),
@@ -667,9 +660,7 @@ class HomeView extends GetView<HomeController> {
                   return CategoryCard(
                     category: cat,
                     onTap: () {
-                      // controller.selectSubCategory('All');
-                      controller.fetchProductsByCategory(cat.id);
-                      controller.currentIndex.value = 1;
+                      Get.toNamed(Routes.CATEGORY, arguments: cat.id);
                     },
                   );
                 },
@@ -785,9 +776,7 @@ class HomeView extends GetView<HomeController> {
               final item = brandGridCategories[index];
               return GestureDetector(
                 onTap: () {
-                  controller.selectSubCategory('All');
-                  controller.fetchProductsByCategory(item.id);
-                  controller.currentIndex.value = 1;
+                  Get.toNamed(Routes.CATEGORY, arguments: item.id);
                 },
                 child: Column(
                   children: [

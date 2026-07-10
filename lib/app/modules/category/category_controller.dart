@@ -1,41 +1,53 @@
-
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../data/models/product_model.dart';
-import '../../data/dummy_data.dart';
+import 'package:iron_street_app/app/data/models/category_model.dart';
+import 'package:iron_street_app/app/data/models/product_list_model.dart';
+import 'package:iron_street_app/app/modules/home/home_controller.dart';
 
 class CategoryController extends GetxController {
-  var selectedCategory = 'All'.obs;
-  var sortBy = 'rating'.obs; // rating, priceLowHigh, priceHighLow
-  var searchQuery = ''.obs;
+  final homeController = Get.find<HomeController>();
 
-  List<Product> get filteredProducts {
-    return allAvailableProducts.where((p) {
-      final matchesCat = selectedCategory.value == 'All' ||
-          p.category.toLowerCase() == selectedCategory.value.toLowerCase();
-      final matchesSearch = p.name.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
-          p.brand.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
-          p.material.toLowerCase().contains(searchQuery.value.toLowerCase());
-      return matchesCat && matchesSearch;
-    }).toList();
-  }
+  // Delegate WooCommerce observables and scroll controller
+  RxList<ProductListModel> get products => homeController.products;
+  RxBool get isProductsLoading => homeController.isProductsLoading;
+  RxBool get isFetchingMoreProducts => homeController.isFetchingMoreProducts;
+  RxBool get hasMoreProducts => homeController.hasMoreProducts;
+  RxInt get activeProductCategoryId => homeController.activeProductCategoryId;
+  RxList<CategoryModel> get allCategories => homeController.allCategories;
+  ScrollController get scrollController => homeController.scrollController;
 
-  List<Product> get sortedProducts {
-    var items = List<Product>.from(filteredProducts);
-    if (sortBy.value == 'rating') {
-      items.sort((a, b) => b.rating.compareTo(a.rating));
-    } else if (sortBy.value == 'priceLowHigh') {
-      items.sort((a, b) => a.price.compareTo(b.price));
-    } else if (sortBy.value == 'priceHighLow') {
-      items.sort((a, b) => b.price.compareTo(a.price));
+  // Local Sort and Price Filter states
+  var selectedPriceFilter = 'All'.obs;
+  var activeSortType = 'default'.obs;
+
+  List<ProductListModel> get sortedAndFilteredProducts {
+    List<ProductListModel> list = List<ProductListModel>.from(homeController.products);
+
+    // Apply price filter locally
+    if (selectedPriceFilter.value == 'under_10k') {
+      list = list.where((p) => p.price < 10000).toList();
+    } else if (selectedPriceFilter.value == '10k_20k') {
+      list = list.where((p) => p.price >= 10000 && p.price <= 20000).toList();
+    } else if (selectedPriceFilter.value == 'over_20k') {
+      list = list.where((p) => p.price > 20000).toList();
     }
-    return items;
+
+    // Apply sorting locally
+    if (activeSortType.value == 'price_low_high') {
+      list.sort((a, b) => a.price.compareTo(b.price));
+    } else if (activeSortType.value == 'price_high_low') {
+      list.sort((a, b) => b.price.compareTo(a.price));
+    } else if (activeSortType.value == 'rating') {
+      list.sort((a, b) => b.rating.compareTo(a.rating));
+    }
+
+    return list;
   }
 
-  void selectCategory(String category) {
-    selectedCategory.value = category;
-  }
-
-  void updateSort(String order) {
-    sortBy.value = order;
+  void fetchProductsByCategory(int categoryId) {
+    homeController.fetchProductsByCategory(categoryId);
+    // Reset filters
+    selectedPriceFilter.value = 'All';
+    activeSortType.value = 'default';
   }
 }

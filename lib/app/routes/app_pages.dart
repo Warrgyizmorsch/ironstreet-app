@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import '../modules/home/home_binding.dart';
 import '../modules/home/home_view.dart';
 import '../modules/category/category_binding.dart';
-import '../modules/category/category_view.dart';
+import '../modules/category/category_product_view.dart';
 import '../modules/product_detail/product_detail_binding.dart';
 import '../modules/product_detail/product_detail_view.dart';
 import '../modules/product_detail/product_reviews_view.dart';
@@ -46,7 +46,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.CATEGORY,
-      page: () => const CategoryView(),
+      page: () => const CategoryProductView(),
       binding: CategoryBinding(),
       transition: Transition.rightToLeftWithFade,
     ),
