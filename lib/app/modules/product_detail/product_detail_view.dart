@@ -584,78 +584,18 @@ class ProductDetailView extends GetView<ProductDetailController> {
                             ],
                           ),
                           const SizedBox(height: 16),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFAF9F6),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: const Color(0xFFF1F1F1),
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.local_shipping_outlined,
-                                  color: AppColors.primary,
-                                  size: 18,
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(
-                                  child: Text(
-                                    deliveryCondition.isNotEmpty
-                                        ? deliveryCondition
-                                        : prod.stockStatus == 'instock'
-                                            ? 'Available for delivery'
-                                            : 'Currently unavailable',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey[700],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 18),
-                          Row(
-                            children: [
-                              _buildMiniInfoCard(
-                                icon: Icons.verified_outlined,
-                                title: 'Purchasable',
-                                value: prod.purchasable ? 'Yes' : 'No',
-                              ),
-                              const SizedBox(width: 10),
-                              _buildMiniInfoCard(
-                                icon: Icons.inventory_2_outlined,
-                                title: 'Stock',
-                                value: _formatStock(prod.stockStatus),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              _buildMiniInfoCard(
-                                icon: Icons.sell_outlined,
-                                title: 'Sale',
-                                value: prod.onSale ? 'On Sale' : 'Regular',
-                              ),
-                              const SizedBox(width: 10),
-                              _buildMiniInfoCard(
-                                icon: Icons.link_outlined,
-                                title: 'Product ID',
-                                value: prod.id.toString(),
-                              ),
-                            ],
-                          ),
-
-
-                          const SizedBox(height: 24),
+                          Obx(() => DeliveryDetailsSection(
+                                selectedAddress:
+                                    checkoutController.selectedAddress.value,
+                                estimatedDeliveryDate: deliveryCondition
+                                        .isNotEmpty
+                                    ? _calculateDeliveryDate(deliveryCondition)
+                                    : '4',
+                                onAddressTap: () =>
+                                    _showAddressSelectionBottomSheet(
+                                        context, checkoutController),
+                              )),
+                          // const SizedBox(height: 24),
                           if (material.isNotEmpty ||
                               tableTopMaterial.isNotEmpty ||
                               dimensions.isNotEmpty)
@@ -970,54 +910,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
           fontSize: 10,
           color: Colors.grey[700],
           fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMiniInfoCard({
-    required IconData icon,
-    required String title,
-    required String value,
-  }) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFAF9F6),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFF1F1F1)),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 18, color: AppColors.primary),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.poppins(
-                      fontSize: 9,
-                      color: Colors.grey[500],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    value,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: 11,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );
