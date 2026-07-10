@@ -587,10 +587,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                           Obx(() => DeliveryDetailsSection(
                                 selectedAddress:
                                     checkoutController.selectedAddress.value,
-                                estimatedDeliveryDate: deliveryCondition
-                                        .isNotEmpty
-                                    ? _calculateDeliveryDate(deliveryCondition)
-                                    : '4',
+                                estimatedDeliveryDate:
+                                    _calculateDeliveryDate(deliveryCondition),
                                 onAddressTap: () =>
                                     _showAddressSelectionBottomSheet(
                                         context, checkoutController),
@@ -1614,13 +1612,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
   }
 
   String _calculateDeliveryDate(String deliveryCondition) {
-    int days = 7;
-    final RegExp regExp = RegExp(r'(\d+)');
-    final match = regExp.firstMatch(deliveryCondition);
-    if (match != null) {
-      days = int.tryParse(match.group(1) ?? '7') ?? 7;
-    }
-    final DateTime deliveryDate = DateTime.now().add(Duration(days: days));
+    final DateTime deliveryDate = DateTime.now().add(const Duration(days: 2));
     return DateFormat('d MMM, EEE').format(deliveryDate);
   }
 

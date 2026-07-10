@@ -19,7 +19,8 @@ class DeliveryDetailsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasDeliveryDate = estimatedDeliveryDate != null && estimatedDeliveryDate!.isNotEmpty;
+    final bool hasDeliveryDate =
+        estimatedDeliveryDate != null && estimatedDeliveryDate!.isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +69,8 @@ class DeliveryDetailsSection extends StatelessWidget {
                       ),
                       children: [
                         TextSpan(
-                          text: '${(selectedAddress?.addressType ?? "HOME").toUpperCase()}  ',
+                          text:
+                              '${(selectedAddress?.addressType ?? "HOME").toUpperCase()}  ',
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.bold,
                             color: AppColors.primary,
@@ -141,7 +143,7 @@ class DeliveryDetailsSection extends StatelessWidget {
             ),
           ),
         ],
-        const SizedBox(height: 20),
+        const SizedBox(height: 5),
       ],
     );
   }
