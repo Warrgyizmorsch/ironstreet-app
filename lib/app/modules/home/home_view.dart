@@ -288,20 +288,31 @@ class HomeView extends GetView<HomeController> {
       shape: const CircleBorder(eccentricity: BorderSide.strokeAlignCenter),
       backgroundColor: const Color.fromARGB(255, 19, 122, 16),
       child: const Icon(Icons.message_rounded, color: Colors.white),
-      onPressed: () {
-        Get.defaultDialog(
-          title: 'Opening WhatsApp',
-          middleText:
-              'Connecting you with our on-call layout executive on WhatsApp...',
-          textConfirm: 'Proceed',
-          confirmTextColor: Colors.white,
-          buttonColor: const Color(0xFF25D366),
-          onConfirm: () {
-            Get.back();
-            Get.snackbar(
-                'Connected', 'Virtual styling advisor lines are now active!');
-          },
+      onPressed: () async {
+        const cleanPhone = '918690154568';
+        final message = Uri.encodeComponent(
+          'Hello Iron Street! I would like to get details/designs from your on-call layout executive.',
         );
+        final Uri whatsappUrl =
+            Uri.parse('https://wa.me/$cleanPhone?text=$message');
+
+        try {
+          if (await canLaunchUrl(whatsappUrl)) {
+            await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
+          } else {
+            Get.snackbar(
+              'Error',
+              'Could not launch WhatsApp. Please make sure it is installed.',
+              snackPosition: SnackPosition.BOTTOM,
+            );
+          }
+        } catch (e) {
+          Get.snackbar(
+            'Error',
+            'An error occurred: $e',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
       },
     );
   }
