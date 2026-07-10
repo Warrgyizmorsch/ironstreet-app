@@ -35,12 +35,13 @@ class ProductCard extends StatelessWidget {
     );
 
     return GestureDetector(
-      onTap: onTap ?? () {
-        Get.toNamed(
-          Routes.PRODUCT_DETAIL,
-          arguments: product.id,
-        );
-      },
+      onTap: onTap ??
+          () {
+            Get.toNamed(
+              Routes.PRODUCT_DETAIL,
+              arguments: product.id,
+            );
+          },
       child: Container(
         width: width,
         decoration: BoxDecoration(
@@ -201,16 +202,16 @@ class ProductCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    product.brand.toUpperCase(),
-                    style: GoogleFonts.poppins(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.grey[400],
-                      letterSpacing: 0.8,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
+                  // Text(
+                  //   product.brand.toUpperCase(),
+                  //   style: GoogleFonts.poppins(
+                  //     fontSize: 8,
+                  //     fontWeight: FontWeight.w800,
+                  //     color: Colors.grey[400],
+                  //     letterSpacing: 0.8,
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 2),
                   SizedBox(
                     height: 32,
                     child: Text(

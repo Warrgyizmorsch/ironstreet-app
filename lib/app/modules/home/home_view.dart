@@ -286,8 +286,9 @@ class HomeView extends GetView<HomeController> {
   Widget _buildWhatsAppFAB() {
     return FloatingActionButton(
       shape: const CircleBorder(eccentricity: BorderSide.strokeAlignCenter),
-      backgroundColor: const Color.fromARGB(255, 19, 122, 16),
-      child: const Icon(Icons.message_rounded, color: Colors.white),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      child: const Icon(Icons.message_rounded,
+          color: Color.fromARGB(255, 11, 138, 15)),
       onPressed: () async {
         const cleanPhone = '918690154568';
         final message = Uri.encodeComponent(
@@ -819,7 +820,7 @@ class HomeView extends GetView<HomeController> {
 
   Widget _buildHorizontalProductsListShimmer() {
     return SizedBox(
-      height: 240,
+      height: 235,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const NeverScrollableScrollPhysics(),
@@ -837,7 +838,7 @@ class HomeView extends GetView<HomeController> {
 
   Widget _buildHorizontalProductsList(List<ProductListModel> list) {
     return SizedBox(
-      height: 240,
+      height: 230,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
