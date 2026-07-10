@@ -215,6 +215,64 @@ class CategoryProductView extends GetView<CategoryController> {
               ),
             ),
 
+            // Subcategory Chips Scroll
+            Obx(() {
+              final rootId = controller.rootCategoryId;
+              final subcategories = controller.siblingSubcategories;
+
+              if (rootId == 0 || subcategories.isEmpty) {
+                return const SizedBox.shrink();
+              }
+
+              final activeId = controller.activeProductCategoryId.value;
+              final isAllActive = activeId == rootId;
+
+              // Find parent category name
+              final parentCat = controller.allCategories.firstWhereOrNull((c) => c.id == rootId);
+              final parentName = parentCat?.name ?? 'Category';
+
+              return Container(
+                height: 38,
+                margin: const EdgeInsets.only(bottom: 12),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: subcategories.length + 1, // +1 for "View All"
+                  itemBuilder: (context, index) {
+                    final isFirst = index == 0;
+                    final bool isActive = isFirst ? isAllActive : (subcategories[index - 1].id == activeId);
+                    final String label = isFirst ? 'View All $parentName' : subcategories[index - 1].name;
+                    final int targetId = isFirst ? rootId : subcategories[index - 1].id;
+
+                    return GestureDetector(
+                      onTap: () => controller.fetchProductsByCategory(targetId),
+                      child: Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: isActive ? AppColors.primary : Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: isActive ? AppColors.primary : const Color(0xFFE5E5E5),
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            label,
+                            style: GoogleFonts.poppins(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: isActive ? Colors.white : Colors.grey[700],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              );
+            }),
+
             // Product Grid
             Expanded(
               child: isLoading

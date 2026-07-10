@@ -16,6 +16,25 @@ class CategoryController extends GetxController {
   RxList<CategoryModel> get allCategories => homeController.allCategories;
   ScrollController get scrollController => homeController.scrollController;
 
+  // Get the main category ID. If the active category has a parent, returns the parent.
+  int get rootCategoryId {
+    final activeId = activeProductCategoryId.value;
+    if (activeId == 0) return 0;
+    
+    final activeCat = allCategories.firstWhereOrNull((c) => c.id == activeId);
+    if (activeCat != null && activeCat.parentId > 0) {
+      return activeCat.parentId;
+    }
+    return activeId;
+  }
+
+  // Get sibling subcategories under the root category
+  List<CategoryModel> get siblingSubcategories {
+    final rootId = rootCategoryId;
+    if (rootId == 0) return [];
+    return allCategories.where((cat) => cat.parentId == rootId).toList();
+  }
+
   // Local Sort and Price Filter states
   var selectedPriceFilter = 'All'.obs;
   var activeSortType = 'default'.obs;
