@@ -491,7 +491,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               runSpacing: 8,
                               children: prod.categories
                                   .map(
-                                    (cat) => _buildSmallChip(cat.name),
+                                    (cat) => _buildSmallChip(cat.name, cat.id),
                                   )
                                   .toList(),
                             ),
@@ -894,20 +894,25 @@ class ProductDetailView extends GetView<ProductDetailController> {
     );
   }
 
-  Widget _buildSmallChip(String title) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F7),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFEDEDED)),
-      ),
-      child: Text(
-        title,
-        style: GoogleFonts.poppins(
-          fontSize: 10,
-          color: Colors.grey[700],
-          fontWeight: FontWeight.w500,
+  Widget _buildSmallChip(String title, int categoryId) {
+    return GestureDetector(
+      onTap: () {
+        Get.toNamed(Routes.CATEGORY, arguments: categoryId);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF7F7F7),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: const Color(0xFFEDEDED)),
+        ),
+        child: Text(
+          title,
+          style: GoogleFonts.poppins(
+            fontSize: 10,
+            color: Colors.grey[700],
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );
