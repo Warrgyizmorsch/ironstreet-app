@@ -8,11 +8,11 @@ import 'package:intl/intl.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/data/models/product_model.dart';
 import 'package:iron_street_app/app/data/models/product_review_model.dart';
-import 'package:iron_street_app/app/data/models/related_product_list.dart';
 import 'package:iron_street_app/app/modules/product_detail/widget/full_screen_image.dart';
 import 'package:iron_street_app/app/routes/app_pages.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 import '../../widgets/shimmer.dart';
+import '../../widgets/product_card.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'product_detail_controller.dart';
@@ -908,8 +908,9 @@ class ProductDetailView extends GetView<ProductDetailController> {
               itemBuilder: (context, index) {
                 final item = controller.relatedProducts[index];
 
-                return _buildRelatedProductCard(
+                return ProductCard(
                   product: item,
+                  width: 155,
                   onTap: () => controller.openRelatedProduct(item),
                 );
               },
@@ -918,144 +919,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
         ],
       );
     });
-  }
-
-  Widget _buildRelatedProductCard({
-    required ProductRelatedListModel product,
-    required VoidCallback onTap,
-  }) {
-    final formatCurrency = NumberFormat.currency(
-      locale: 'en_IN',
-      symbol: '₹',
-      decimalDigits: 0,
-    );
-
-    final double price = double.tryParse(product.price.toString()) ?? 0;
-    final double oldPrice =
-        double.tryParse(product.regularPrice.toString()) ?? 0;
-
-    final String imageUrl =
-        product.images.isNotEmpty ? product.images.first.src : '';
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 155,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFFEFEFEF)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(14),
-              ),
-              child: Container(
-                // height: 125,
-                width: double.infinity,
-                color: const Color(0xFFF7F7F7),
-                child: imageUrl.isEmpty
-                    ? const Icon(
-                        Icons.image_not_supported_outlined,
-                        color: Colors.grey,
-                      )
-                    : CachedNetworkImage(
-                        imageUrl: imageUrl,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Shimmer(
-                          child: Container(
-                            color: Colors.black,
-                            width: double.infinity,
-                            height: 155,
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => const Icon(
-                          Icons.broken_image_outlined,
-                          color: Colors.grey,
-                        ),
-                      ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF222222),
-                      height: 1.3,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        formatCurrency.format(price),
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      if (oldPrice > price && oldPrice > 0)
-                        Expanded(
-                          child: Text(
-                            formatCurrency.format(oldPrice),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.poppins(
-                              fontSize: 10,
-                              color: Colors.grey,
-                              decoration: TextDecoration.lineThrough,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                  // const SizedBox(height: 8),n
-                  // Container(
-                  //   padding: const EdgeInsets.symmetric(
-                  //     horizontal: 8,
-                  //     vertical: 4,
-                  //   ),
-                  //   decoration: BoxDecoration(
-                  //     color: const Color(0xFFFAF9F6),
-                  //     borderRadius: BorderRadius.circular(20),
-                  //     border: Border.all(color: const Color(0xFFF1F1F1)),
-                  //   ),
-                  //   child: Text(
-                  //     'View Details',
-                  //     style: GoogleFonts.poppins(
-                  //       fontSize: 9,
-                  //       fontWeight: FontWeight.bold,
-                  //       color: AppColors.primary,
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 
   Widget _buildStockBadge(String stockStatus) {

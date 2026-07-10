@@ -15,11 +15,13 @@ import 'shimmer.dart';
 class ProductCard extends StatelessWidget {
   final ProductListModel product;
   final double width;
+  final VoidCallback? onTap;
 
   const ProductCard({
     super.key,
     required this.product,
     this.width = 160,
+    this.onTap,
   });
 
   @override
@@ -33,7 +35,7 @@ class ProductCard extends StatelessWidget {
     );
 
     return GestureDetector(
-      onTap: () {
+      onTap: onTap ?? () {
         Get.toNamed(
           Routes.PRODUCT_DETAIL,
           arguments: product.id,

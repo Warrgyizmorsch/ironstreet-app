@@ -1,9 +1,12 @@
 // ignore_for_file: deprecated_member_use
 
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import 'account_controller.dart';
@@ -28,7 +31,11 @@ class AccountView extends GetView<AccountController> {
     final regFirstController = TextEditingController();
     final regLastController = TextEditingController();
 
+    final SessionManager session = SessionManager();
+
     final RxBool isLoginTab = true.obs;
+
+    log(session.getToken().toString());
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),

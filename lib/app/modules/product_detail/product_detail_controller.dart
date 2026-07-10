@@ -27,7 +27,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:iron_street_app/app/data/models/product_detail_model.dart';
 import 'package:iron_street_app/app/data/models/product_review_model.dart';
-import 'package:iron_street_app/app/data/models/related_product_list.dart';
+import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/data/repositories/main_repositories.dart';
 
 class ProductDetailController extends GetxController {
@@ -40,7 +40,7 @@ class ProductDetailController extends GetxController {
   var isReviewsLoading = false.obs;
 
   var productDetail = Rxn<ProductDetailModel>();
-  var relatedProducts = <ProductRelatedListModel>[].obs;
+  var relatedProducts = <ProductListModel>[].obs;
   var reviewsList = <ProductReviewModel>[].obs;
 
   var selectedImageIndex = 0.obs;
@@ -199,8 +199,8 @@ class ProductDetailController extends GetxController {
         productIds: relatedIds,
       );
 
-      List<ProductRelatedListModel> fetchedProducts = (response as List)
-          .map((json) => ProductRelatedListModel.fromJson(json))
+      List<ProductListModel> fetchedProducts = (response as List)
+          .map((json) => ProductListModel.fromJson(json))
           .toList();
 
       relatedProducts.assignAll(fetchedProducts);
@@ -215,7 +215,7 @@ class ProductDetailController extends GetxController {
     selectedImageIndex.value = index;
   }
 
-  void openRelatedProduct(ProductRelatedListModel product) {
+  void openRelatedProduct(ProductListModel product) {
     if (product.id == 0) {
       Get.snackbar('Error', 'Invalid related product id');
       return;
