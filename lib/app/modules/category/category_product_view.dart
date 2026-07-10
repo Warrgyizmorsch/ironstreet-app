@@ -181,160 +181,163 @@ class CategoryProductView extends GetView<CategoryController> {
         final products = controller.sortedAndFilteredProducts;
         final isLoading = controller.isProductsLoading.value;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Category Info Section
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Obx(() {
-                    final activeId = controller.activeProductCategoryId.value;
-                    final cat = controller.allCategories.firstWhereOrNull((c) => c.id == activeId);
-                    return Text(
-                      cat?.name ?? 'Category Products',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF222222),
-                      ),
-                    );
-                  }),
-                  const SizedBox(height: 2),
-                  Text(
-                    '${products.length} Products',
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+        // Retrieve subcategories inside Obx so we know if they are empty
+        final rootId = controller.rootCategoryId;
+        final subcategories = controller.siblingSubcategories;
+        final hasChips = rootId > 0 && subcategories.isNotEmpty;
+
+        return CustomScrollView(
+          controller: controller.scrollController,
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            // 1. Category Info Section
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Obx(() {
+                      final activeId = controller.activeProductCategoryId.value;
+                      final cat = controller.allCategories.firstWhereOrNull((c) => c.id == activeId);
+                      return Text(
+                        cat?.name ?? 'Category Products',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF222222),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
               ),
             ),
 
-            // Subcategory Chips Scroll
-            Obx(() {
-              final rootId = controller.rootCategoryId;
-              final subcategories = controller.siblingSubcategories;
+            // 2. Sticky Subcategory Chips Scroll
+            if (hasChips)
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _StickyChipsDelegate(
+                  child: Obx(() {
+                    final activeId = controller.activeProductCategoryId.value;
+                    final isAllActive = activeId == rootId;
 
-              if (rootId == 0 || subcategories.isEmpty) {
-                return const SizedBox.shrink();
-              }
+                    // Find parent category name
+                    final parentCat = controller.allCategories.firstWhereOrNull((c) => c.id == rootId);
+                    final parentName = parentCat?.name ?? 'Category';
 
-              final activeId = controller.activeProductCategoryId.value;
-              final isAllActive = activeId == rootId;
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: subcategories.length + 1, // +1 for "View All"
+                      itemBuilder: (context, index) {
+                        final isFirst = index == 0;
+                        final bool isActive = isFirst ? isAllActive : (subcategories[index - 1].id == activeId);
+                        final String label = isFirst ? 'View All $parentName' : subcategories[index - 1].name;
+                        final int targetId = isFirst ? rootId : subcategories[index - 1].id;
 
-              // Find parent category name
-              final parentCat = controller.allCategories.firstWhereOrNull((c) => c.id == rootId);
-              final parentName = parentCat?.name ?? 'Category';
-
-              return Container(
-                height: 38,
-                margin: const EdgeInsets.only(bottom: 12),
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  itemCount: subcategories.length + 1, // +1 for "View All"
-                  itemBuilder: (context, index) {
-                    final isFirst = index == 0;
-                    final bool isActive = isFirst ? isAllActive : (subcategories[index - 1].id == activeId);
-                    final String label = isFirst ? 'View All $parentName' : subcategories[index - 1].name;
-                    final int targetId = isFirst ? rootId : subcategories[index - 1].id;
-
-                    return GestureDetector(
-                      onTap: () => controller.fetchProductsByCategory(targetId),
-                      child: Container(
-                        margin: const EdgeInsets.only(right: 8),
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: isActive ? AppColors.primary : Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: isActive ? AppColors.primary : const Color(0xFFE5E5E5),
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            label,
-                            style: GoogleFonts.poppins(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                              color: isActive ? Colors.white : Colors.grey[700],
+                        return GestureDetector(
+                          onTap: () => controller.fetchProductsByCategory(targetId),
+                          child: Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: isActive ? AppColors.primary : Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: isActive ? AppColors.primary : const Color(0xFFE5E5E5),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              );
-            }),
-
-            // Product Grid
-            Expanded(
-              child: isLoading
-                  ? GridView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                        childAspectRatio: 0.72,
-                      ),
-                      itemCount: 6,
-                      itemBuilder: (context, index) => const ProductCardShimmer(width: double.infinity),
-                    )
-                  : products.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.category_outlined, size: 48, color: Colors.grey[400]),
-                              const SizedBox(height: 12),
-                              Text(
-                                'No products found.',
+                            child: Center(
+                              child: Text(
+                                label,
                                 style: GoogleFonts.poppins(
-                                  fontSize: 12,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey,
+                                  color: isActive ? Colors.white : Colors.grey[700],
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                        )
-                      : GridView.builder(
-                          controller: controller.scrollController,
-                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 70), // Clearance padding for bottom bar
-                          physics: const BouncingScrollPhysics(),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 0.72,
-                          ),
-                          itemCount: products.length,
-                          itemBuilder: (context, index) {
-                            final prod = products[index];
-                            return ProductCard(
-                              product: prod,
-                              width: double.infinity,
-                            );
-                          },
-                        ),
-            ),
+                        );
+                      },
+                    );
+                  }),
+                ),
+              ),
 
-            // Fetching More Indicator
-            if (controller.isFetchingMoreProducts.value)
-              const Padding(
-                padding: EdgeInsets.all(8.0),
+            // 3. Products Grid or Loading Shimmers
+            if (isLoading)
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 0.72,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => const ProductCardShimmer(width: double.infinity),
+                    childCount: 6,
+                  ),
+                ),
+              )
+            else if (products.isEmpty)
+              SliverFillRemaining(
+                hasScrollBody: false,
                 child: Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.primary,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.category_outlined, size: 48, color: Colors.grey[400]),
+                      const SizedBox(height: 12),
+                      Text(
+                        'No products found.',
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 70), // Bottom padding clearance for bottom bar
+                sliver: SliverGrid(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 0.72,
+                  ),
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final prod = products[index];
+                      return ProductCard(
+                        product: prod,
+                        width: double.infinity,
+                      );
+                    },
+                    childCount: products.length,
+                  ),
+                ),
+              ),
+
+            // 4. Loading More Indicator
+            if (controller.isFetchingMoreProducts.value)
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
               ),
@@ -542,5 +545,29 @@ class CategoryProductView extends GetView<CategoryController> {
           ? const Icon(Icons.check, color: AppColors.primary, size: 18)
           : null,
     );
+  }
+}
+
+class _StickyChipsDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+  _StickyChipsDelegate({required this.child});
+
+  @override
+  double get minExtent => 50.0;
+  @override
+  double get maxExtent => 50.0;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: const Color(0xFFF6F6F6), // Matches Scaffold background
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: child,
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _StickyChipsDelegate oldDelegate) {
+    return true;
   }
 }
