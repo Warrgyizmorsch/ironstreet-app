@@ -164,7 +164,12 @@ class _BannerSliderState extends State<BannerSlider> {
                               const SizedBox(height: 2),
                               Text(
                                 item.subtitle,
+                                maxLines: 1,
+                                
                                 style: GoogleFonts.poppins(
+                                  
+                                  
+
                                   fontSize: 10,
                                   fontWeight: FontWeight.w500,
                                   color: Colors.white70,

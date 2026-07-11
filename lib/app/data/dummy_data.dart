@@ -64,30 +64,59 @@ final List<CategoryItem> categoriesList = [
   ),
 ];
 
+// final List<BannerItem> bannerCarouselCount = [
+//   BannerItem(
+//     id: 'b1',
+//     title: 'Summer Season Sale',
+//     subtitle: 'Lounge Chairs Starting From ₹5,999',
+//     image:
+//         'https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=800&auto=format&fit=crop&q=80',
+//     promoText: 'UPTO 60% OFF',
+//   ),
+//   BannerItem(
+//     id: 'b2',
+//     title: 'Entire Bedroom Setup',
+//     subtitle: 'Starting at ₹38,999',
+//     image:
+//         'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&auto=format&fit=crop&q=80',
+//     promoText: '15-Year Warranty',
+//   ),
+//   BannerItem(
+//     id: 'b3',
+//     title: 'Watch. Store. Style.',
+//     subtitle: 'TV Units Starting From ₹1,999',
+//     image:
+//         'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&auto=format&fit=crop&q=80',
+//     promoText: 'Limited Stock Offer',
+//   ),
+// ];
 final List<BannerItem> bannerCarouselCount = [
   BannerItem(
-    id: 'b1',
-    title: 'Summer Season Sale',
-    subtitle: 'Lounge Chairs Starting From ₹5,999',
+    id: '314',
+    title: 'Rest in Refined Comfort',
+    subtitle:
+        'Discover stylish metal beds crafted for strength, comfort, and lasting durability.',
     image:
-        'https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=800&auto=format&fit=crop&q=80',
-    promoText: 'UPTO 60% OFF',
+        'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&auto=format&fit=crop&q=80',
+    promoText: 'Beds Starting From ₹12,999',
   ),
   BannerItem(
-    id: 'b2',
-    title: 'Entire Bedroom Setup',
-    subtitle: 'Starting at ₹38,999',
+    id: '337',
+    title: 'Redefining Dining Spaces',
+    subtitle:
+        'Experience the perfect balance of durability and design, engineered to last a lifetime.',
     image:
-        'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&auto=format&fit=crop&q=80',
-    promoText: '15-Year Warranty',
+        'https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&auto=format&fit=crop&q=80',
+    promoText: 'Dining Sets Up To 40% Off',
   ),
   BannerItem(
-    id: 'b3',
-    title: 'Watch. Store. Style.',
-    subtitle: 'TV Units Starting From ₹1,999',
+    id: '149',
+    title: 'Designed for Everyday Comfort',
+    subtitle:
+        'Relax on modern sofas built with precision, premium comfort, and timeless style.',
     image:
-        'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&auto=format&fit=crop&q=80',
-    promoText: 'Limited Stock Offer',
+        'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&auto=format&fit=crop&q=80',
+    promoText: 'Sofas Starting From ₹18,999',
   ),
 ];
 

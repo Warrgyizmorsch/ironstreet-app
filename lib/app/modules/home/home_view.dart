@@ -1,9 +1,11 @@
 // ignore_for_file: unused_element, deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:iron_street_app/app/utills/constant/images.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/utills/helpers/helpers.dart';
@@ -280,8 +282,12 @@ class HomeView extends GetView<HomeController> {
     return FloatingActionButton(
       shape: const CircleBorder(eccentricity: BorderSide.strokeAlignCenter),
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      child: const Icon(Icons.message_rounded,
-          color: Color.fromARGB(255, 11, 138, 15)),
+      // child: const Icon(Icons.message_rounded,
+      //     color: Color.fromARGB(255, 11, 138, 15)),
+      child: SvgPicture.asset(
+        AppImages.whatsappLogo,
+        fit: BoxFit.scaleDown,
+      ),
       onPressed: () async {
         const cleanPhone = '918690154568';
         final message = Uri.encodeComponent(
@@ -325,8 +331,13 @@ class HomeView extends GetView<HomeController> {
         BannerSlider(
           banners: bannerCarouselCount,
           onTap: (banner) {
-            Get.snackbar(
-                'Promo Tapped', 'Opening selection: "${banner.title}"');
+            final int? categoryId = int.tryParse(banner.id);
+            if (categoryId != null) {
+              Get.toNamed(Routes.CATEGORY, arguments: categoryId);
+            } else {
+              Get.snackbar(
+                  'Promo Tapped', 'Opening selection: "${banner.title}"');
+            }
           },
         ),
 
