@@ -3,6 +3,7 @@ import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/data/repositories/user_repository/user_repository.dart';
 import '../address/address_controller.dart';
 import '../cart/cart_controller.dart';
+import '../wishlist/wishlist_controller.dart';
 
 class AccountController extends GetxController {
   final UserRepository _userRepository = UserRepository();
@@ -78,6 +79,11 @@ class AccountController extends GetxController {
         // Fetch live cart to merge guest cart items and retrieve saved addresses
         if (Get.isRegistered<CartController>()) {
           Get.find<CartController>().fetchCart();
+        }
+
+        // Fetch live wishlist items
+        if (Get.isRegistered<WishlistController>()) {
+          Get.find<WishlistController>().fetchWishlistFromServer();
         }
 
         Get.snackbar(
@@ -190,6 +196,11 @@ class AccountController extends GetxController {
         cartCtrl.totalDiscountValue.value = 0.0;
         cartCtrl.shippingAddress.value = null;
         cartCtrl.billingAddress.value = null;
+      }
+
+      // Clear in-memory wishlist details
+      if (Get.isRegistered<WishlistController>()) {
+        Get.find<WishlistController>().clearWishlist();
       }
 
       Get.snackbar(

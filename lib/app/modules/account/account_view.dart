@@ -33,9 +33,9 @@ class AccountView extends GetView<AccountController> {
 
     final SessionManager session = SessionManager();
 
-    final RxBool isLoginTab = true.obs;
+    log(SessionManager().getToken().toString());
 
-    log(session.getToken().toString());
+    final RxBool isLoginTab = true.obs;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F6),

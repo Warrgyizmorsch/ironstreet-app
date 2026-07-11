@@ -33,4 +33,8 @@ class AppUrls {
   static const String cartUpdateItem = '$cartUrl/update-item';
   static const String cartRemoveItem = '$cartUrl/remove-item';
   static const String updateCustomer = '$cartUrl/update-customer';
+
+  // YITH Wishlist endpoints
+  static const String getWishlist = 'https://ironstreets.com/wp-json/iron-app/v1/wishlist/items?fresh=1';
+  static const String mutateWishlist = 'https://ironstreets.com/wp-json/yith/wishlist/v1/items';
 }
