@@ -203,9 +203,9 @@ class CartInterceptor extends Interceptor {
   final SessionManager _sessionManager = SessionManager();
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     final isCustomApi = options.path.contains('/iron-app/') || options.path.contains('/yith/');
-    // For WooCommerce Store API endpoints, intercept and modify authentication
+
     if (options.path.contains('/wc/store/') || isCustomApi) {
       options.headers.remove('Authorization'); // Remove WC admin basic auth
 
@@ -230,7 +230,8 @@ class CartInterceptor extends Interceptor {
         }
       }
     }
-    super.onRequest(options, handler);
+    // Must call handler.next(options) inside async to let waits complete first
+    handler.next(options);
   }
 
   @override

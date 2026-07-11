@@ -72,6 +72,11 @@ class SessionManager {
     return prefs.getString(_keyAddresses) ?? '';
   }
 
+  Future<void> clearNonce() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_keyNonce);
+  }
+
   Future<void> clearSession() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_keyToken);
@@ -80,7 +85,6 @@ class SessionManager {
     await prefs.remove(_keyAddresses);
     await prefs.remove(_keyCartToken);
     await prefs.remove(_keyNonce);
-
     log('session clearing');
   }
 }

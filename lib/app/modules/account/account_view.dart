@@ -31,8 +31,6 @@ class AccountView extends GetView<AccountController> {
     final regFirstController = TextEditingController();
     final regLastController = TextEditingController();
 
-    final SessionManager session = SessionManager();
-
     log(SessionManager().getToken().toString());
 
     final RxBool isLoginTab = true.obs;

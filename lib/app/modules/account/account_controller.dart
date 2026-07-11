@@ -54,7 +54,6 @@ class AccountController extends GetxController {
 
     try {
       isLoading.value = true;
-
       final response = await _userRepository.loginUser(
         username: cleanUsername,
         password: cleanPassword,
@@ -65,6 +64,9 @@ class AccountController extends GetxController {
       final String displayName = response['user_display_name'] ?? '';
 
       if (jwtToken.isNotEmpty) {
+        // Clear guest nonce to prevent cryptographic validation errors on user cart fetch
+        await _sessionManager.clearNonce();
+
         await _sessionManager.saveSession(
           token: jwtToken,
           email: userEmail,
@@ -76,12 +78,10 @@ class AccountController extends GetxController {
         name.value = displayName;
         isLoggedIn.value = true;
 
-        // Fetch live cart to merge guest cart items and retrieve saved addresses
+        // Fetch live cart and wishlist items
         if (Get.isRegistered<CartController>()) {
           Get.find<CartController>().fetchCart();
         }
-
-        // Fetch live wishlist items
         if (Get.isRegistered<WishlistController>()) {
           Get.find<WishlistController>().fetchWishlistFromServer();
         }
