@@ -72,28 +72,4 @@ class ProductListModel {
       reviewsCount: json['rating_count'] ?? 0,
     );
   }
-
-  factory ProductListModel.fromWishlistJson(Map<String, dynamic> json) {
-    double currentPrice = double.tryParse(json['price']?.toString() ?? '0') ?? 0.0;
-    double regularPrice = double.tryParse(json['regular_price']?.toString() ?? '0') ?? 0.0;
-    if (regularPrice == 0.0) {
-      regularPrice = currentPrice;
-    }
-    double calculatedDiscount = 0.0;
-    if (regularPrice > currentPrice && regularPrice > 0) {
-      calculatedDiscount = ((regularPrice - currentPrice) / regularPrice) * 100;
-    }
-
-    return ProductListModel(
-      id: json['product_id'] ?? 0,
-      name: json['name'] ?? '',
-      price: currentPrice,
-      oldPrice: regularPrice,
-      discount: calculatedDiscount,
-      image: json['image'] ?? '',
-      brand: 'Ironstreets',
-      rating: 0.0,
-      reviewsCount: 0,
-    );
-  }
 }

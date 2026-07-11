@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SessionManager {
@@ -60,6 +58,16 @@ class SessionManager {
     return token.isNotEmpty;
   }
 
+  Future<void> clearSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_keyToken);
+    await prefs.remove(_keyEmail);
+    await prefs.remove(_keyName);
+    await prefs.remove(_keyAddresses);
+    await prefs.remove(_keyCartToken);
+    await prefs.remove(_keyNonce);
+  }
+
   static const String _keyAddresses = 'saved_addresses';
 
   Future<void> saveAddresses(String addressesJson) async {
@@ -70,17 +78,5 @@ class SessionManager {
   Future<String> getAddresses() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString(_keyAddresses) ?? '';
-  }
-
-  Future<void> clearSession() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_keyToken);
-    await prefs.remove(_keyEmail);
-    await prefs.remove(_keyName);
-    await prefs.remove(_keyAddresses);
-    await prefs.remove(_keyCartToken);
-    await prefs.remove(_keyNonce);
-
-    log('session clearing');
   }
 }
