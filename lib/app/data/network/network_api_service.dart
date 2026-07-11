@@ -204,8 +204,9 @@ class CartInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    final isCustomApi = options.path.contains('/iron-app/') || options.path.contains('/yith/');
     // For WooCommerce Store API endpoints, intercept and modify authentication
-    if (options.path.contains('/wc/store/')) {
+    if (options.path.contains('/wc/store/') || isCustomApi) {
       options.headers.remove('Authorization'); // Remove WC admin basic auth
 
       // Inject Customer Bearer token (if logged in)
@@ -214,17 +215,19 @@ class CartInterceptor extends Interceptor {
         options.headers['Authorization'] = 'Bearer $token';
       }
 
-      // Inject Cart Token (tracks guest/user identity)
-      final cartToken = await _sessionManager.getCartToken();
-      if (cartToken.isNotEmpty) {
-        options.headers['Cart-Token'] = cartToken;
-      }
+      if (options.path.contains('/wc/store/')) {
+        // Inject Cart Token (tracks guest/user identity)
+        final cartToken = await _sessionManager.getCartToken();
+        if (cartToken.isNotEmpty) {
+          options.headers['Cart-Token'] = cartToken;
+        }
 
-      // Inject CSRF Nonce
-      final nonce = await _sessionManager.getNonce();
-      if (nonce.isNotEmpty) {
-        options.headers['Nonce'] = nonce;
-        options.headers['X-WC-Store-API-Nonce'] = nonce;
+        // Inject CSRF Nonce
+        final nonce = await _sessionManager.getNonce();
+        if (nonce.isNotEmpty) {
+          options.headers['Nonce'] = nonce;
+          options.headers['X-WC-Store-API-Nonce'] = nonce;
+        }
       }
     }
     super.onRequest(options, handler);
