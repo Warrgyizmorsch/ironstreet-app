@@ -728,14 +728,18 @@ class CartBottomBar extends StatelessWidget {
             const SizedBox(height: 8),
             _buildInvoiceLine('Subtotal Items Price',
                 formatCurrency.format(controller.oldSubtotal)),
-            _buildInvoiceLine('Special Store Coupon Discount',
-                '- ${formatCurrency.format(controller.discountAmount)}',
-                isGreen: true),
+            if (controller.discountAmount > 0)
+              _buildInvoiceLine('Special Store Coupon Discount',
+                  '- ${formatCurrency.format(controller.discountAmount)}',
+                  isGreen: true),
             _buildInvoiceLine(
                 'Delivery Charges',
                 controller.deliveryPrice > 0
                     ? formatCurrency.format(controller.deliveryPrice)
                     : 'FREE'),
+            if (controller.totalTax > 0)
+              _buildInvoiceLine('Estimated GST (18% included)',
+                  formatCurrency.format(controller.totalTax)),
             const Divider(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

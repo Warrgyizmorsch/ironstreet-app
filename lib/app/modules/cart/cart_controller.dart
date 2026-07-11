@@ -23,6 +23,13 @@ class CartController extends GetxController {
   var cartItems = <CartItem>[].obs;
   var isLoading = false.obs;
 
+  // Live WooCommerce Cart totals
+  var subtotalValue = 0.0.obs;
+  var deliveryPriceValue = 0.0.obs;
+  var totalTaxValue = 0.0.obs;
+  var totalAmountValue = 0.0.obs;
+  var totalDiscountValue = 0.0.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -32,17 +39,20 @@ class CartController extends GetxController {
   int get totalCount =>
       cartItems.fold(0, (sum, item) => sum + item.quantity.value);
 
-  double get subtotal => cartItems.fold(
-      0.0, (sum, item) => sum + (item.product.price * item.quantity.value));
+  double get subtotal => subtotalValue.value;
+  double get oldSubtotal => subtotalValue.value + totalDiscountValue.value;
+  double get discountAmount => totalDiscountValue.value;
+  double get deliveryPrice => deliveryPriceValue.value;
+  double get totalTax => totalTaxValue.value;
+  double get totalAmount => totalAmountValue.value;
 
-  double get oldSubtotal => cartItems.fold(
-      0.0, (sum, item) => sum + (item.product.oldPrice * item.quantity.value));
-
-  double get discountAmount => oldSubtotal - subtotal;
-
-  double get deliveryPrice => subtotal > 15000 ? 0.0 : 499.0;
-
-  double get totalAmount => subtotal + deliveryPrice;
+  void _updateTotals(CartTotalsModel totals) {
+    subtotalValue.value = totals.totalItems;
+    deliveryPriceValue.value = totals.totalShipping;
+    totalTaxValue.value = totals.totalTax;
+    totalAmountValue.value = totals.totalPrice;
+    totalDiscountValue.value = totals.totalDiscount;
+  }
 
   // Fetch the live WooCommerce cart
   Future<void> fetchCart() async {
@@ -59,9 +69,10 @@ class CartController extends GetxController {
           );
         }).toList();
         cartItems.assignAll(items);
+        _updateTotals(cartResp.totals);
       }
     } catch (e) {
-      // Fail silently to keep UX smooth, or show details if required
+      // Fail silently to keep UX smooth
     } finally {
       isLoading.value = false;
     }
@@ -84,6 +95,7 @@ class CartController extends GetxController {
           );
         }).toList();
         cartItems.assignAll(items);
+        _updateTotals(cartResp.totals);
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to add item to cart: $e');
@@ -113,6 +125,7 @@ class CartController extends GetxController {
               );
             }).toList();
             cartItems.assignAll(items);
+            _updateTotals(cartResp.totals);
           }
         } catch (e) {
           Get.snackbar('Error', 'Failed to update quantity: $e');
@@ -137,6 +150,7 @@ class CartController extends GetxController {
             );
           }).toList();
           cartItems.assignAll(items);
+          _updateTotals(cartResp.totals);
         }
       } catch (e) {
         Get.snackbar('Error', 'Failed to remove item: $e');
@@ -146,6 +160,11 @@ class CartController extends GetxController {
 
   void clearCart() {
     cartItems.clear();
+    subtotalValue.value = 0.0;
+    deliveryPriceValue.value = 0.0;
+    totalTaxValue.value = 0.0;
+    totalAmountValue.value = 0.0;
+    totalDiscountValue.value = 0.0;
   }
 
   bool isInCart(String productId) {
