@@ -4,6 +4,28 @@ class SessionManager {
   static const String _keyToken = 'auth_token';
   static const String _keyEmail = 'auth_email';
   static const String _keyName = 'auth_name';
+  static const String _keyCartToken = 'cart_token';
+  static const String _keyNonce = 'cart_nonce';
+
+  Future<void> saveCartToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyCartToken, token);
+  }
+
+  Future<String> getCartToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyCartToken) ?? '';
+  }
+
+  Future<void> saveNonce(String nonce) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyNonce, nonce);
+  }
+
+  Future<String> getNonce() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyNonce) ?? '';
+  }
 
   Future<void> saveSession({
     required String token,

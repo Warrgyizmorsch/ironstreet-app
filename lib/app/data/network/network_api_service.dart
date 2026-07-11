@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:iron_street_app/app/data/network/base_api_service.dart';
 import 'package:iron_street_app/app/utills/constant/app_urls.dart';
 import 'package:iron_street_app/app/data/exceptions/app_exceptions.dart';
+import 'package:iron_street_app/app/data/local/session_manager.dart';
 
 class NetworkApiServices extends BaseApiServices {
   late final Dio _dio;
@@ -26,6 +27,7 @@ class NetworkApiServices extends BaseApiServices {
       responseBody: true,
       error: true,
     ));
+    _dio.interceptors.add(CartInterceptor());
   }
 
   @override
@@ -194,5 +196,54 @@ class NetworkApiServices extends BaseApiServices {
     } else {
       throw FetchDataException('Unexpected Error: ${e.message}');
     }
+  }
+}
+
+class CartInterceptor extends Interceptor {
+  final SessionManager _sessionManager = SessionManager();
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    // For WooCommerce Store API endpoints, intercept and modify authentication
+    if (options.path.contains('/wc/store/')) {
+      options.headers.remove('Authorization'); // Remove WC admin basic auth
+
+      // Inject Customer Bearer token (if logged in)
+      final token = await _sessionManager.getToken();
+      if (token.isNotEmpty) {
+        options.headers['Authorization'] = 'Bearer $token';
+      }
+
+      // Inject Cart Token (tracks guest/user identity)
+      final cartToken = await _sessionManager.getCartToken();
+      if (cartToken.isNotEmpty) {
+        options.headers['Cart-Token'] = cartToken;
+      }
+
+      // Inject CSRF Nonce
+      final nonce = await _sessionManager.getNonce();
+      if (nonce.isNotEmpty) {
+        options.headers['Nonce'] = nonce;
+        options.headers['X-WC-Store-API-Nonce'] = nonce;
+      }
+    }
+    super.onRequest(options, handler);
+  }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) async {
+    // Capture and persist Cart-Token and Nonce from response headers
+    final cartTokenHeader = response.headers.value('cart-token') ?? response.headers.value('Cart-Token');
+    if (cartTokenHeader != null && cartTokenHeader.isNotEmpty) {
+      await _sessionManager.saveCartToken(cartTokenHeader);
+    }
+
+    final nonceHeader = response.headers.value('nonce') ?? 
+                        response.headers.value('Nonce') ?? 
+                        response.headers.value('X-WC-Store-API-Nonce');
+    if (nonceHeader != null && nonceHeader.isNotEmpty) {
+      await _sessionManager.saveNonce(nonceHeader);
+    }
+    super.onResponse(response, handler);
   }
 }

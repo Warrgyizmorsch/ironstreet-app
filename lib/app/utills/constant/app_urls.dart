@@ -25,4 +25,11 @@ class AppUrls {
   // YITH Wishlist endpoint (from previous setup)
   static const String wishlist =
       'https://ironstreets.com/wp-json/yith/wishlist/v1/products';
+
+  // WooCommerce Store API Cart
+  static const String storeApiUrl = 'https://ironstreets.com/wp-json/wc/store/v1';
+  static const String cartUrl = '$storeApiUrl/cart';
+  static const String cartAddItem = '$cartUrl/add-item';
+  static const String cartUpdateItem = '$cartUrl/update-item';
+  static const String cartRemoveItem = '$cartUrl/remove-item';
 }
