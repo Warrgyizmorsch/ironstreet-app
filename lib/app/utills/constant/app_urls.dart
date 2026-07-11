@@ -32,4 +32,5 @@ class AppUrls {
   static const String cartAddItem = '$cartUrl/add-item';
   static const String cartUpdateItem = '$cartUrl/update-item';
   static const String cartRemoveItem = '$cartUrl/remove-item';
+  static const String updateCustomer = '$cartUrl/update-customer';
 }

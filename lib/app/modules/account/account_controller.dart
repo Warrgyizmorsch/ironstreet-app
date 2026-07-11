@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/data/repositories/user_repository/user_repository.dart';
+import '../address/address_controller.dart';
+import '../cart/cart_controller.dart';
 
 class AccountController extends GetxController {
   final UserRepository _userRepository = UserRepository();
@@ -72,6 +74,11 @@ class AccountController extends GetxController {
         email.value = userEmail;
         name.value = displayName;
         isLoggedIn.value = true;
+
+        // Fetch live cart to merge guest cart items and retrieve saved addresses
+        if (Get.isRegistered<CartController>()) {
+          Get.find<CartController>().fetchCart();
+        }
 
         Get.snackbar(
           'Success',
@@ -166,6 +173,24 @@ class AccountController extends GetxController {
       token.value = '';
       email.value = '';
       name.value = '';
+
+      // Clear in-memory address book
+      if (Get.isRegistered<AddressController>()) {
+        Get.find<AddressController>().addresses.clear();
+      }
+
+      // Clear in-memory cart details
+      if (Get.isRegistered<CartController>()) {
+        final cartCtrl = Get.find<CartController>();
+        cartCtrl.cartItems.clear();
+        cartCtrl.subtotalValue.value = 0.0;
+        cartCtrl.deliveryPriceValue.value = 0.0;
+        cartCtrl.totalTaxValue.value = 0.0;
+        cartCtrl.totalAmountValue.value = 0.0;
+        cartCtrl.totalDiscountValue.value = 0.0;
+        cartCtrl.shippingAddress.value = null;
+        cartCtrl.billingAddress.value = null;
+      }
 
       Get.snackbar(
         'Signed Out',

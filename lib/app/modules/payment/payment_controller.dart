@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../cart/cart_controller.dart';
 import '../checkout/checkout_controller.dart';
 import '../orders/orders_controller.dart';
+import '../../data/models/address_model.dart';
 import '../../data/models/order_model.dart';
 import '../../data/models/payment_method_model.dart';
 import 'payment_success_view.dart';
@@ -90,7 +91,19 @@ class PaymentController extends GetxController {
     // Success flow
     final orderNum = 'IS-${1000 + DateTime.now().second * 97}-ORDER';
     final orderId = 'ord_${DateTime.now().millisecondsSinceEpoch}';
-    final shipping = checkCtrl.selectedAddress.value!;
+    final shipping = cartCtrl.shippingAddress.value?.toAddressModel() ?? AddressModel(
+      id: '',
+      name: '',
+      phone: '',
+      addressLine1: '',
+      addressLine2: '',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: '',
+      addressType: '',
+      isDefault: false,
+    );
     
     final orderItems = cartCtrl.cartItems.map((cartItem) {
       return OrderItemModel(

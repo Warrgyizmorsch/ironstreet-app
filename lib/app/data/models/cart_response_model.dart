@@ -1,14 +1,19 @@
 import 'package:iron_street_app/app/data/models/product_model.dart';
+import 'package:iron_street_app/app/data/models/address_model.dart';
 
 class CartResponseModel {
   final List<CartItemModel> items;
   final CartTotalsModel totals;
   final int itemsCount;
+  final CartAddressModel? shippingAddress;
+  final CartAddressModel? billingAddress;
 
   CartResponseModel({
     required this.items,
     required this.totals,
     required this.itemsCount,
+    this.shippingAddress,
+    this.billingAddress,
   });
 
   factory CartResponseModel.fromJson(Map<String, dynamic> json) {
@@ -18,6 +23,12 @@ class CartResponseModel {
           .toList(),
       totals: CartTotalsModel.fromJson(json['totals'] ?? {}),
       itemsCount: json['items_count'] ?? 0,
+      shippingAddress: json['shipping_address'] != null 
+          ? CartAddressModel.fromJson(json['shipping_address']) 
+          : null,
+      billingAddress: json['billing_address'] != null 
+          ? CartAddressModel.fromJson(json['billing_address']) 
+          : null,
     );
   }
 }
@@ -123,6 +134,72 @@ class CartTotalsModel {
       totalTax: taxVal,
       totalShipping: shippingVal,
       totalDiscount: discountVal,
+    );
+  }
+}
+
+class CartAddressModel {
+  final String firstName;
+  final String lastName;
+  final String company;
+  final String address1;
+  final String address2;
+  final String city;
+  final String state;
+  final String postcode;
+  final String country;
+  final String phone;
+  final String email;
+
+  CartAddressModel({
+    required this.firstName,
+    required this.lastName,
+    required this.company,
+    required this.address1,
+    required this.address2,
+    required this.city,
+    required this.state,
+    required this.postcode,
+    required this.country,
+    required this.phone,
+    required this.email,
+  });
+
+  factory CartAddressModel.fromJson(Map<String, dynamic> json) {
+    return CartAddressModel(
+      firstName: json['first_name'] ?? '',
+      lastName: json['last_name'] ?? '',
+      company: json['company'] ?? '',
+      address1: json['address_1'] ?? '',
+      address2: json['address_2'] ?? '',
+      city: json['city'] ?? '',
+      state: json['state'] ?? '',
+      postcode: json['postcode'] ?? '',
+      country: json['country'] ?? '',
+      phone: json['phone'] ?? '',
+      email: json['email'] ?? '',
+    );
+  }
+
+  String get fullAddress {
+    return [address1, address2, city, state, postcode, country]
+        .where((s) => s.isNotEmpty)
+        .join(', ');
+  }
+
+  AddressModel toAddressModel() {
+    return AddressModel(
+      id: '',
+      name: '$firstName $lastName'.trim(),
+      phone: phone,
+      addressLine1: address1,
+      addressLine2: address2,
+      city: city,
+      state: state,
+      postalCode: postcode,
+      country: country.isEmpty ? 'India' : country,
+      addressType: 'Home',
+      isDefault: true,
     );
   }
 }

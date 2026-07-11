@@ -20,7 +20,6 @@ import '../cart/cart_controller.dart';
 import '../wishlist/wishlist_controller.dart';
 import 'package:iron_street_app/app/modules/address/address_controller.dart';
 import 'package:iron_street_app/app/modules/address/add_edit_address_view.dart';
-import 'package:iron_street_app/app/modules/checkout/checkout_controller.dart';
 import 'widget/delivery_details_section.dart';
 
 class ProductDetailView extends GetView<ProductDetailController> {
@@ -35,9 +34,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
         ? Get.find<AddressController>()
         : Get.put(AddressController());
 
-    final checkoutController = Get.isRegistered<CheckoutController>()
-        ? Get.find<CheckoutController>()
-        : Get.put(CheckoutController());
 
     final formatCurrency = NumberFormat.currency(
       locale: 'en_IN',
@@ -586,12 +582,17 @@ class ProductDetailView extends GetView<ProductDetailController> {
                           const SizedBox(height: 16),
                           Obx(() => DeliveryDetailsSection(
                                 selectedAddress:
-                                    checkoutController.selectedAddress.value,
+                                    cartController.shippingAddress.value?.toAddressModel(),
                                 estimatedDeliveryDate:
                                     _calculateDeliveryDate(deliveryCondition),
-                                onAddressTap: () =>
-                                    _showAddressSelectionBottomSheet(
-                                        context, checkoutController),
+                                onAddressTap: () {
+                                  final wcAddr = cartController.shippingAddress.value;
+                                  if (wcAddr != null && (wcAddr.city.isNotEmpty || wcAddr.address1.isNotEmpty)) {
+                                    Get.to(() => AddEditAddressView(address: wcAddr.toAddressModel()));
+                                  } else {
+                                    Get.to(() => const AddEditAddressView());
+                                  }
+                                },
                               )),
                           // const SizedBox(height: 24),
                           if (material.isNotEmpty ||
@@ -1636,125 +1637,5 @@ class ProductDetailView extends GetView<ProductDetailController> {
     return DateFormat('d MMM, EEE').format(deliveryDate);
   }
 
-  void _showAddressSelectionBottomSheet(
-      BuildContext context, CheckoutController checkCtrl) {
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Select Delivery Address',
-                  style: GoogleFonts.poppins(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF222222),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close, size: 18),
-                  onPressed: () => Get.back(),
-                ),
-              ],
-            ),
-            const Divider(),
-            const SizedBox(height: 8),
-            Flexible(
-              child: Obx(() {
-                final list = checkCtrl.addrCtrl.addresses;
-                if (list.isEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 24),
-                      child: Text(
-                        'No saved addresses',
-                        style: GoogleFonts.poppins(
-                            fontSize: 11, color: Colors.grey),
-                      ),
-                    ),
-                  );
-                }
 
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    final addr = list[index];
-                    final isSelected =
-                        checkCtrl.selectedAddress.value?.id == addr.id;
-
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: isSelected
-                              ? AppColors.primary
-                              : const Color(0xFFF1F1F1),
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ListTile(
-                        onTap: () {
-                          checkCtrl.updateSelectedAddress(addr);
-                          Get.back();
-                        },
-                        title: Text(
-                          '${addr.name} (${addr.addressType})',
-                          style: GoogleFonts.poppins(
-                              fontSize: 11, fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text(
-                          addr.fullAddress,
-                          style: GoogleFonts.poppins(
-                              fontSize: 9, color: Colors.grey),
-                        ),
-                        trailing: isSelected
-                            ? const Icon(Icons.check_circle,
-                                color: AppColors.primary, size: 18)
-                            : null,
-                      ),
-                    );
-                  },
-                );
-              }),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              height: 44,
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.primary),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                onPressed: () {
-                  Get.back();
-                  Get.to(() => const AddEditAddressView());
-                },
-                child: Text(
-                  'ADD NEW ADDRESS',
-                  style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

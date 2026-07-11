@@ -1,27 +1,12 @@
 import 'package:get/get.dart';
 import '../cart/cart_controller.dart';
-import '../address/address_controller.dart';
-import '../../data/models/address_model.dart';
 import '../payment/payment_view.dart';
 
 class CheckoutController extends GetxController {
   final cartCtrl = Get.find<CartController>();
-  final addrCtrl = Get.find<AddressController>();
 
-  var selectedAddress = Rxn<AddressModel>();
   var appliedCoupon = ''.obs;
   var couponDiscount = 0.0.obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-    // Default to the default address if any exists
-    selectedAddress.value = addrCtrl.defaultAddress;
-  }
-
-  void updateSelectedAddress(AddressModel address) {
-    selectedAddress.value = address;
-  }
 
   bool applyCoupon(String code) {
     final cleanCode = code.trim().toUpperCase();
@@ -61,7 +46,8 @@ class CheckoutController extends GetxController {
   }
 
   void proceedToPayment() {
-    if (selectedAddress.value == null) {
+    final addr = cartCtrl.shippingAddress.value;
+    if (addr == null || addr.address1.isEmpty) {
       Get.snackbar(
         'Address Required',
         'Please select or add a shipping address to proceed.',

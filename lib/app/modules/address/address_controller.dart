@@ -1,132 +1,111 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../data/models/address_model.dart';
-
+import '../../data/repositories/main_repositories.dart';
+import '../cart/cart_controller.dart';
 
 class AddressController extends GetxController {
+  final MainRepositories repositories = Get.isRegistered<MainRepositories>()
+      ? Get.find<MainRepositories>()
+      : Get.put(MainRepositories());
+
+  // Addresses represents a reactive view of the active WooCommerce session address
   var addresses = <AddressModel>[].obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    _loadDummyAddresses();
-  }
-
-  void _loadDummyAddresses() {
+  void syncFromWooCommerce(dynamic wcAddr) {
+    if (wcAddr == null || (wcAddr.firstName.isEmpty && wcAddr.address1.isEmpty)) {
+      addresses.clear();
+      return;
+    }
+    
     addresses.assignAll([
       AddressModel(
-        id: 'addr_1',
-        name: 'Ananya Sharma',
-        phone: '+91 98765 43210',
-        addressLine1: 'Flat 402, Sunshine Residency',
-        addressLine2: '12th Main, 4th Sector, HSR Layout',
-        city: 'Bengaluru',
-        state: 'Karnataka',
-        postalCode: '560102',
-        country: 'India',
-        addressType: 'Home',
+        id: 'wc_active',
+        name: '${wcAddr.firstName} ${wcAddr.lastName}'.trim(),
+        phone: wcAddr.phone,
+        addressLine1: wcAddr.address1,
+        addressLine2: wcAddr.address2,
+        city: wcAddr.city,
+        state: wcAddr.state,
+        postalCode: wcAddr.postcode,
+        country: wcAddr.country.isNotEmpty ? wcAddr.country : 'India',
+        addressType: 'Active Address',
         isDefault: true,
-      ),
-      AddressModel(
-        id: 'addr_2',
-        name: 'Ananya Sharma (Office)',
-        phone: '+91 98765 11223',
-        addressLine1: 'Tower B, Global Tech Park',
-        addressLine2: 'Outer Ring Road, Devarabeesanahalli',
-        city: 'Bengaluru',
-        state: 'Karnataka',
-        postalCode: '560103',
-        country: 'India',
-        addressType: 'Work',
-        isDefault: false,
-      ),
+      )
     ]);
   }
 
-  void addAddress(AddressModel newAddress) {
-    if (newAddress.isDefault) {
-      // Set all other addresses to non-default
-      for (var i = 0; i < addresses.length; i++) {
-        if (addresses[i].isDefault) {
-          addresses[i] = addresses[i].copyWith(isDefault: false);
+  Future<void> syncAddressToWooCommerce(AddressModel address) async {
+    try {
+      final wcAddress = address.toWcAddress();
+      // Update WooCommerce cart session addresses
+      final response = await repositories.updateCustomerAddress(
+        shippingAddress: wcAddress,
+        billingAddress: wcAddress,
+      );
+      if (response != null) {
+        if (Get.isRegistered<CartController>()) {
+          Get.find<CartController>().fetchCart();
         }
       }
-    }
-    // If it's the first address, make it default anyway
-    if (addresses.isEmpty) {
-      newAddress = newAddress.copyWith(isDefault: true);
-    }
-    addresses.add(newAddress);
-    Get.snackbar(
-      'Address Added',
-      'Successfully added new address: ${newAddress.addressType}',
-      snackPosition: SnackPosition.BOTTOM,
-    );
-  }
-
-  void updateAddress(String id, AddressModel updatedAddress) {
-    if (updatedAddress.isDefault) {
-      // Set all other addresses to non-default
-      for (var i = 0; i < addresses.length; i++) {
-        if (addresses[i].id != id && addresses[i].isDefault) {
-          addresses[i] = addresses[i].copyWith(isDefault: false);
-        }
+    } catch (e) {
+      String errMsg = e.toString();
+      if (errMsg.contains('invalid_state') || errMsg.contains('is not valid')) {
+        errMsg = "Invalid state code selected. If country is India, please enter a valid 2-letter state code (e.g., KA for Karnataka, MH for Maharashtra, DL for Delhi) or type the full name (e.g. Karnataka).";
       }
-    }
-    
-    int index = addresses.indexWhere((element) => element.id == id);
-    if (index != -1) {
-      addresses[index] = updatedAddress;
-      
-      // Ensure at least one default address exists
-      bool hasDefault = addresses.any((element) => element.isDefault);
-      if (!hasDefault && addresses.isNotEmpty) {
-        addresses[0] = addresses[0].copyWith(isDefault: true);
-      }
-      
       Get.snackbar(
-        'Address Updated',
-        'Successfully updated address details',
+        'Address Sync Failed',
+        errMsg,
         snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: const Color(0xFFFFEBEE),
+        colorText: const Color(0xFFC62828),
+        duration: const Duration(seconds: 5),
       );
     }
   }
 
-  void deleteAddress(String id) {
-    var item = addresses.firstWhereOrNull((e) => e.id == id);
-    if (item == null) return;
-    
-    bool deletedWasDefault = item.isDefault;
-    addresses.removeWhere((element) => element.id == id);
-    
-    if (deletedWasDefault && addresses.isNotEmpty) {
-      addresses[0] = addresses[0].copyWith(isDefault: true);
-    }
-    
-    Get.snackbar(
-      'Address Deleted',
-      'Address was removed from your address book',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+  void addAddress(AddressModel newAddress) {
+    syncAddressToWooCommerce(newAddress);
   }
 
-  void selectDefaultAddress(String id) {
-    for (var i = 0; i < addresses.length; i++) {
-      if (addresses[i].id == id) {
-        addresses[i] = addresses[i].copyWith(isDefault: true);
-      } else if (addresses[i].isDefault) {
-        addresses[i] = addresses[i].copyWith(isDefault: false);
-      }
-    }
-    addresses.refresh();
-    Get.snackbar(
-      'Default Updated',
-      'Changed default delivery address',
-      snackPosition: SnackPosition.BOTTOM,
-    );
+  void updateAddress(String id, AddressModel updatedAddress) {
+    syncAddressToWooCommerce(updatedAddress);
   }
+
+  void deleteAddress(String id) {
+    _clearWooCommerceAddress();
+  }
+
+  void selectDefaultAddress(String id) {}
 
   AddressModel? get defaultAddress {
-    return addresses.firstWhereOrNull((element) => element.isDefault) ?? 
-           (addresses.isNotEmpty ? addresses[0] : null);
+    return addresses.isNotEmpty ? addresses[0] : null;
+  }
+
+  Future<void> _clearWooCommerceAddress() async {
+    try {
+      final emptyAddress = {
+        'first_name': '',
+        'last_name': '',
+        'company': '',
+        'address_1': '',
+        'address_2': '',
+        'city': '',
+        'state': '',
+        'postcode': '',
+        'country': '',
+        'phone': '',
+      };
+      await repositories.updateCustomerAddress(
+        shippingAddress: emptyAddress,
+        billingAddress: emptyAddress,
+      );
+      addresses.clear();
+      if (Get.isRegistered<CartController>()) {
+        Get.find<CartController>().fetchCart();
+      }
+    } catch (e) {
+      // Fail silently to keep UX smooth
+    }
   }
 }

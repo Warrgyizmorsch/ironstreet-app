@@ -16,7 +16,7 @@ class AddEditAddressView extends StatefulWidget {
 
 class _AddEditAddressViewState extends State<AddEditAddressView> {
   final _formKey = GlobalKey<FormState>();
-  
+
   late TextEditingController _nameCtrl;
   late TextEditingController _phoneCtrl;
   late TextEditingController _line1Ctrl;
@@ -24,7 +24,7 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
   late TextEditingController _cityCtrl;
   late TextEditingController _stateCtrl;
   late TextEditingController _postalCtrl;
-  
+
   String _addressType = 'Home';
   bool _isDefault = false;
 
@@ -99,7 +99,8 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+          icon: const Icon(Icons.arrow_back_ios_new,
+              color: Colors.black, size: 20),
           onPressed: () => Get.back(),
         ),
       ),
@@ -136,7 +137,9 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
               label: 'Phone Number',
               hint: 'Enter 10-digit phone number',
               keyboardType: TextInputType.phone,
-              validator: (v) => v!.trim().length < 10 ? 'Enter a valid 10-digit number' : null,
+              validator: (v) => v!.trim().length < 10
+                  ? 'Enter a valid 10-digit number'
+                  : null,
               prefixIcon: Icons.phone_android,
             ),
             const SizedBox(height: 24),
@@ -158,7 +161,8 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
               controller: _line1Ctrl,
               label: 'Flat, House No., Building, Apartment',
               hint: 'e.g. Flat 402, Sunshine Residency',
-              validator: (v) => v!.trim().isEmpty ? 'This field is required' : null,
+              validator: (v) =>
+                  v!.trim().isEmpty ? 'This field is required' : null,
               prefixIcon: Icons.home_outlined,
             ),
             const SizedBox(height: 12),
@@ -168,7 +172,8 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
               controller: _line2Ctrl,
               label: 'Area, Street, Sector, Village',
               hint: 'e.g. 12th Main, HSR Layout Sector 4',
-              validator: (v) => v!.trim().isEmpty ? 'This field is required' : null,
+              validator: (v) =>
+                  v!.trim().isEmpty ? 'This field is required' : null,
               prefixIcon: Icons.map_outlined,
             ),
             const SizedBox(height: 12),
@@ -232,7 +237,9 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                 return Padding(
                   padding: const EdgeInsets.only(right: 12),
                   child: ChoiceChip(
-                    avatar: Icon(icon, size: 16, color: isSel ? Colors.white : Colors.grey[700]),
+                    avatar: Icon(icon,
+                        size: 16,
+                        color: isSel ? Colors.white : Colors.grey[700]),
                     label: Text(type),
                     selected: isSel,
                     selectedColor: AppColors.primary,
@@ -344,12 +351,16 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
           style: GoogleFonts.poppins(fontSize: 13, color: Colors.black),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[400]),
+            hintStyle:
+                GoogleFonts.poppins(fontSize: 12, color: Colors.grey[400]),
             isDense: true,
             filled: true,
             fillColor: const Color(0xFFF9F9F9),
-            prefixIcon: prefixIcon != null ? Icon(prefixIcon, size: 18, color: Colors.grey[600]) : null,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            prefixIcon: prefixIcon != null
+                ? Icon(prefixIcon, size: 18, color: Colors.grey[600])
+                : null,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: Colors.grey[200]!),

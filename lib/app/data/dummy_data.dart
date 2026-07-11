@@ -1,95 +1,8 @@
 import 'models/product_model.dart';
 import 'models/other_models.dart';
 
-final List<CategoryItem> categoriesList = [
-  CategoryItem(
-    id: 'sofas',
-    title: 'Sofas',
-    image:
-        'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=200&auto=format&fit=crop&q=80',
-  ),
-  CategoryItem(
-    id: 'beds',
-    title: 'Beds',
-    image:
-        'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=200&auto=format&fit=crop&q=80',
-  ),
-  CategoryItem(
-    id: 'dining',
-    title: 'Dining Sets',
-    image:
-        'https://images.unsplash.com/photo-1577140917170-285929fb55b7?w=200&auto=format&fit=crop&q=80',
-  ),
-  CategoryItem(
-    id: 'tv_units',
-    title: 'TV Units',
-    image:
-        'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=200&auto=format&fit=crop&q=80',
-  ),
-  CategoryItem(
-    id: 'coffee_tables',
-    title: 'Coffee Tables',
-    image:
-        'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=200&auto=format&fit=crop&q=80',
-  ),
-  CategoryItem(
-    id: 'recliner_sofas',
-    title: 'Recliners',
-    image:
-        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=200&auto=format&fit=crop&q=80',
-  ),
-  CategoryItem(
-    id: 'lounge_chairs',
-    title: 'Lounge Chairs',
-    image:
-        'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?w=200&auto=format&fit=crop&q=80',
-  ),
-  CategoryItem(
-    id: 'shoe_racks',
-    title: 'Shoe Racks',
-    image:
-        'https://images.unsplash.com/photo-1518051870910-a46e5443d112?w=200&auto=format&fit=crop&q=80',
-  ),
-  CategoryItem(
-    id: 'cabinets',
-    title: 'Cabinets',
-    image:
-        'https://images.unsplash.com/photo-1538688525198-9b88f6f53126?w=200&auto=format&fit=crop&q=80',
-  ),
-  CategoryItem(
-    id: 'bookshelves',
-    title: 'Bookshelves',
-    image:
-        'https://images.unsplash.com/photo-1594620302200-9a762244a156?w=200&auto=format&fit=crop&q=80',
-  ),
-];
 
-// final List<BannerItem> bannerCarouselCount = [
-//   BannerItem(
-//     id: 'b1',
-//     title: 'Summer Season Sale',
-//     subtitle: 'Lounge Chairs Starting From ₹5,999',
-//     image:
-//         'https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=800&auto=format&fit=crop&q=80',
-//     promoText: 'UPTO 60% OFF',
-//   ),
-//   BannerItem(
-//     id: 'b2',
-//     title: 'Entire Bedroom Setup',
-//     subtitle: 'Starting at ₹38,999',
-//     image:
-//         'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&auto=format&fit=crop&q=80',
-//     promoText: '15-Year Warranty',
-//   ),
-//   BannerItem(
-//     id: 'b3',
-//     title: 'Watch. Store. Style.',
-//     subtitle: 'TV Units Starting From ₹1,999',
-//     image:
-//         'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&auto=format&fit=crop&q=80',
-//     promoText: 'Limited Stock Offer',
-//   ),
-// ];
+
 final List<BannerItem> bannerCarouselCount = [
   BannerItem(
     id: '314',
@@ -450,26 +363,6 @@ final List<ExperienceStore> experienceStores = [
     image:
         'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format&fit=crop&q=80',
   ),
-  // ExperienceStore(
-  //   id: 's2',
-  //   name: 'Iron Street Experience Store - Mumbai Kherwadi',
-  //   address:
-  //       'Ground Floor, Signature Towers, Kherwadi Road, Bandra East, Mumbai, Maharashtra 400051',
-  //   city: 'Mumbai',
-  //   timings: '11:00 AM - 9:00 PM',
-  //   phone: '+91 22 8765 4321',
-  //   image:
-  //       'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400&auto=format&fit=crop&q=80',
-  // ),
-  // ExperienceStore(
-  //   id: 's3',
-  //   name: 'Iron Street Experience Store - New Delhi Kirti Nagar',
-  //   address:
-  //       'Plot No. 12, Kirti Nagar Industrial Area, Near Metro Pillar 321, New Delhi 110015',
-  //   city: 'New Delhi',
-  //   timings: '11:00 AM - 9:00 PM',
-  //   phone: '+91 11 4455 6677',
-  //   image:
-  //       'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=400&auto=format&fit=crop&q=80',
-  // ),
+ 
+
 ];

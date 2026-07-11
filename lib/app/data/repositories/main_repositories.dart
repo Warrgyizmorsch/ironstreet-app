@@ -270,6 +270,7 @@ class MainRepositories {
       rethrow;
     }
   }
+  
 
   Future<dynamic> removeCartItem({required String key}) async {
     try {
@@ -277,6 +278,24 @@ class MainRepositories {
         AppUrls.cartRemoveItem,
         data: {
           'key': key,
+        },
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<dynamic> updateCustomerAddress({
+    required Map<String, dynamic> shippingAddress,
+    required Map<String, dynamic> billingAddress,
+  }) async {
+    try {
+      final response = await _apiService.postApi(
+        AppUrls.updateCustomer,
+        data: {
+          'shipping_address': shippingAddress,
+          'billing_address': billingAddress,
         },
       );
       return response;

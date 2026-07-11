@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import '../../data/models/product_model.dart';
 import '../../data/models/cart_response_model.dart';
 import '../../data/repositories/main_repositories.dart';
+import '../address/address_controller.dart';
 
 class CartItem {
   final Product product;
@@ -30,9 +31,16 @@ class CartController extends GetxController {
   var totalAmountValue = 0.0.obs;
   var totalDiscountValue = 0.0.obs;
 
+  // WooCommerce addresses from the cart
+  var shippingAddress = Rxn<CartAddressModel>();
+  var billingAddress = Rxn<CartAddressModel>();
+
   @override
   void onInit() {
     super.onInit();
+    if (!Get.isRegistered<AddressController>()) {
+      Get.put(AddressController());
+    }
     fetchCart();
   }
 
@@ -54,6 +62,16 @@ class CartController extends GetxController {
     totalDiscountValue.value = totals.totalDiscount;
   }
 
+  void _updateAddresses(CartResponseModel cartResp) {
+    shippingAddress.value = cartResp.shippingAddress;
+    billingAddress.value = cartResp.billingAddress;
+
+    // Sync back to AddressController
+    if (Get.isRegistered<AddressController>() && cartResp.shippingAddress != null) {
+      Get.find<AddressController>().syncFromWooCommerce(cartResp.shippingAddress);
+    }
+  }
+
   // Fetch the live WooCommerce cart
   Future<void> fetchCart() async {
     try {
@@ -70,6 +88,7 @@ class CartController extends GetxController {
         }).toList();
         cartItems.assignAll(items);
         _updateTotals(cartResp.totals);
+        _updateAddresses(cartResp);
       }
     } catch (e) {
       // Fail silently to keep UX smooth
@@ -96,6 +115,7 @@ class CartController extends GetxController {
         }).toList();
         cartItems.assignAll(items);
         _updateTotals(cartResp.totals);
+        _updateAddresses(cartResp);
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to add item to cart: $e');

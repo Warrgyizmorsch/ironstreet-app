@@ -238,40 +238,43 @@ class AddressListView extends GetView<AddressController> {
           },
         );
       }),
-      bottomNavigationBar: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            border: Border(
-              top: BorderSide(color: Color(0xFFF1F1F1)),
-            ),
-          ),
-          child: SizedBox(
-            width: double.infinity,
-            height: 50,
-            child: ElevatedButton.icon(
-              onPressed: () => Get.to(() => const AddEditAddressView()),
-              icon: const Icon(Icons.add, color: Colors.white),
-              label: Text(
-                'ADD NEW ADDRESS',
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                  color: Colors.white,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+      bottomNavigationBar: Obx(() {
+        final reachedLimit = addrCtrl.addresses.length >= 2;
+        return SafeArea(
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(color: Color(0xFFF1F1F1)),
               ),
             ),
+            child: SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton.icon(
+                onPressed: reachedLimit ? null : () => Get.to(() => const AddEditAddressView()),
+                icon: Icon(Icons.add, color: reachedLimit ? Colors.grey : Colors.white),
+                label: Text(
+                  reachedLimit ? 'ADDRESS LIMIT REACHED (MAX 2)' : 'ADD NEW ADDRESS',
+                  style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: reachedLimit ? Colors.grey : Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: reachedLimit ? Colors.grey[300] : AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }

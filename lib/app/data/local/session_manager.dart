@@ -63,5 +63,20 @@ class SessionManager {
     await prefs.remove(_keyToken);
     await prefs.remove(_keyEmail);
     await prefs.remove(_keyName);
+    await prefs.remove(_keyAddresses);
+    await prefs.remove(_keyCartToken);
+    await prefs.remove(_keyNonce);
+  }
+
+  static const String _keyAddresses = 'saved_addresses';
+
+  Future<void> saveAddresses(String addressesJson) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_keyAddresses, addressesJson);
+  }
+
+  Future<String> getAddresses() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyAddresses) ?? '';
   }
 }

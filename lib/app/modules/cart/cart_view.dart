@@ -122,6 +122,7 @@ class DeliveryLocationSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cartCtrl = Get.find<CartController>();
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -143,11 +144,14 @@ class DeliveryLocationSection extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Obx(() {
-              final addr = checkoutController.selectedAddress.value;
+              final wcAddr = cartCtrl.shippingAddress.value;
+              String displayStr = 'Select Delivery Address';
+              if (wcAddr != null && (wcAddr.city.isNotEmpty || wcAddr.postcode.isNotEmpty)) {
+                displayStr = 'Delivery at ${wcAddr.city.isNotEmpty ? wcAddr.city : 'Selected Address'}${wcAddr.postcode.isNotEmpty ? ' - ${wcAddr.postcode}' : ''}';
+              }
+              
               return Text(
-                addr != null
-                    ? 'Delivery at ${addr.city} - ${addr.postalCode}'
-                    : 'Select Delivery Address',
+                displayStr,
                 style: GoogleFonts.poppins(
                   fontSize: 11,
                   color: Colors.grey[700],
@@ -156,147 +160,35 @@ class DeliveryLocationSection extends StatelessWidget {
               );
             }),
           ),
-          TextButton(
-            onPressed: () {
-              _showAddressSelectionBottomSheet(context, checkoutController);
-            },
-            style: TextButton.styleFrom(
-              minimumSize: Size.zero,
-              padding: EdgeInsets.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Text(
-              'Change',
-              style: GoogleFonts.poppins(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 11,
+          Obx(() {
+            final wcAddr = cartCtrl.shippingAddress.value;
+            final hasAddress = wcAddr != null && (wcAddr.city.isNotEmpty || wcAddr.address1.isNotEmpty);
+            
+            return TextButton(
+              onPressed: () {
+                if (hasAddress) {
+                  Get.to(() => AddEditAddressView(address: wcAddr.toAddressModel()));
+                } else {
+                  Get.to(() => const AddEditAddressView());
+                }
+              },
+              style: TextButton.styleFrom(
+                minimumSize: Size.zero,
+                padding: EdgeInsets.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-            ),
-          ),
+              child: Text(
+                hasAddress ? 'Change' : 'Add Address',
+                style: GoogleFonts.poppins(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                ),
+              ),
+            );
+          }),
         ],
       ),
-    );
-  }
-
-  void _showAddressSelectionBottomSheet(
-      BuildContext context, CheckoutController checkCtrl) {
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Select Delivery Address',
-                  style: GoogleFonts.poppins(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF222222),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close, size: 18),
-                  onPressed: () => Get.back(),
-                ),
-              ],
-            ),
-            const Divider(),
-            const SizedBox(height: 8),
-            Flexible(
-              child: Obx(() {
-                final list = checkCtrl.addrCtrl.addresses;
-                if (list.isEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 24),
-                      child: Text(
-                        'No saved addresses',
-                        style: GoogleFonts.poppins(
-                            fontSize: 11, color: Colors.grey),
-                      ),
-                    ),
-                  );
-                }
-
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: list.length,
-                  itemBuilder: (context, index) {
-                    final addr = list[index];
-                    final isSelected =
-                        checkCtrl.selectedAddress.value?.id == addr.id;
-
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: isSelected
-                              ? AppColors.primary
-                              : const Color(0xFFF1F1F1),
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ListTile(
-                        onTap: () {
-                          checkCtrl.updateSelectedAddress(addr);
-                          Get.back();
-                        },
-                        title: Text(
-                          '${addr.name} (${addr.addressType})',
-                          style: GoogleFonts.poppins(
-                              fontSize: 11, fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Text(
-                          addr.fullAddress,
-                          style: GoogleFonts.poppins(
-                              fontSize: 9, color: Colors.grey),
-                        ),
-                        trailing: isSelected
-                            ? const Icon(Icons.check_circle,
-                                color: AppColors.primary, size: 18)
-                            : null,
-                      ),
-                    );
-                  },
-                );
-              }),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              height: 44,
-              child: OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.primary),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                ),
-                onPressed: () {
-                  Get.back();
-                  Get.to(() => const AddEditAddressView());
-                },
-                child: Text(
-                  'ADD NEW ADDRESS',
-                  style: GoogleFonts.poppins(
-                      fontSize: 11, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
-      isScrollControlled: true,
     );
   }
 }

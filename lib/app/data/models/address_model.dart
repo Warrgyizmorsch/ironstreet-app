@@ -87,4 +87,84 @@ class AddressModel {
 
   String get fullAddress => 
       "$addressLine1, ${addressLine2.isNotEmpty ? '$addressLine2, ' : ''}$city, $state - $postalCode";
+
+  Map<String, dynamic> toWcAddress() {
+    final parts = name.trim().split(' ');
+    final firstName = parts.isNotEmpty ? parts[0] : '';
+    final lastName = parts.length > 1 ? parts.sublist(1).join(' ') : '';
+
+    // Normalize State to WooCommerce 2-letter codes for India
+    String normalizedState = state.trim();
+    final stateMap = {
+      'andhra pradesh': 'AP',
+      'arunachal pradesh': 'AR',
+      'assam': 'AS',
+      'bihar': 'BR',
+      'chhattisgarh': 'CT',
+      'goa': 'GA',
+      'gujarat': 'GJ',
+      'haryana': 'HR',
+      'himachal pradesh': 'HP',
+      'jammu and kashmir': 'JK',
+      'jharkhand': 'JH',
+      'karnataka': 'KA',
+      'kerala': 'KL',
+      'madhya pradesh': 'MP',
+      'maharashtra': 'MH',
+      'manipur': 'MN',
+      'meghalaya': 'ML',
+      'mizoram': 'MZ',
+      'nagaland': 'NL',
+      'odisha': 'OD',
+      'orissa': 'OD',
+      'punjab': 'PB',
+      'rajasthan': 'RJ',
+      'sikkim': 'SK',
+      'tamil nadu': 'TN',
+      'telangana': 'TS',
+      'tripura': 'TR',
+      'uttar pradesh': 'UP',
+      'uttarakhand': 'UK',
+      'west bengal': 'WB',
+      'delhi': 'DL',
+      'andaman and nicobar': 'AN',
+      'chandigarh': 'CH',
+      'dadra and nagar haveli': 'DN',
+      'daman and diu': 'DD',
+      'lakshadweep': 'LD',
+      'puducherry': 'PY',
+      'pondicherry': 'PY',
+      'ladakh': 'LA',
+    };
+
+    final key = normalizedState.toLowerCase();
+    if (stateMap.containsKey(key)) {
+      normalizedState = stateMap[key]!;
+    } else {
+      // Clean it up to uppercase
+      final cleanState = normalizedState.toUpperCase();
+      final validStates = [
+        'AN', 'AP', 'AR', 'AS', 'BR', 'CH', 'CT', 'DD', 'DH', 'DL', 'DN', 'GA',
+        'GJ', 'HP', 'HR', 'JH', 'JK', 'KA', 'KL', 'LA', 'LD', 'MH', 'ML', 'MN',
+        'MP', 'MZ', 'NL', 'OD', 'PB', 'PY', 'RJ', 'SK', 'TS', 'TN', 'TR', 'UP',
+        'UK', 'WB'
+      ];
+      if (validStates.contains(cleanState)) {
+        normalizedState = cleanState;
+      }
+    }
+
+    return {
+      'first_name': firstName,
+      'last_name': lastName,
+      'company': '',
+      'address_1': addressLine1,
+      'address_2': addressLine2,
+      'city': city,
+      'state': normalizedState,
+      'postcode': postalCode,
+      'country': country == 'India' ? 'IN' : country,
+      'phone': phone,
+    };
+  }
 }
