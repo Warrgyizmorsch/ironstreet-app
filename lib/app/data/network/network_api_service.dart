@@ -31,12 +31,16 @@ class NetworkApiServices extends BaseApiServices {
   }
 
   @override
-  Future<dynamic> getApi(String url,{
+  Future<dynamic> getApi(String url, {
     Map<String, dynamic>? queryParameters,
-
+    Map<String, dynamic>? headers,
   }) async {
     try {
-      final response = await _dio.get(url,queryParameters: queryParameters);
+      final response = await _dio.get(
+        url,
+        queryParameters: queryParameters,
+        options: headers != null ? Options(headers: headers) : null,
+      );
       return returnResponse(response);
     } on DioException catch (e) {
       return _handleDioError(e);

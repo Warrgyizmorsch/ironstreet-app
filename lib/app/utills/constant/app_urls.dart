@@ -37,4 +37,12 @@ class AppUrls {
   // YITH Wishlist endpoints
   static const String getWishlist = 'https://ironstreets.com/wp-json/iron-app/v1/wishlist/items?fresh=1';
   static const String mutateWishlist = 'https://ironstreets.com/wp-json/yith/wishlist/v1/items';
+
+  // WordPress REST API — authenticated user profile
+  static const String userProfile =
+      'https://ironstreets.com/wp-json/wp/v2/users/me?context=edit&_fields=id,name,first_name,last_name,email,registered_date,roles,url';
+
+  // WordPress REST API — update authenticated user profile (POST)
+  static const String userProfileUpdate =
+      'https://ironstreets.com/wp-json/wp/v2/users/me?_fields=id,name,first_name,last_name,email,registered_date,roles,url';
 }

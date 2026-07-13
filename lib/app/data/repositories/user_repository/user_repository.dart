@@ -1,3 +1,4 @@
+import 'package:iron_street_app/app/data/models/user_model.dart';
 import 'package:iron_street_app/app/data/network/network_api_service.dart';
 import 'package:iron_street_app/app/utills/constant/app_urls.dart';
 
@@ -57,6 +58,56 @@ class UserRepository {
         headers: headers,
       );
       return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  /// Fetches the authenticated user's WordPress profile.
+  /// Endpoint: GET /wp/v2/users/me?context=edit&_fields=...
+  /// Auth: Authorization: Bearer <jwt_token>
+  Future<UserModel> fetchProfile({required String token}) async {
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    try {
+      final response = await _apiService.getApi(
+        AppUrls.userProfile,
+        headers: headers,
+      );
+      return UserModel.fromWpJson(response as Map<String, dynamic>);
+    } catch (e) {
+      rethrow;
+    }
+  }
+  /// Updates the authenticated user's WordPress profile.
+  /// Endpoint: POST /wp/v2/users/me?_fields=...
+  /// Auth: Authorization: Bearer <jwt_token>
+  /// Sends only the fields that are provided (name and/or email).
+  Future<UserModel> updateProfile({
+    required String token,
+    String? name,
+    String? email,
+  }) async {
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    // Build body with only changed fields
+    final Map<String, dynamic> body = {};
+    if (name != null && name.isNotEmpty) body['name'] = name;
+    if (email != null && email.isNotEmpty) body['email'] = email;
+
+    try {
+      final response = await _apiService.postApi(
+        AppUrls.userProfileUpdate,
+        data: body,
+        headers: headers,
+      );
+      return UserModel.fromWpJson(response as Map<String, dynamic>);
     } catch (e) {
       rethrow;
     }

@@ -4,6 +4,7 @@ import 'package:iron_street_app/app/data/repositories/user_repository/user_repos
 import '../address/address_controller.dart';
 import '../cart/cart_controller.dart';
 import '../wishlist/wishlist_controller.dart';
+import '../profile/profile_controller.dart';
 
 class AccountController extends GetxController {
   final UserRepository _userRepository = UserRepository();
@@ -35,6 +36,11 @@ class AccountController extends GetxController {
         email.value = savedEmail;
         name.value = savedName;
         isLoggedIn.value = true;
+
+        // Refresh full profile from API on every cold start
+        if (Get.isRegistered<ProfileController>()) {
+          Get.find<ProfileController>().fetchProfile();
+        }
       }
     } catch (_) {}
   }
@@ -78,12 +84,15 @@ class AccountController extends GetxController {
         name.value = displayName;
         isLoggedIn.value = true;
 
-        // Fetch live cart and wishlist items
+        // Fetch live cart, wishlist and profile
         if (Get.isRegistered<CartController>()) {
           Get.find<CartController>().fetchCart();
         }
         if (Get.isRegistered<WishlistController>()) {
           Get.find<WishlistController>().fetchWishlistFromServer();
+        }
+        if (Get.isRegistered<ProfileController>()) {
+          Get.find<ProfileController>().fetchProfile();
         }
 
         Get.snackbar(

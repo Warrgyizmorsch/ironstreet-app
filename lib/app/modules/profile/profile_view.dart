@@ -17,6 +17,7 @@ class ProfileView extends GetView<ProfileController> {
         : Get.put(ProfileController());
 
     final nameController = TextEditingController();
+    final emailController = TextEditingController();
     final phoneController = TextEditingController();
 
     return Scaffold(
@@ -39,26 +40,40 @@ class ProfileView extends GetView<ProfileController> {
         actions: [
           Obx(() {
             if (profCtrl.isEditing.value) {
-              return TextButton(
-                onPressed: () {
-                  profCtrl.nameEditVal.value = nameController.text;
-                  profCtrl.phoneEditVal.value = phoneController.text;
-                  profCtrl.saveProfile();
-                },
-                child: Text(
-                  'SAVE',
-                  style: GoogleFonts.poppins(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
-              );
+              return profCtrl.isSaving.value
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    )
+                  : TextButton(
+                      onPressed: () {
+                        profCtrl.nameEditVal.value = nameController.text;
+                        profCtrl.emailEditVal.value = emailController.text;
+                        profCtrl.phoneEditVal.value = phoneController.text;
+                        profCtrl.saveProfile();
+                      },
+                      child: Text(
+                        'SAVE',
+                        style: GoogleFonts.poppins(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                    );
             } else {
               return TextButton(
                 onPressed: () {
                   profCtrl.startEditing();
                   nameController.text = profCtrl.userProfile.value?.name ?? '';
+                  emailController.text = profCtrl.userProfile.value?.email ?? '';
                   phoneController.text = profCtrl.userProfile.value?.phone ?? '';
                 },
                 child: Text(
@@ -221,6 +236,13 @@ class ProfileView extends GetView<ProfileController> {
                     ),
                     const Divider(height: 24),
                     _buildInputField(
+                      controller: emailController,
+                      label: 'Email Address',
+                      icon: Icons.mail_outline_rounded,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const Divider(height: 24),
+                    _buildInputField(
                       controller: phoneController,
                       label: 'Phone Number',
                       icon: Icons.phone_android_outlined,
@@ -229,10 +251,10 @@ class ProfileView extends GetView<ProfileController> {
                   ] else ...[
                     _buildDetailRow('Full Name', user.name, Icons.person_outline),
                     const Divider(height: 24),
+                    _buildDetailRow('Email Address', user.email, Icons.mail_outline_rounded),
+                    const Divider(height: 24),
                     _buildDetailRow('Phone Number', user.phone, Icons.phone_android_outlined),
                   ],
-                  const Divider(height: 24),
-                  _buildDetailRow('Email Address', user.email, Icons.mail_outline_rounded, isReadOnly: true),
                 ],
               ),
             ),
@@ -243,35 +265,58 @@ class ProfileView extends GetView<ProfileController> {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () => profCtrl.cancelEditing(),
+                      onPressed: profCtrl.isSaving.value
+                          ? null
+                          : () => profCtrl.cancelEditing(),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                         side: const BorderSide(color: Colors.grey),
                       ),
                       child: Text(
                         'CANCEL',
-                        style: GoogleFonts.poppins(color: Colors.grey[700], fontWeight: FontWeight.bold),
+                        style: GoogleFonts.poppins(
+                            color: Colors.grey[700],
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {
-                        profCtrl.nameEditVal.value = nameController.text;
-                        profCtrl.phoneEditVal.value = phoneController.text;
-                        profCtrl.saveProfile();
-                      },
+                      onPressed: profCtrl.isSaving.value
+                          ? null
+                          : () {
+                              profCtrl.nameEditVal.value =
+                                  nameController.text;
+                              profCtrl.emailEditVal.value =
+                                  emailController.text;
+                              profCtrl.phoneEditVal.value =
+                                  phoneController.text;
+                              profCtrl.saveProfile();
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                       ),
-                      child: Text(
-                        'SAVE',
-                        style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
+                      child: profCtrl.isSaving.value
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text(
+                              'SAVE',
+                              style: GoogleFonts.poppins(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
                     ),
                   ),
                 ],

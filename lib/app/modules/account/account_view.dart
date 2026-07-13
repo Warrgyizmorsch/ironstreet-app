@@ -12,6 +12,7 @@ import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 import 'account_controller.dart';
 import '../../routes/app_pages.dart';
 import 'legal_policies_view.dart';
+import '../profile/profile_controller.dart';
 
 class AccountView extends GetView<AccountController> {
   const AccountView({super.key});
@@ -59,86 +60,138 @@ class AccountView extends GetView<AccountController> {
 
   // --- PROFILE DASHBOARD STATE ---
   Widget _buildProfileDashboard(AccountController accCtrl) {
+    final profCtrl = Get.isRegistered<ProfileController>()
+        ? Get.find<ProfileController>()
+        : Get.put(ProfileController(), permanent: true);
+
     return ListView(
       padding: const EdgeInsets.all(16),
       physics: const BouncingScrollPhysics(),
       children: [
-        // Profile Brief Card
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFF1F1F1)),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 58,
-                height: 58,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFFFF0E6),
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  accCtrl.name.value.isNotEmpty
-                      ? accCtrl.name.value
-                          .trim()
-                          .split(' ')
-                          .where((w) => w.isNotEmpty)
-                          .map((n) => n[0])
-                          .join('')
-                          .toUpperCase()
-                      : 'U',
-                  style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.primary),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      accCtrl.name.value,
-                      style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF222222)),
-                    ),
-                    Text(
-                      accCtrl.email.value.isNotEmpty
-                          ? accCtrl.email.value
-                          : 'imam123@gmail.com',
-                      style:
-                          GoogleFonts.poppins(fontSize: 10, color: Colors.grey),
-                    ),
-                    const SizedBox(height: 6),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFF0E6),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: const Color(0xFFFFD4C0)),
-                      ),
-                      child: Text(
-                        'Gold Club Member'.toUpperCase(),
+        // Profile Brief Card — powered by ProfileController (live API data)
+        Obx(() {
+          final user = profCtrl.userProfile.value;
+          final isLoading = profCtrl.isLoading.value;
+
+          // Display name: prefer full API name, fall back to JWT display name
+          final displayName = user?.name.isNotEmpty == true
+              ? user!.name
+              : accCtrl.name.value;
+
+          // Email: prefer API email, fall back to JWT email
+          final displayEmail = user?.email.isNotEmpty == true
+              ? user!.email
+              : accCtrl.email.value;
+
+          // Member status from roles
+          final memberStatus = user?.memberStatus ?? 'Member';
+
+          // Joined date
+          final joinedDate = user?.joinedDate ?? '';
+
+          // Avatar initials
+          final initials = displayName.trim().isNotEmpty
+              ? displayName
+                  .trim()
+                  .split(' ')
+                  .where((w) => w.isNotEmpty)
+                  .map((n) => n[0])
+                  .join('')
+                  .toUpperCase()
+              : 'U';
+
+          // Avatar image URL from WP user URL field
+          final avatarUrl = user?.profileImage ?? '';
+
+          return Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFF1F1F1)),
+            ),
+            child: Row(
+              children: [
+                // Avatar: real image if available, else initials circle
+                isLoading
+                    ? Container(
+                        width: 58,
+                        height: 58,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFFFF0E6),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      )
+                    : avatarUrl.isNotEmpty
+                        ? ClipOval(
+                            child: Image.network(
+                              avatarUrl,
+                              width: 58,
+                              height: 58,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => _initialsCircle(initials),
+                            ),
+                          )
+                        : _initialsCircle(initials),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        displayName,
                         style: GoogleFonts.poppins(
-                            fontSize: 8,
+                            fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.primary),
+                            color: const Color(0xFF222222)),
                       ),
-                    )
-                  ],
+                      Text(
+                        displayEmail,
+                        style: GoogleFonts.poppins(
+                            fontSize: 10, color: Colors.grey),
+                      ),
+                      if (joinedDate.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          joinedDate,
+                          style: GoogleFonts.poppins(
+                              fontSize: 9, color: Colors.grey.shade400),
+                        ),
+                      ],
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFF0E6),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: const Color(0xFFFFD4C0)),
+                        ),
+                        child: Text(
+                          memberStatus.toUpperCase(),
+                          style: GoogleFonts.poppins(
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
+              ],
+            ),
+          );
+        }),
         const SizedBox(height: 12),
 
         // Quick Stats row
@@ -236,6 +289,26 @@ class AccountView extends GetView<AccountController> {
                 fontSize: 8, color: Colors.grey, fontWeight: FontWeight.bold),
           ),
         ],
+      ),
+    );
+  }
+
+  /// Reusable initials avatar circle (fallback when no profile image)
+  Widget _initialsCircle(String initials) {
+    return Container(
+      width: 58,
+      height: 58,
+      decoration: const BoxDecoration(
+        color: Color(0xFFFFF0E6),
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        initials,
+        style: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+            color: AppColors.primary),
       ),
     );
   }
