@@ -1,71 +1,151 @@
+import 'dart:developer';
 import 'package:get/get.dart';
 import '../../data/models/order_model.dart';
-import '../../data/models/address_model.dart';
-import '../../data/dummy_data.dart';
+import '../../data/repositories/main_repositories.dart';
+import '../profile/profile_controller.dart';
 
 class OrdersController extends GetxController {
+  final MainRepositories repositories = Get.isRegistered<MainRepositories>()
+      ? Get.find<MainRepositories>()
+      : Get.put(MainRepositories());
+
   var orders = <OrderModel>[].obs;
+  var isLoading = false.obs;
+  var hasError = false.obs;
+
+  // Pagination states
+  int _page = 1;
+  static const int _perPage = 10;
+  var hasMore = true.obs;
+  var isMoreLoading = false.obs;
+
+  // Active Order Detail state for detail view
+  var activeOrderDetail = Rxn<OrderModel>();
+  var isDetailsLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    _loadDummyOrders();
+    fetchUserOrders(isRefresh: true);
   }
 
-  void _loadDummyOrders() {
-    // Standard mock shipping address
-    final mockAddress = AddressModel(
-      id: 'addr_1',
-      name: 'Ananya Sharma',
-      phone: '+91 98765 43210',
-      addressLine1: 'Flat 402, Sunshine Residency',
-      addressLine2: '12th Main, 4th Sector, HSR Layout',
-      city: 'Bengaluru',
-      state: 'Karnataka',
-      postalCode: '560102',
-      country: 'India',
-      addressType: 'Home',
-      isDefault: true,
-    );
+  /// Fetches user's orders from the WooCommerce REST API with pagination.
+  /// Set [isRefresh] to true to reset the list and load the first page.
+  Future<void> fetchUserOrders({bool isRefresh = false}) async {
+    // Avoid double fetching while loading
+    if (!isRefresh && (isMoreLoading.value || !hasMore.value)) return;
 
-    // Let's grab product references from our dummy_data.dart
-    final p1 = discoverNewProducts.firstWhere((p) => p.id == 'p1');
-    final p3 = discoverNewProducts.firstWhere((p) => p.id == 'p3');
+    try {
+      if (isRefresh) {
+        isLoading.value = true;
+        hasError.value = false;
+        _page = 1;
+        hasMore.value = true;
+      } else {
+        isMoreLoading.value = true;
+      }
 
-    orders.assignAll([
-      OrderModel(
-        id: 'ord_recent_1',
-        orderNumber: 'IS-7341-ORDER',
-        items: [
-          OrderItemModel(product: p1, quantity: 1, price: p1.price),
-        ],
-        shippingAddress: mockAddress,
-        paymentMethod: 'UPI',
-        paymentDetails: 'ananya@oksbi',
-        orderDate: DateTime.now().subtract(const Duration(days: 1)),
-        status: 'Dispatched',
-        subtotal: p1.price,
-        discount: p1.oldPrice - p1.price,
-        deliveryCharges: 0.0,
-        totalAmount: p1.price,
-      ),
-      OrderModel(
-        id: 'ord_past_1',
-        orderNumber: 'IS-4911-ORDER',
-        items: [
-          OrderItemModel(product: p3, quantity: 1, price: p3.price),
-        ],
-        shippingAddress: mockAddress,
-        paymentMethod: 'Credit Card',
-        paymentDetails: 'xxxx-xxxx-xxxx-4122',
-        orderDate: DateTime.now().subtract(const Duration(days: 20)),
-        status: 'Delivered',
-        subtotal: p3.price,
-        discount: p3.oldPrice - p3.price,
-        deliveryCharges: 499.0,
-        totalAmount: p3.price + 499.0,
-      ),
-    ]);
+      final profCtrl = Get.isRegistered<ProfileController>()
+          ? Get.find<ProfileController>()
+          : Get.put(ProfileController(), permanent: true);
+
+      // Fetch user profile if not loaded yet to retrieve customer ID
+      if (profCtrl.userProfile.value == null) {
+        await profCtrl.fetchProfile();
+      }
+
+      final String customerIdStr = profCtrl.userProfile.value?.id ?? '';
+      if (customerIdStr.isEmpty) {
+        log('[OrdersController] No customer ID found — skipping orders fetch');
+        if (isRefresh) orders.clear();
+        return;
+      }
+
+      final int customerId = int.tryParse(customerIdStr) ?? 0;
+      if (customerId == 0) {
+        log('[OrdersController] Invalid customer ID: $customerIdStr');
+        if (isRefresh) orders.clear();
+        return;
+      }
+
+      log('[OrdersController] Fetching page $_page of orders for customer ID: $customerId');
+      final response = await repositories.fetchOrders(
+        customerId: customerId,
+        page: _page,
+        perPage: _perPage,
+      );
+
+      if (response is List) {
+        final List<OrderModel> fetchedOrders = response
+            .map((json) => OrderModel.fromWcJson(json as Map<String, dynamic>))
+            .toList();
+
+        if (isRefresh) {
+          orders.assignAll(fetchedOrders);
+        } else {
+          orders.addAll(fetchedOrders);
+        }
+
+        // If returned items count is less than perPage, we reached the end
+        if (fetchedOrders.length < _perPage) {
+          hasMore.value = false;
+          log('[OrdersController] Reached the end of orders. No more pages.');
+        } else {
+          hasMore.value = true;
+        }
+
+        log('[OrdersController] Loaded ${fetchedOrders.length} orders. Total list size: ${orders.length}');
+      } else {
+        log('[OrdersController] Invalid list format returned from API');
+        if (isRefresh) orders.clear();
+        hasMore.value = false;
+      }
+    } catch (e) {
+      if (isRefresh) {
+        hasError.value = true;
+      }
+      log('[OrdersController] Error loading orders from API (page $_page): $e');
+    } finally {
+      if (isRefresh) {
+        isLoading.value = false;
+      } else {
+        isMoreLoading.value = false;
+      }
+    }
+  }
+
+  /// Triggers loading of the next page if there are more items to retrieve
+  Future<void> loadNextPage() async {
+    if (!isLoading.value && !isMoreLoading.value && hasMore.value) {
+      _page++;
+      await fetchUserOrders(isRefresh: false);
+    }
+  }
+
+  /// Fetches detailed information for a single order by ID
+  Future<void> fetchOrderDetail(String orderId) async {
+    try {
+      isDetailsLoading.value = true;
+      activeOrderDetail.value = null; // Clear previous state to show loading
+
+      final int id = int.tryParse(orderId) ?? 0;
+      if (id == 0) {
+        log('[OrdersController] Invalid order ID format: $orderId');
+        return;
+      }
+
+      log('[OrdersController] Fetching fresh details for order ID: $id');
+      final response = await repositories.fetchOrderDetail(orderId: id);
+
+      if (response != null && response is Map<String, dynamic>) {
+        activeOrderDetail.value = OrderModel.fromWcJson(response);
+        log('[OrdersController] Order detail loaded: #${activeOrderDetail.value?.orderNumber}');
+      }
+    } catch (e) {
+      log('[OrdersController] Error loading order details: $e');
+    } finally {
+      isDetailsLoading.value = false;
+    }
   }
 
   void placeOrder(OrderModel newOrder) {

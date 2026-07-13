@@ -20,6 +20,37 @@ class OrderItemModel {
     );
   }
 
+  /// Maps from WooCommerce REST API response line_items
+  factory OrderItemModel.fromWcJson(Map<String, dynamic> json) {
+    final imageObj = json['image'] ?? {};
+    final String imageUrl = imageObj['src'] ?? '';
+    final double priceVal = (json['price'] ?? 0.0).toDouble();
+
+    final product = Product(
+      id: (json['product_id'] ?? 0).toString(),
+      name: json['name'] ?? '',
+      brand: '',
+      price: priceVal,
+      oldPrice: priceVal,
+      discount: 0.0,
+      rating: 5.0,
+      reviewsCount: 1,
+      image: imageUrl,
+      images: [imageUrl],
+      description: '',
+      deliveryText: '',
+      dimensions: '',
+      material: 'Solid Wood', // Default fallback material
+      category: '',
+    );
+
+    return OrderItemModel(
+      product: product,
+      quantity: json['quantity'] ?? 1,
+      price: priceVal,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'product': product.toJson(),
@@ -75,6 +106,76 @@ class OrderModel {
       discount: (json['discount'] ?? 0.0).toDouble(),
       deliveryCharges: (json['deliveryCharges'] ?? 0.0).toDouble(),
       totalAmount: (json['totalAmount'] ?? 0.0).toDouble(),
+    );
+  }
+
+  /// Maps from WooCommerce REST API /wc/v3/orders/ response object
+  factory OrderModel.fromWcJson(Map<String, dynamic> json) {
+    final String idVal = (json['id'] ?? '').toString();
+    final String orderNum = json['number'] ?? idVal;
+    
+    // Parse order items
+    final List<OrderItemModel> fetchedItems = (json['line_items'] as List?)
+            ?.map((item) => OrderItemModel.fromWcJson(item))
+            .toList() ??
+        [];
+
+    // Parse shipping address
+    final shippingJson = json['shipping'] ?? {};
+    final billingJson = json['billing'] ?? {};
+    
+    final firstName = shippingJson['first_name'] ?? '';
+    final lastName = shippingJson['last_name'] ?? '';
+    final phone = shippingJson['phone']?.toString().isNotEmpty == true 
+        ? shippingJson['phone'].toString()
+        : (billingJson['phone']?.toString() ?? '');
+
+    final shippingAddress = AddressModel(
+      id: 'wc_shipping',
+      name: '$firstName $lastName'.trim(),
+      phone: phone,
+      addressLine1: shippingJson['address_1'] ?? '',
+      addressLine2: shippingJson['address_2'] ?? '',
+      city: shippingJson['city'] ?? '',
+      state: shippingJson['state'] ?? '',
+      postalCode: shippingJson['postcode'] ?? '',
+      country: shippingJson['country'] ?? 'IN',
+      addressType: 'Shipping',
+      isDefault: true,
+    );
+
+    final double total = double.tryParse(json['total']?.toString() ?? '0.0') ?? 0.0;
+    final double shippingCharges = double.tryParse(json['shipping_total']?.toString() ?? '0.0') ?? 0.0;
+    final double discount = double.tryParse(json['discount_total']?.toString() ?? '0.0') ?? 0.0;
+    final double subtotal = total - shippingCharges + discount;
+
+    final String paymentMethodTitle = json['payment_method_title'] ?? '';
+    final String paymentMethodCode = json['payment_method'] ?? '';
+    final String transactionId = json['transaction_id'] ?? '';
+
+    // Order date parsing
+    DateTime orderDateVal = DateTime.now();
+    try {
+      if (json['date_created'] != null) {
+        orderDateVal = DateTime.parse(json['date_created']);
+      }
+    } catch (_) {}
+
+    return OrderModel(
+      id: idVal,
+      orderNumber: orderNum,
+      items: fetchedItems,
+      shippingAddress: shippingAddress,
+      paymentMethod: paymentMethodTitle.isNotEmpty ? paymentMethodTitle : 'Payment Gateway',
+      paymentDetails: transactionId.isNotEmpty 
+          ? transactionId 
+          : (paymentMethodCode.isNotEmpty ? paymentMethodCode : 'Direct'),
+      orderDate: orderDateVal,
+      status: json['status'] ?? 'pending',
+      subtotal: subtotal,
+      discount: discount,
+      deliveryCharges: shippingCharges,
+      totalAmount: total,
     );
   }
 

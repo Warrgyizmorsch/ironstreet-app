@@ -18,6 +18,16 @@ class OrdersView extends GetView<OrdersController> {
         ? Get.find<OrdersController>()
         : Get.put(OrdersController());
 
+    final ScrollController scrollController = ScrollController();
+    
+    // Add scroll listener to load next page when scrolled near bottom
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >= 
+          scrollController.position.maxScrollExtent - 200) {
+        ordCtrl.loadNextPage();
+      }
+    });
+
     final dateFormatter = DateFormat('dd MMM yyyy, hh:mm a');
 
     return Scaffold(
@@ -38,33 +48,111 @@ class OrdersView extends GetView<OrdersController> {
           onPressed: () => Get.back(),
         ),
       ),
-      body: Obx(() {
-        if (ordCtrl.orders.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.shopping_bag_outlined, size: 80, color: Colors.grey[400]),
-                const SizedBox(height: 16),
-                Text(
-                  'No Orders Placed Yet',
-                  style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey[700]),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Your purchase history will appear here.',
-                  style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey),
-                ),
-              ],
-            ),
-          );
-        }
+      body: RefreshIndicator(
+        onRefresh: () => ordCtrl.fetchUserOrders(isRefresh: true),
+        color: AppColors.primary,
+        child: Obx(() {
+          if (ordCtrl.isLoading.value) {
+            return const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+              ),
+            );
+          }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: ordCtrl.orders.length,
-          itemBuilder: (context, index) {
-            final order = ordCtrl.orders[index];
+          if (ordCtrl.hasError.value) {
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.7,
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline_rounded, size: 64, color: Colors.red[300]),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Failed to load orders',
+                      style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Check your internet connection and swipe down to try again.',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.poppins(fontSize: 11, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 16),
+                    OutlinedButton.icon(
+                      onPressed: () => ordCtrl.fetchUserOrders(),
+                      icon: const Icon(Icons.refresh, size: 16, color: AppColors.primary),
+                      label: Text(
+                        'RETRY',
+                        style: GoogleFonts.poppins(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 11),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: AppColors.primary),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          if (ordCtrl.orders.isEmpty) {
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Container(
+                height: MediaQuery.of(context).size.height * 0.7,
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.shopping_bag_outlined, size: 80, color: Colors.grey[400]),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No Orders Placed Yet',
+                      style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.grey[700]),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Your purchase history will appear here.',
+                      style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          return ListView.builder(
+            controller: scrollController,
+            padding: const EdgeInsets.all(16),
+            itemCount: ordCtrl.orders.length + (ordCtrl.hasMore.value ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (index == ordCtrl.orders.length) {
+                return Obx(() {
+                  return ordCtrl.isMoreLoading.value
+                      ? const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 24),
+                          child: Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                              ),
+                            ),
+                          ),
+                        )
+                      : const SizedBox.shrink();
+                });
+              }
+
+              final order = ordCtrl.orders[index];
             
             // Build Status Chip decoration
             Color statusColor;
@@ -235,6 +323,7 @@ class OrdersView extends GetView<OrdersController> {
           },
         );
       }),
-    );
-  }
+    ),
+  );
+}
 }
