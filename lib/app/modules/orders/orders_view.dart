@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 import 'orders_controller.dart';
 import 'order_detail_view.dart';
+import '../../widgets/shimmer.dart';
 
 class OrdersView extends GetView<OrdersController> {
   const OrdersView({super.key});
@@ -53,10 +54,10 @@ class OrdersView extends GetView<OrdersController> {
         color: AppColors.primary,
         child: Obx(() {
           if (ordCtrl.isLoading.value) {
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-              ),
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: 3,
+              itemBuilder: (context, index) => const OrderCardShimmer(),
             );
           }
 
@@ -136,17 +137,8 @@ class OrdersView extends GetView<OrdersController> {
                 return Obx(() {
                   return ordCtrl.isMoreLoading.value
                       ? const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 24),
-                          child: Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-                              ),
-                            ),
-                          ),
+                          padding: EdgeInsets.only(top: 8, bottom: 16),
+                          child: OrderCardShimmer(),
                         )
                       : const SizedBox.shrink();
                 });
