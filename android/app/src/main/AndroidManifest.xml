@@ -38,6 +38,19 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
+        <!-- Specific UPI Apps -->
+        <package android:name="com.google.android.apps.nbu.paisa.user" /> <!-- Google Pay -->
+        <package android:name="com.phonepe.app" /> <!-- PhonePe -->
+        <package android:name="net.one97.paytm" /> <!-- Paytm -->
+        <package android:name="in.org.npci.upiapp" /> <!-- BHIM -->
+
+        <!-- General intent filter to support other UPI apps -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="upi" />
+        </intent>
+
         <!-- Allow querying phone dialer component -->
         <intent>
             <action android:name="android.intent.action.DIAL"/>

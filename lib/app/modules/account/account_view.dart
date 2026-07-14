@@ -74,9 +74,8 @@ class AccountView extends GetView<AccountController> {
           final isLoading = profCtrl.isLoading.value;
 
           // Display name: prefer full API name, fall back to JWT display name
-          final displayName = user?.name.isNotEmpty == true
-              ? user!.name
-              : accCtrl.name.value;
+          final displayName =
+              user?.name.isNotEmpty == true ? user!.name : accCtrl.name.value;
 
           // Email: prefer API email, fall back to JWT email
           final displayEmail = user?.email.isNotEmpty == true
@@ -139,7 +138,8 @@ class AccountView extends GetView<AccountController> {
                               width: 58,
                               height: 58,
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => _initialsCircle(initials),
+                              errorBuilder: (_, __, ___) =>
+                                  _initialsCircle(initials),
                             ),
                           )
                         : _initialsCircle(initials),
@@ -231,8 +231,7 @@ class AccountView extends GetView<AccountController> {
               const Divider(height: 1),
               _buildSettingsRow('My Orders', targetRoute: Routes.ORDERS),
               const Divider(height: 1),
-              _buildSettingsRow('Your Address Book',
-                  targetRoute: Routes.ADDRESS_LIST),
+              _buildSettingsRow('My Address', targetRoute: Routes.ADDRESS_LIST),
               const Divider(height: 1),
               // _buildSettingsRow('My Reviews & Ratings'),
               // const Divider(height: 1),

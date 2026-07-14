@@ -34,7 +34,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
         ? Get.find<AddressController>()
         : Get.put(AddressController());
 
-
     final formatCurrency = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
@@ -581,14 +580,19 @@ class ProductDetailView extends GetView<ProductDetailController> {
                           ),
                           const SizedBox(height: 16),
                           Obx(() => DeliveryDetailsSection(
-                                selectedAddress:
-                                    cartController.shippingAddress.value?.toAddressModel(),
+                                selectedAddress: cartController
+                                    .shippingAddress.value
+                                    ?.toAddressModel(),
                                 estimatedDeliveryDate:
                                     _calculateDeliveryDate(deliveryCondition),
                                 onAddressTap: () {
-                                  final wcAddr = cartController.shippingAddress.value;
-                                  if (wcAddr != null && (wcAddr.city.isNotEmpty || wcAddr.address1.isNotEmpty)) {
-                                    Get.to(() => AddEditAddressView(address: wcAddr.toAddressModel()));
+                                  final wcAddr =
+                                      cartController.shippingAddress.value;
+                                  if (wcAddr != null &&
+                                      (wcAddr.city.isNotEmpty ||
+                                          wcAddr.address1.isNotEmpty)) {
+                                    Get.to(() => AddEditAddressView(
+                                        address: wcAddr.toAddressModel()));
                                   } else {
                                     Get.to(() => const AddEditAddressView());
                                   }
@@ -1636,6 +1640,4 @@ class ProductDetailView extends GetView<ProductDetailController> {
     final DateTime deliveryDate = DateTime.now().add(const Duration(days: 2));
     return DateFormat('d MMM, EEE').format(deliveryDate);
   }
-
-
 }

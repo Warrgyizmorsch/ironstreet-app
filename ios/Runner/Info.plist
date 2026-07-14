@@ -66,5 +66,13 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>phonepe</string>
+		<string>tez</string>
+		<string>paytmmp</string>
+		<string>bhim</string>
+		<string>upi</string>
+	</array>
 </dict>
 </plist>

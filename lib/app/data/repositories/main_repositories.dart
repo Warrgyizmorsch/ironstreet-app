@@ -419,4 +419,18 @@ class MainRepositories {
       rethrow;
     }
   }
+
+  /// Updates an order status and details (e.g. marking it paid and adding the transaction ID)
+  Future<dynamic> updateOrder({
+    required int orderId,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      final String url = '${AppUrls.orders}/$orderId';
+      final response = await _apiService.putApi(url, data);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
