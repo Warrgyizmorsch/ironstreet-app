@@ -12,6 +12,21 @@ class AddressController extends GetxController {
   // Addresses represents a reactive view of the active WooCommerce session address
   var addresses = <AddressModel>[].obs;
 
+  @override
+  void onInit() {
+    super.onInit();
+    loadAddresses();
+  }
+
+  void loadAddresses() {
+    if (Get.isRegistered<CartController>()) {
+      final cartCtrl = Get.find<CartController>();
+      if (cartCtrl.shippingAddress.value != null) {
+        syncFromWooCommerce(cartCtrl.shippingAddress.value);
+      }
+    }
+  }
+
   void syncFromWooCommerce(dynamic wcAddr) {
     if (wcAddr == null || (wcAddr.firstName.isEmpty && wcAddr.address1.isEmpty)) {
       addresses.clear();

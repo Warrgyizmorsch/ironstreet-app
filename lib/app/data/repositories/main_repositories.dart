@@ -389,4 +389,23 @@ class MainRepositories {
       rethrow;
     }
   }
+
+  /// Initiates the order checkout via the WooCommerce Store API
+  Future<dynamic> placeOrderStoreApi({
+    required String paymentMethod,
+  }) async {
+    try {
+      const String url = '${AppUrls.storeApiUrl}/checkout';
+      final response = await _apiService.postApi(
+        url,
+        queryParameters: {
+          'billing_address': 'Yes',
+          'payment_method': paymentMethod,
+        },
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
