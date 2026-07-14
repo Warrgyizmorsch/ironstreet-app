@@ -72,7 +72,10 @@ class CheckoutController extends GetxController {
     try {
       isProcessing.value = true;
 
-      // 1. Call standard WooCommerce Store API Checkout endpoint to create the order
+      // 1. Call standard WooCommerce Store API GET Checkout to create/sync the checkout-draft
+      await repositories.getCheckoutDraft();
+
+      // 2. Call standard WooCommerce Store API POST Checkout to finalize order & payment redirection
       final response = await repositories.placeOrderStoreApi(
         paymentMethod: 'razorpay',
       );

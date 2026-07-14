@@ -390,6 +390,17 @@ class MainRepositories {
     }
   }
 
+  /// Retrieves the current checkout draft via the WooCommerce Store API
+  Future<dynamic> getCheckoutDraft() async {
+    try {
+      const String url = '${AppUrls.storeApiUrl}/checkout';
+      final response = await _apiService.getApi(url);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   /// Initiates the order checkout via the WooCommerce Store API
   Future<dynamic> placeOrderStoreApi({
     required String paymentMethod,
