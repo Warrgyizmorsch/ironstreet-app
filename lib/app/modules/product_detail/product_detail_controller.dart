@@ -28,12 +28,12 @@ import 'package:get/get.dart';
 import 'package:iron_street_app/app/data/models/product_detail_model.dart';
 import 'package:iron_street_app/app/data/models/product_review_model.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
-import 'package:iron_street_app/app/data/repositories/main_repositories.dart';
+import 'package:iron_street_app/app/data/repositories/product_repository/product_repository.dart';
 
 class ProductDetailController extends GetxController {
-  final MainRepositories repositories;
-
-  ProductDetailController({required this.repositories});
+  final ProductRepository productRepository = Get.isRegistered<ProductRepository>()
+      ? Get.find<ProductRepository>()
+      : Get.put(ProductRepository());
 
   var isLoading = false.obs;
   var isRelatedProductsLoading = false.obs;
@@ -123,7 +123,7 @@ class ProductDetailController extends GetxController {
 
       imageAutoScrollTimer?.cancel();
 
-      dynamic response = await repositories.fetchProductDetail(productId: id);
+      dynamic response = await productRepository.fetchProductDetail(productId: id);
 
       final detail = ProductDetailModel.fromJson(response);
 
@@ -148,7 +148,7 @@ class ProductDetailController extends GetxController {
   Future<void> fetchProductReviews(int id) async {
     try {
       isReviewsLoading.value = true;
-      dynamic response = await repositories.fetchProductReviews(productId: id);
+      dynamic response = await productRepository.fetchProductReviews(productId: id);
       List<ProductReviewModel> fetchedReviews = (response as List)
           .map((json) => ProductReviewModel.fromJson(json))
           .toList();
@@ -195,7 +195,7 @@ class ProductDetailController extends GetxController {
     try {
       isRelatedProductsLoading.value = true;
 
-      dynamic response = await repositories.fetchRelatedProductsByIds(
+      dynamic response = await productRepository.fetchRelatedProductsByIds(
         productIds: relatedIds,
       );
 

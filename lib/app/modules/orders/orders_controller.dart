@@ -1,13 +1,13 @@
 import 'dart:developer';
 import 'package:get/get.dart';
 import '../../data/models/order_model.dart';
-import '../../data/repositories/main_repositories.dart';
+import '../../data/repositories/order_repository/order_repository.dart';
 import '../profile/profile_controller.dart';
 
 class OrdersController extends GetxController {
-  final MainRepositories repositories = Get.isRegistered<MainRepositories>()
-      ? Get.find<MainRepositories>()
-      : Get.put(MainRepositories());
+  final OrderRepository orderRepository = Get.isRegistered<OrderRepository>()
+      ? Get.find<OrderRepository>()
+      : Get.put(OrderRepository());
 
   var orders = <OrderModel>[].obs;
   var isLoading = false.obs;
@@ -69,7 +69,7 @@ class OrdersController extends GetxController {
       }
 
       log('[OrdersController] Fetching page $_page of orders for customer ID: $customerId');
-      final response = await repositories.fetchOrders(
+      final response = await orderRepository.fetchOrders(
         customerId: customerId,
         page: _page,
         perPage: _perPage,
@@ -135,7 +135,7 @@ class OrdersController extends GetxController {
       }
 
       log('[OrdersController] Fetching fresh details for order ID: $id');
-      final response = await repositories.fetchOrderDetail(orderId: id);
+      final response = await orderRepository.fetchOrderDetail(orderId: id);
 
       if (response != null && response is Map<String, dynamic>) {
         activeOrderDetail.value = OrderModel.fromWcJson(response);

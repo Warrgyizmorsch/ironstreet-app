@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../data/models/address_model.dart';
-import '../../data/repositories/main_repositories.dart';
+import '../../data/repositories/address_repository/address_repository.dart';
 import '../cart/cart_controller.dart';
 
 class AddressController extends GetxController {
-  final MainRepositories repositories = Get.isRegistered<MainRepositories>()
-      ? Get.find<MainRepositories>()
-      : Get.put(MainRepositories());
+  final AddressRepository addressRepository = Get.isRegistered<AddressRepository>()
+      ? Get.find<AddressRepository>()
+      : Get.put(AddressRepository());
 
   // Addresses represents a reactive view of the active WooCommerce session address
   var addresses = <AddressModel>[].obs;
@@ -54,7 +54,7 @@ class AddressController extends GetxController {
     try {
       final wcAddress = address.toWcAddress();
       // Update WooCommerce cart session addresses
-      final response = await repositories.updateCustomerAddress(
+      final response = await addressRepository.updateCustomerAddress(
         shippingAddress: wcAddress,
         billingAddress: wcAddress,
       );
@@ -111,7 +111,7 @@ class AddressController extends GetxController {
         'country': '',
         'phone': '',
       };
-      await repositories.updateCustomerAddress(
+      await addressRepository.updateCustomerAddress(
         shippingAddress: emptyAddress,
         billingAddress: emptyAddress,
       );

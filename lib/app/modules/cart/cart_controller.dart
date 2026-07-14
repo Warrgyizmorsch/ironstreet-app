@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import '../../data/models/product_model.dart';
 import '../../data/models/cart_response_model.dart';
-import '../../data/repositories/main_repositories.dart';
+import '../../data/repositories/cart_repository/cart_repository.dart';
 import '../address/address_controller.dart';
 
 class CartItem {
@@ -17,9 +17,9 @@ class CartItem {
 }
 
 class CartController extends GetxController {
-  final MainRepositories repositories = Get.isRegistered<MainRepositories>()
-      ? Get.find<MainRepositories>()
-      : Get.put(MainRepositories());
+  final CartRepository cartRepository = Get.isRegistered<CartRepository>()
+      ? Get.find<CartRepository>()
+      : Get.put(CartRepository());
 
   var cartItems = <CartItem>[].obs;
   var isLoading = false.obs;
@@ -76,7 +76,7 @@ class CartController extends GetxController {
   Future<void> fetchCart() async {
     try {
       isLoading.value = true;
-      final response = await repositories.getCart();
+      final response = await cartRepository.getCart();
       if (response != null) {
         final cartResp = CartResponseModel.fromJson(response);
         final List<CartItem> items = cartResp.items.map((itemModel) {
@@ -100,7 +100,7 @@ class CartController extends GetxController {
   // Add a product to the WooCommerce cart
   Future<void> addToCart(Product product, {int qty = 1}) async {
     try {
-      final response = await repositories.addToCart(
+      final response = await cartRepository.addToCart(
         productId: int.tryParse(product.id) ?? 0,
         quantity: qty,
       );
@@ -131,7 +131,7 @@ class CartController extends GetxController {
         await removeItem(productId);
       } else {
         try {
-          final response = await repositories.updateCartItem(
+          final response = await cartRepository.updateCartItem(
             key: item.key,
             quantity: nextQty,
           );
@@ -159,7 +159,7 @@ class CartController extends GetxController {
     final item = cartItems.firstWhereOrNull((item) => item.product.id == productId);
     if (item != null) {
       try {
-        final response = await repositories.removeCartItem(key: item.key);
+        final response = await cartRepository.removeCartItem(key: item.key);
         if (response != null) {
           final cartResp = CartResponseModel.fromJson(response);
           final List<CartItem> items = cartResp.items.map((itemModel) {

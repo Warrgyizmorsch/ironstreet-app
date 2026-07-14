@@ -7,11 +7,18 @@ import 'package:flutter/material.dart';
 import 'package:iron_street_app/app/data/models/category_model.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/data/models/product_tag_model.dart';
-import 'package:iron_street_app/app/data/repositories/main_repositories.dart';
+import 'package:iron_street_app/app/data/repositories/category_repository/category_repository.dart';
+import 'package:iron_street_app/app/data/repositories/product_repository/product_repository.dart';
 
 class HomeController extends GetxController {
-  final MainRepositories repositories;
-  HomeController({required this.repositories});
+
+  final CategoryRepository categoryRepository = Get.isRegistered<CategoryRepository>()
+      ? Get.find<CategoryRepository>()
+      : Get.put(CategoryRepository());
+
+  final ProductRepository productRepository = Get.isRegistered<ProductRepository>()
+      ? Get.find<ProductRepository>()
+      : Get.put(ProductRepository());
   @override
   void onInit() {
     super.onInit();
@@ -154,7 +161,7 @@ class HomeController extends GetxController {
         isFetchingMoreProducts.value = true;
       }
 
-      final result = await repositories.searchProducts(
+      final result = await productRepository.searchProducts(
         query: query,
         page: searchPage,
         perPage: searchPerPage,
@@ -201,7 +208,7 @@ class HomeController extends GetxController {
     try {
       isCategoriesLoading.value = true;
 
-      dynamic response = await repositories.fetchCategories(
+      dynamic response = await categoryRepository.fetchCategories(
         page: 1,
         perPage: 100,
       );
@@ -249,7 +256,7 @@ class HomeController extends GetxController {
       products.clear(); // Clear old products
 
       // Fetch Page 1
-      dynamic response = await repositories.fetchProductsByCategory(
+      dynamic response = await categoryRepository.fetchProductsByCategory(
         categoryId: activeProductCategoryId.value,
         page: productPage,
         perPage: 10,
@@ -280,7 +287,7 @@ class HomeController extends GetxController {
       isFetchingMoreProducts.value = true;
       productPage++; // Go to next page
 
-      dynamic response = await repositories.fetchProductsByCategory(
+      dynamic response = await categoryRepository.fetchProductsByCategory(
         categoryId: activeProductCategoryId.value,
         page: productPage,
         perPage: 10,
@@ -307,7 +314,7 @@ class HomeController extends GetxController {
     try {
       isCustomerFavoritesLoading.value = true;
 
-      final response = await repositories.fetchRelatedProductsByIds(
+      final response = await productRepository.fetchRelatedProductsByIds(
         productIds: customerFavoriteIds,
       );
 
@@ -326,7 +333,7 @@ class HomeController extends GetxController {
     try {
       isBestSellingChairsLoading.value = true;
 
-      final response = await repositories.fetchProductsByCategory(
+      final response = await categoryRepository.fetchProductsByCategory(
         categoryId: 203,
         perPage: 10,
         page: 1,
@@ -347,7 +354,7 @@ class HomeController extends GetxController {
     try {
       isOutdoorFurnitureLoading.value = true;
 
-      final response = await repositories.fetchProductsByCategory(
+      final response = await categoryRepository.fetchProductsByCategory(
         categoryId: 141,
         perPage: 10,
         page: 1,
@@ -368,7 +375,7 @@ class HomeController extends GetxController {
     try {
       isTagsLoading.value = true;
 
-      final tags = await repositories.getProductTags();
+      final tags = await productRepository.getProductTags();
 
       // only tags that have products
       final activeTags = tags.where((tag) => tag.count > 1).toList();
@@ -392,7 +399,7 @@ class HomeController extends GetxController {
       tagLoadingMap[tagId] = true;
       tagLoadingMap.refresh();
 
-      final products = await repositories.getProductsByTag(
+      final products = await productRepository.getProductsByTag(
         tagId: tagId,
         perPage: 10,
       );

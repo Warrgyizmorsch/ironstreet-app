@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
-import 'package:iron_street_app/app/data/repositories/main_repositories.dart';
+import 'package:iron_street_app/app/data/repositories/wishlist_repository/wishlist_repository.dart';
 
 class WishlistController extends GetxController {
-  final MainRepositories repositories = Get.isRegistered<MainRepositories>()
-      ? Get.find<MainRepositories>()
-      : Get.put(MainRepositories());
+  final WishlistRepository wishlistRepository = Get.isRegistered<WishlistRepository>()
+      ? Get.find<WishlistRepository>()
+      : Get.put(WishlistRepository());
 
   final SessionManager _sessionManager = SessionManager();
 
@@ -25,7 +25,7 @@ class WishlistController extends GetxController {
     if (await _sessionManager.isLoggedIn()) {
       try {
         isLoading.value = true;
-        final data = await repositories.fetchWishlist();
+        final data = await wishlistRepository.fetchWishlist();
         wishlistId.value = data['wishlist_id'] ?? 0;
         wishlistItems.assignAll(data['items'] ?? []);
       } catch (e) {
@@ -61,12 +61,12 @@ class WishlistController extends GetxController {
     if (await _sessionManager.isLoggedIn()) {
       try {
         if (exists) {
-          await repositories.removeFromWishlist(
+          await wishlistRepository.removeFromWishlist(
             productId: product.id,
             wishlistId: wishlistId.value,
           );
         } else {
-          await repositories.addToWishlist(
+          await wishlistRepository.addToWishlist(
             productId: product.id,
             wishlistId: wishlistId.value,
           );

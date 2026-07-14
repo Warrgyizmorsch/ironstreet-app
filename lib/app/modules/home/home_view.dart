@@ -650,7 +650,8 @@ class HomeView extends GetView<HomeController> {
 
               // 2. Show empty state if no subcategories exist
               if (controller.subCategories.isEmpty) {
-                return const Center(child: Text("No categories available"));
+                // return const Center(child: Text("No categories available"));
+                return const SizedBox.shrink();
               }
 
               // 3. Render the flat list in a double-row horizontal grid

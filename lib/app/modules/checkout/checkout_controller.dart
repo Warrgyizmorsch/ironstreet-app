@@ -1,15 +1,20 @@
 import 'package:get/get.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import '../../data/repositories/main_repositories.dart';
+import '../../data/repositories/checkout_repository/checkout_repository.dart';
+import '../../data/repositories/order_repository/order_repository.dart';
 import '../cart/cart_controller.dart';
 import '../payment/payment_success_view.dart';
 import '../payment/payment_failed_view.dart';
 
 class CheckoutController extends GetxController {
   final cartCtrl = Get.find<CartController>();
-  final MainRepositories repositories = Get.isRegistered<MainRepositories>()
-      ? Get.find<MainRepositories>()
-      : Get.put(MainRepositories());
+  final CheckoutRepository checkoutRepository = Get.isRegistered<CheckoutRepository>()
+      ? Get.find<CheckoutRepository>()
+      : Get.put(CheckoutRepository());
+
+  final OrderRepository orderRepository = Get.isRegistered<OrderRepository>()
+      ? Get.find<OrderRepository>()
+      : Get.put(OrderRepository());
 
   var appliedCoupon = ''.obs;
   var couponDiscount = 0.0.obs;
@@ -39,7 +44,7 @@ class CheckoutController extends GetxController {
 
     try {
       // 1. Mark order as paid in WooCommerce via PUT /orders/<id>
-      await repositories.updateOrder(
+      await orderRepository.updateOrder(
         orderId: _activeOrderId!,
         data: {
           'status': 'processing',
@@ -153,10 +158,10 @@ class CheckoutController extends GetxController {
       isProcessing.value = true;
 
       // 1. Call standard WooCommerce Store API GET Checkout to create/sync the checkout-draft
-      await repositories.getCheckoutDraft();
+      await checkoutRepository.getCheckoutDraft();
 
       // 2. Call standard WooCommerce Store API POST Checkout to finalize order & payment redirection
-      final response = await repositories.placeOrderStoreApi(
+      final response = await checkoutRepository.placeOrderStoreApi(
         paymentMethod: 'razorpay',
       );
 
