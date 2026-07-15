@@ -745,7 +745,18 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                 final bool productInCart =
                                     cartController.isInCart(prod.id.toString());
                                 if (!productInCart) {
-                                  cartController.addToCart(Product(
+                                  // Show progress loader dialog
+                                  Get.dialog(
+                                    const Center(
+                                      child: CircularProgressIndicator(
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                    barrierDismissible: false,
+                                  );
+
+                                  // Wait for product to be added to remote WooCommerce cart
+                                  await cartController.addToCart(Product(
                                       id: prod.id.toString(),
                                       name: prod.name,
                                       brand: brandName.isNotEmpty
@@ -767,8 +778,10 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                       category: prod.categories.isNotEmpty
                                           ? prod.categories.first.name
                                           : 'Furniture'));
+
+                                  // Dismiss progress loader
+                                  Get.back();
                                 }
-                                await Future.delayed(Duration.zero);
                                 Get.toNamed(Routes.CHECKOUT);
                               }
                             : null,
