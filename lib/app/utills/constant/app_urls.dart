@@ -1,51 +1,47 @@
 import 'dart:convert';
 
 class AppUrls {
-  // WooCommerce Base URL
-  static const String baseUrl = 'https://ironstreets.com/wp-json/wc/v3';
+  // 1. Central Base Domains
+  static const String domain = 'https://ironstreets.com';
+  static const String wpJsonBase = '$domain/wp-json';
 
-  // WooCommerce Consumer Key & Secret (Replace with your actual keys)
+  // 2. WooCommerce Consumer Key & Secret
   static const String _consumerKey =
       'ck_33f319670ab8218b0145c499f741ed1d075d6041';
   static const String _consumerSecret =
       'cs_e9bbf1764d5097b1e535b2c900800ae69f160016';
 
-  // Helper to generate the Basic Auth Header required by WooCommerce
-  static String get basicAuthHeader {
-    return 'Basic ${base64Encode(utf8.encode('$_consumerKey:$_consumerSecret'))}';
-  }
+  // Caches base64 encoded auth header once on load instead of recomputing per request
+  static final String basicAuthHeader =
+      'Basic ${base64Encode(utf8.encode("$_consumerKey:$_consumerSecret"))}';
 
-  // Endpoints
-  static const String products = '$baseUrl/products';
-  static const String categories = '$baseUrl/products/categories';
-  static const String orders = '$baseUrl/orders';
-  static const String customers = '$baseUrl/customers';
-  static const String tags = '$baseUrl/products/tags';
+  // 3. WooCommerce REST API (v3) Endpoints
+  static const String wcV3Base = '$wpJsonBase/wc/v3';
+  static const String baseUrl = wcV3Base; // Preserved for compatibility
+  static const String products = '$wcV3Base/products';
+  static const String categories = '$wcV3Base/products/categories';
+  static const String orders = '$wcV3Base/orders';
+  static const String customers = '$wcV3Base/customers';
+  static const String tags = '$wcV3Base/products/tags';
 
-  // YITH Wishlist endpoint (from previous setup)
-  static const String wishlist =
-      'https://ironstreets.com/wp-json/yith/wishlist/v1/products';
-
-  // WooCommerce Store API Cart
-  static const String storeApiUrl =
-      'https://ironstreets.com/wp-json/wc/store/v1';
-  static const String cartUrl = '$storeApiUrl/cart?fresh=1';
+  // 4. WooCommerce Store API (v1) Cart & Checkout Endpoints
+  
+  static const String storeApiUrl = '$wpJsonBase/wc/store/v1';
+  static const String cartUrl = '$storeApiUrl/cart';
   static const String cartAddItem = '$cartUrl/add-item';
   static const String cartUpdateItem = '$cartUrl/update-item';
   static const String cartRemoveItem = '$cartUrl/remove-item';
   static const String updateCustomer = '$cartUrl/update-customer';
 
-  // YITH Wishlist endpoints
-  static const String getWishlist =
-      'https://ironstreets.com/wp-json/iron-app/v1/wishlist/items?fresh=1';
-  static const String mutateWishlist =
-      'https://ironstreets.com/wp-json/yith/wishlist/v1/items';
+  // 5. YITH / Custom Wishlist Endpoints
+  static const String wishlist = '$wpJsonBase/yith/wishlist/v1/products';
+  static const String getWishlist = '$wpJsonBase/iron-app/v1/wishlist/items?fresh=1';
+  static const String mutateWishlist = '$wpJsonBase/yith/wishlist/v1/items';
 
-  // WordPress REST API — authenticated user profile
+  // 6. WordPress REST API Endpoints (User Profile)
+  static const String wpV2Base = '$wpJsonBase/wp/v2';
   static const String userProfile =
-      'https://ironstreets.com/wp-json/wp/v2/users/me?context=edit&_fields=id,name,first_name,last_name,email,registered_date,roles,url';
-
-  // WordPress REST API — update authenticated user profile (POST)
+      '$wpV2Base/users/me?context=edit&_fields=id,name,first_name,last_name,email,registered_date,roles,url';
   static const String userProfileUpdate =
-      'https://ironstreets.com/wp-json/wp/v2/users/me?_fields=id,name,first_name,last_name,email,registered_date,roles,url';
+      '$wpV2Base/users/me?_fields=id,name,first_name,last_name,email,registered_date,roles,url';
 }

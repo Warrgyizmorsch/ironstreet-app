@@ -17,7 +17,7 @@ class NetworkApiServices extends BaseApiServices {
         receiveTimeout: const Duration(seconds: 30),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': AppUrls.basicAuthHeader, 
+          'Authorization': AppUrls.basicAuthHeader,
         },
       ),
     );
@@ -32,7 +32,8 @@ class NetworkApiServices extends BaseApiServices {
   }
 
   @override
-  Future<dynamic> getApi(String url, {
+  Future<dynamic> getApi(
+    String url, {
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? headers,
   }) async {
@@ -208,8 +209,10 @@ class CartInterceptor extends Interceptor {
   final SessionManager _sessionManager = Get.find<SessionManager>();
 
   @override
-  Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    final isCustomApi = options.path.contains('/iron-app/') || options.path.contains('/yith/');
+  Future<void> onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    final isCustomApi =
+        options.path.contains('/iron-app/') || options.path.contains('/yith/');
 
     if (options.path.contains('/wc/store/') || isCustomApi) {
       options.headers.remove('Authorization'); // Remove WC admin basic auth
@@ -242,14 +245,15 @@ class CartInterceptor extends Interceptor {
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
     // Capture and persist Cart-Token and Nonce from response headers
-    final cartTokenHeader = response.headers.value('cart-token') ?? response.headers.value('Cart-Token');
+    final cartTokenHeader = response.headers.value('cart-token') ??
+        response.headers.value('Cart-Token');
     if (cartTokenHeader != null && cartTokenHeader.isNotEmpty) {
       await _sessionManager.saveCartToken(cartTokenHeader);
     }
 
-    final nonceHeader = response.headers.value('nonce') ?? 
-                        response.headers.value('Nonce') ?? 
-                        response.headers.value('X-WC-Store-API-Nonce');
+    final nonceHeader = response.headers.value('nonce') ??
+        response.headers.value('Nonce') ??
+        response.headers.value('X-WC-Store-API-Nonce');
     if (nonceHeader != null && nonceHeader.isNotEmpty) {
       await _sessionManager.saveNonce(nonceHeader);
     }
