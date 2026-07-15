@@ -12,13 +12,9 @@ import 'package:iron_street_app/app/data/repositories/product_repository/product
 
 class HomeController extends GetxController {
 
-  final CategoryRepository categoryRepository = Get.isRegistered<CategoryRepository>()
-      ? Get.find<CategoryRepository>()
-      : Get.put(CategoryRepository());
+  final CategoryRepository categoryRepository = Get.find<CategoryRepository>();
 
-  final ProductRepository productRepository = Get.isRegistered<ProductRepository>()
-      ? Get.find<ProductRepository>()
-      : Get.put(ProductRepository());
+  final ProductRepository productRepository = Get.find<ProductRepository>();
   @override
   void onInit() {
     super.onInit();

@@ -17,9 +17,7 @@ class CartItem {
 }
 
 class CartController extends GetxController {
-  final CartRepository cartRepository = Get.isRegistered<CartRepository>()
-      ? Get.find<CartRepository>()
-      : Get.put(CartRepository());
+  final CartRepository cartRepository = Get.find<CartRepository>();
 
   var cartItems = <CartItem>[].obs;
   var isLoading = false.obs;

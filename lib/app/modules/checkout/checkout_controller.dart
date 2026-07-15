@@ -8,13 +8,8 @@ import '../payment/payment_failed_view.dart';
 
 class CheckoutController extends GetxController {
   final cartCtrl = Get.find<CartController>();
-  final CheckoutRepository checkoutRepository = Get.isRegistered<CheckoutRepository>()
-      ? Get.find<CheckoutRepository>()
-      : Get.put(CheckoutRepository());
-
-  final OrderRepository orderRepository = Get.isRegistered<OrderRepository>()
-      ? Get.find<OrderRepository>()
-      : Get.put(OrderRepository());
+  final CheckoutRepository checkoutRepository = Get.find<CheckoutRepository>();
+  final OrderRepository orderRepository = Get.find<OrderRepository>();
 
   var appliedCoupon = ''.obs;
   var couponDiscount = 0.0.obs;

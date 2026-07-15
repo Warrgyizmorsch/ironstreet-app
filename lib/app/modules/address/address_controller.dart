@@ -5,9 +5,7 @@ import '../../data/repositories/address_repository/address_repository.dart';
 import '../cart/cart_controller.dart';
 
 class AddressController extends GetxController {
-  final AddressRepository addressRepository = Get.isRegistered<AddressRepository>()
-      ? Get.find<AddressRepository>()
-      : Get.put(AddressRepository());
+  final AddressRepository addressRepository = Get.find<AddressRepository>();
 
   // Addresses represents a reactive view of the active WooCommerce session address
   var addresses = <AddressModel>[].obs;
@@ -16,6 +14,13 @@ class AddressController extends GetxController {
   void onInit() {
     super.onInit();
     loadAddresses();
+
+    // Reactively watch for cart shipping address updates
+    if (Get.isRegistered<CartController>()) {
+      ever(Get.find<CartController>().shippingAddress, (wcAddr) {
+        syncFromWooCommerce(wcAddr);
+      });
+    }
   }
 
   void loadAddresses() {

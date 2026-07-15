@@ -5,11 +5,9 @@ import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/data/repositories/wishlist_repository/wishlist_repository.dart';
 
 class WishlistController extends GetxController {
-  final WishlistRepository wishlistRepository = Get.isRegistered<WishlistRepository>()
-      ? Get.find<WishlistRepository>()
-      : Get.put(WishlistRepository());
+  final WishlistRepository wishlistRepository = Get.find<WishlistRepository>();
 
-  final SessionManager _sessionManager = SessionManager();
+  final SessionManager _sessionManager = Get.find<SessionManager>();
 
   final RxList<ProductListModel> wishlistItems = <ProductListModel>[].obs;
   var wishlistId = 0.obs;
@@ -22,7 +20,7 @@ class WishlistController extends GetxController {
   }
 
   Future<void> fetchWishlistFromServer() async {
-    if (await _sessionManager.isLoggedIn()) {
+    if (_sessionManager.isLoggedIn()) {
       try {
         isLoading.value = true;
         final data = await wishlistRepository.fetchWishlist();
@@ -58,7 +56,7 @@ class WishlistController extends GetxController {
       );
     }
 
-    if (await _sessionManager.isLoggedIn()) {
+    if (_sessionManager.isLoggedIn()) {
       try {
         if (exists) {
           await wishlistRepository.removeFromWishlist(

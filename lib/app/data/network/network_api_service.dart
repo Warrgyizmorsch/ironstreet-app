@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:get/get.dart' hide Response, FormData, MultipartFile;
 import 'package:dio/dio.dart';
 import 'package:iron_street_app/app/data/network/base_api_service.dart';
 import 'package:iron_street_app/app/utills/constant/app_urls.dart';
@@ -12,8 +13,8 @@ class NetworkApiServices extends BaseApiServices {
   NetworkApiServices() {
     _dio = Dio(
       BaseOptions(
-        connectTimeout: const Duration(seconds: 15),
-        receiveTimeout: const Duration(seconds: 15),
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': AppUrls.basicAuthHeader, 
@@ -204,7 +205,7 @@ class NetworkApiServices extends BaseApiServices {
 }
 
 class CartInterceptor extends Interceptor {
-  final SessionManager _sessionManager = SessionManager();
+  final SessionManager _sessionManager = Get.find<SessionManager>();
 
   @override
   Future<void> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
@@ -214,20 +215,20 @@ class CartInterceptor extends Interceptor {
       options.headers.remove('Authorization'); // Remove WC admin basic auth
 
       // Inject Customer Bearer token (if logged in)
-      final token = await _sessionManager.getToken();
+      final token = _sessionManager.getToken();
       if (token.isNotEmpty) {
         options.headers['Authorization'] = 'Bearer $token';
       }
 
       if (options.path.contains('/wc/store/')) {
         // Inject Cart Token (tracks guest/user identity)
-        final cartToken = await _sessionManager.getCartToken();
+        final cartToken = _sessionManager.getCartToken();
         if (cartToken.isNotEmpty) {
           options.headers['Cart-Token'] = cartToken;
         }
 
         // Inject CSRF Nonce
-        final nonce = await _sessionManager.getNonce();
+        final nonce = _sessionManager.getNonce();
         if (nonce.isNotEmpty) {
           options.headers['Nonce'] = nonce;
           options.headers['X-WC-Store-API-Nonce'] = nonce;

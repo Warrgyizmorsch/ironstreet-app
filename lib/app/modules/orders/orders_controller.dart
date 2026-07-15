@@ -5,9 +5,7 @@ import '../../data/repositories/order_repository/order_repository.dart';
 import '../profile/profile_controller.dart';
 
 class OrdersController extends GetxController {
-  final OrderRepository orderRepository = Get.isRegistered<OrderRepository>()
-      ? Get.find<OrderRepository>()
-      : Get.put(OrderRepository());
+  final OrderRepository orderRepository = Get.find<OrderRepository>();
 
   var orders = <OrderModel>[].obs;
   var isLoading = false.obs;

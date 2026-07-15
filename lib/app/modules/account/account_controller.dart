@@ -5,10 +5,11 @@ import '../address/address_controller.dart';
 import '../cart/cart_controller.dart';
 import '../wishlist/wishlist_controller.dart';
 import '../profile/profile_controller.dart';
+import '../orders/orders_controller.dart';
 
 class AccountController extends GetxController {
-  final UserRepository _userRepository = UserRepository();
-  final SessionManager _sessionManager = SessionManager();
+  final UserRepository _userRepository = Get.find<UserRepository>();
+  final SessionManager _sessionManager = Get.find<SessionManager>();
 
   var isLoggedIn = false.obs;
   var isLoading = false.obs;
@@ -27,9 +28,9 @@ class AccountController extends GetxController {
 
   Future<void> _checkLoginStatus() async {
     try {
-      final savedToken = await _sessionManager.getToken();
-      final savedEmail = await _sessionManager.getEmail();
-      final savedName = await _sessionManager.getName();
+      final savedToken = _sessionManager.getToken();
+      final savedEmail = _sessionManager.getEmail();
+      final savedName = _sessionManager.getName();
 
       if (savedToken.isNotEmpty) {
         token.value = savedToken;
@@ -210,6 +211,18 @@ class AccountController extends GetxController {
       // Clear in-memory wishlist details
       if (Get.isRegistered<WishlistController>()) {
         Get.find<WishlistController>().clearWishlist();
+      }
+
+      // Clear in-memory profile details
+      if (Get.isRegistered<ProfileController>()) {
+        Get.find<ProfileController>().userProfile.value = null;
+      }
+
+      // Clear in-memory orders details
+      if (Get.isRegistered<OrdersController>()) {
+        final ordCtrl = Get.find<OrdersController>();
+        ordCtrl.orders.clear();
+        ordCtrl.activeOrderDetail.value = null;
       }
 
       Get.snackbar(

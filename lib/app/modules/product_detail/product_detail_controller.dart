@@ -31,9 +31,7 @@ import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/data/repositories/product_repository/product_repository.dart';
 
 class ProductDetailController extends GetxController {
-  final ProductRepository productRepository = Get.isRegistered<ProductRepository>()
-      ? Get.find<ProductRepository>()
-      : Get.put(ProductRepository());
+  final ProductRepository productRepository = Get.find<ProductRepository>();
 
   var isLoading = false.obs;
   var isRelatedProductsLoading = false.obs;

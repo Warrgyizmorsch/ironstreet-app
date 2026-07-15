@@ -11,7 +11,6 @@ import '../../routes/app_pages.dart';
 import '../wishlist/wishlist_controller.dart';
 import '../../data/models/product_list_model.dart';
 import '../../utills/theme/app_colors.dart';
-import '../checkout/checkout_controller.dart';
 import '../address/address_controller.dart';
 import '../address/add_edit_address_view.dart';
 
@@ -25,9 +24,11 @@ class CartView extends GetView<CartController> {
       Get.put(AddressController());
     }
 
-    final checkoutController = Get.isRegistered<CheckoutController>()
-        ? Get.find<CheckoutController>()
-        : Get.put(CheckoutController());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchCart();
+    });
+
+
 
     final formatCurrency = NumberFormat.currency(
       locale: 'en_IN',
@@ -74,29 +75,43 @@ class CartView extends GetView<CartController> {
       ),
       body: Obx(() {
         if (controller.cartItems.isEmpty) {
-          return const EmptyCartState();
+          return RefreshIndicator(
+            onRefresh: () => controller.fetchCart(),
+            color: AppColors.primary,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 120,
+                child: const EmptyCartState(),
+              ),
+            ),
+          );
         }
 
         return Column(
           children: [
             // Delivery Location Section
-            DeliveryLocationSection(checkoutController: checkoutController),
+            const DeliveryLocationSection(),
 
             // List of cart items
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                itemCount: controller.cartItems.length,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final item = controller.cartItems[index];
-                  return CartItemCard(
-                    item: item,
-                    controller: controller,
-                    wishlistController: wishlistController,
-                    formatCurrency: formatCurrency,
-                  );
-                },
+              child: RefreshIndicator(
+                onRefresh: () => controller.fetchCart(),
+                color: AppColors.primary,
+                child: ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  itemCount: controller.cartItems.length,
+                  physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                  itemBuilder: (context, index) {
+                    final item = controller.cartItems[index];
+                    return CartItemCard(
+                      item: item,
+                      controller: controller,
+                      wishlistController: wishlistController,
+                      formatCurrency: formatCurrency,
+                    );
+                  },
+                ),
               ),
             ),
 
@@ -113,11 +128,8 @@ class CartView extends GetView<CartController> {
 }
 
 class DeliveryLocationSection extends StatelessWidget {
-  final CheckoutController checkoutController;
-
   const DeliveryLocationSection({
     super.key,
-    required this.checkoutController,
   });
 
   @override

@@ -27,16 +27,19 @@ class AppUrls {
       'https://ironstreets.com/wp-json/yith/wishlist/v1/products';
 
   // WooCommerce Store API Cart
-  static const String storeApiUrl = 'https://ironstreets.com/wp-json/wc/store/v1';
-  static const String cartUrl = '$storeApiUrl/cart';
+  static const String storeApiUrl =
+      'https://ironstreets.com/wp-json/wc/store/v1';
+  static const String cartUrl = '$storeApiUrl/cart?fresh=1';
   static const String cartAddItem = '$cartUrl/add-item';
   static const String cartUpdateItem = '$cartUrl/update-item';
   static const String cartRemoveItem = '$cartUrl/remove-item';
   static const String updateCustomer = '$cartUrl/update-customer';
 
   // YITH Wishlist endpoints
-  static const String getWishlist = 'https://ironstreets.com/wp-json/iron-app/v1/wishlist/items?fresh=1';
-  static const String mutateWishlist = 'https://ironstreets.com/wp-json/yith/wishlist/v1/items';
+  static const String getWishlist =
+      'https://ironstreets.com/wp-json/iron-app/v1/wishlist/items?fresh=1';
+  static const String mutateWishlist =
+      'https://ironstreets.com/wp-json/yith/wishlist/v1/items';
 
   // WordPress REST API — authenticated user profile
   static const String userProfile =

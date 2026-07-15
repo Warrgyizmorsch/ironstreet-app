@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
+import '../../widgets/shimmer.dart';
 import 'orders_controller.dart';
 
 class OrderDetailView extends StatelessWidget {
@@ -50,11 +51,7 @@ class OrderDetailView extends StatelessWidget {
 
         if (order == null) {
           if (isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
-              ),
-            );
+            return const OrderDetailShimmer();
           }
           return Center(
             child: Text(

@@ -1,32 +1,36 @@
 import 'dart:developer';
-
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SessionManager {
+class SessionManager extends GetxService {
   static const String _keyToken = 'auth_token';
   static const String _keyEmail = 'auth_email';
   static const String _keyName = 'auth_name';
   static const String _keyCartToken = 'cart_token';
   static const String _keyNonce = 'cart_nonce';
+  static const String _keyAddresses = 'saved_addresses';
 
-  Future<void> saveCartToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyCartToken, token);
+  late final SharedPreferences _prefs;
+
+  Future<SessionManager> init() async {
+    _prefs = await SharedPreferences.getInstance();
+    return this;
   }
 
-  Future<String> getCartToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_keyCartToken) ?? '';
+  Future<void> saveCartToken(String token) async {
+    await _prefs.setString(_keyCartToken, token);
+  }
+
+  String getCartToken() {
+    return _prefs.getString(_keyCartToken) ?? '';
   }
 
   Future<void> saveNonce(String nonce) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyNonce, nonce);
+    await _prefs.setString(_keyNonce, nonce);
   }
 
-  Future<String> getNonce() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_keyNonce) ?? '';
+  String getNonce() {
+    return _prefs.getString(_keyNonce) ?? '';
   }
 
   Future<void> saveSession({
@@ -34,57 +38,46 @@ class SessionManager {
     required String email,
     required String name,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyToken, token);
-    await prefs.setString(_keyEmail, email);
-    await prefs.setString(_keyName, name);
+    await _prefs.setString(_keyToken, token);
+    await _prefs.setString(_keyEmail, email);
+    await _prefs.setString(_keyName, name);
   }
 
-  Future<String> getToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_keyToken) ?? '';
+  String getToken() {
+    return _prefs.getString(_keyToken) ?? '';
   }
 
-  Future<String> getEmail() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_keyEmail) ?? '';
+  String getEmail() {
+    return _prefs.getString(_keyEmail) ?? '';
   }
 
-  Future<String> getName() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_keyName) ?? '';
+  String getName() {
+    return _prefs.getString(_keyName) ?? '';
   }
 
-  Future<bool> isLoggedIn() async {
-    final token = await getToken();
-    return token.isNotEmpty;
+  bool isLoggedIn() {
+    return getToken().isNotEmpty;
   }
-
-  static const String _keyAddresses = 'saved_addresses';
 
   Future<void> saveAddresses(String addressesJson) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyAddresses, addressesJson);
+    await _prefs.setString(_keyAddresses, addressesJson);
   }
 
-  Future<String> getAddresses() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_keyAddresses) ?? '';
+  String getAddresses() {
+    return _prefs.getString(_keyAddresses) ?? '';
   }
 
   Future<void> clearNonce() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_keyNonce);
+    await _prefs.remove(_keyNonce);
   }
 
   Future<void> clearSession() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_keyToken);
-    await prefs.remove(_keyEmail);
-    await prefs.remove(_keyName);
-    await prefs.remove(_keyAddresses);
-    await prefs.remove(_keyCartToken);
-    await prefs.remove(_keyNonce);
+    await _prefs.remove(_keyToken);
+    await _prefs.remove(_keyEmail);
+    await _prefs.remove(_keyName);
+    await _prefs.remove(_keyAddresses);
+    await _prefs.remove(_keyCartToken);
+    await _prefs.remove(_keyNonce);
     log('session clearing');
   }
 }

@@ -3,12 +3,16 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'app/routes/app_pages.dart';
+import 'app/bindings/initial_binding.dart';
 
-void main() {
+import 'app/data/local/session_manager.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Get.putAsync(() => SessionManager().init());
   runApp(const IronStreetApp());
 }
-
+ 
 class IronStreetApp extends StatelessWidget {
   const IronStreetApp({super.key});
 
@@ -16,6 +20,7 @@ class IronStreetApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Iron Street',
+      initialBinding: InitialBinding(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         scaffoldBackgroundColor: const Color(0xFFF6F6F6),

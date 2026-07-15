@@ -6,8 +6,8 @@ import '../../data/repositories/user_repository/user_repository.dart';
 import '../account/account_controller.dart';
 
 class ProfileController extends GetxController {
-  final UserRepository _userRepository = UserRepository();
-  final SessionManager _sessionManager = SessionManager();
+  final UserRepository _userRepository = Get.find<UserRepository>();
+  final SessionManager _sessionManager = Get.find<SessionManager>();
 
   final userProfile = Rxn<UserModel>();
   var isLoading = false.obs;
@@ -32,7 +32,7 @@ class ProfileController extends GetxController {
       isLoading.value = true;
       hasError.value = false;
 
-      final token = await _sessionManager.getToken();
+      final token = _sessionManager.getToken();
       if (token.isEmpty) {
         log('[ProfileController] No token — skipping profile fetch');
         return;
@@ -91,7 +91,7 @@ class ProfileController extends GetxController {
     try {
       isSaving.value = true;
 
-      final token = await _sessionManager.getToken();
+      final token = _sessionManager.getToken();
       if (token.isEmpty) {
         Get.snackbar(
           'Error',
