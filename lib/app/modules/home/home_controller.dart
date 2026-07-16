@@ -18,6 +18,10 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    final args = Get.arguments;
+    if (args is Map && args['tabIndex'] is int) {
+      currentIndex.value = args['tabIndex'];
+    }
     _startTimer();
     debounce<String>(
       searchQuery,

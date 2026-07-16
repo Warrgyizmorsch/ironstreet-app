@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import 'package:iron_street_app/app/modules/home/home_controller.dart';
 import 'wishlist_controller.dart';
 import '../cart/cart_controller.dart';
 import '../../data/models/product_list_model.dart';
@@ -312,7 +313,12 @@ class WishlistItemCard extends StatelessWidget {
             ),
             onPressed: () {
               Get.back(); // Close dialog
-              Get.toNamed(Routes.ACCOUNT); // Go to login
+              if (Get.isRegistered<HomeController>()) {
+                Get.find<HomeController>().currentIndex.value = 4;
+                Get.until((route) => Get.currentRoute == Routes.HOME);
+              } else {
+                Get.offAllNamed(Routes.HOME, arguments: {'tabIndex': 4});
+              }
             },
             child: Text(
               'Login',

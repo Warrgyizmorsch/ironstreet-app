@@ -16,6 +16,7 @@ import '../../widgets/shimmer.dart';
 import '../../widgets/product_card.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'package:iron_street_app/app/modules/home/home_controller.dart';
 import 'product_detail_controller.dart';
 import '../cart/cart_controller.dart';
 import '../wishlist/wishlist_controller.dart';
@@ -1709,7 +1710,12 @@ class ProductDetailView extends GetView<ProductDetailController> {
             ),
             onPressed: () {
               Get.back(); // Close dialog
-              Get.toNamed(Routes.ACCOUNT); // Go to login
+              if (Get.isRegistered<HomeController>()) {
+                Get.find<HomeController>().currentIndex.value = 4;
+                Get.until((route) => Get.currentRoute == Routes.HOME);
+              } else {
+                Get.offAllNamed(Routes.HOME, arguments: {'tabIndex': 4});
+              }
             },
             child: Text(
               'Login',

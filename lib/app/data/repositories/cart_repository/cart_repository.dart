@@ -39,7 +39,6 @@ class CartRepository {
         },
       );
       return response;
-      
     } catch (e) {
       rethrow;
     }
