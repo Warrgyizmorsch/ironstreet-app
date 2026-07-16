@@ -41,10 +41,12 @@ class NetworkController extends GetxController {
       isOffline.value = offline;
       if (offline) {
         CustomToast.show(
-          'No Internet Connection',
+          'No Internet Connection. Some features may be offline.',
           isError: true,
+          isPersistent: true,
         );
       } else {
+        CustomToast.dismissPersistent();
         CustomToast.show(
           'Internet connection restored!',
           isSuccess: true,

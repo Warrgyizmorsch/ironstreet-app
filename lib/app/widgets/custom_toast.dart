@@ -5,11 +5,21 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CustomToast {
-  static void show(String message, {bool isSuccess = false, bool isError = false}) {
+  static OverlayEntry? _persistentEntry;
+
+  static void show(
+    String message, {
+    bool isSuccess = false,
+    bool isError = false,
+    bool isPersistent = false,
+  }) {
+    if (isPersistent) {
+      dismissPersistent();
+    }
+
     final overlayState = Get.key.currentState?.overlay;
 
     if (overlayState == null) {
-      // Fallback if overlay state is not ready
       Get.rawSnackbar(
         message: message,
         snackPosition: SnackPosition.BOTTOM,
@@ -29,13 +39,28 @@ class CustomToast {
         message: message,
         isSuccess: isSuccess,
         isError: isError,
+        isPersistent: isPersistent,
         onDismiss: () {
           overlayEntry.remove();
+          if (isPersistent && _persistentEntry == overlayEntry) {
+            _persistentEntry = null;
+          }
         },
       ),
     );
 
+    if (isPersistent) {
+      _persistentEntry = overlayEntry;
+    }
+
     overlayState.insert(overlayEntry);
+  }
+
+  static void dismissPersistent() {
+    if (_persistentEntry != null) {
+      _persistentEntry!.remove();
+      _persistentEntry = null;
+    }
   }
 }
 
@@ -43,12 +68,14 @@ class _ToastWidget extends StatefulWidget {
   final String message;
   final bool isSuccess;
   final bool isError;
+  final bool isPersistent;
   final VoidCallback onDismiss;
 
   const _ToastWidget({
     required this.message,
     required this.isSuccess,
     required this.isError,
+    required this.isPersistent,
     required this.onDismiss,
   });
 
@@ -82,13 +109,15 @@ class _ToastWidgetState extends State<_ToastWidget> with SingleTickerProviderSta
 
     _controller.forward();
 
-    // Auto dismiss after 2.5 seconds
-    Future.delayed(const Duration(milliseconds: 2500), () async {
-      if (mounted) {
-        await _controller.reverse();
-        widget.onDismiss();
-      }
-    });
+    // Auto dismiss after 2.5 seconds (only if NOT persistent)
+    if (!widget.isPersistent) {
+      Future.delayed(const Duration(milliseconds: 2500), () async {
+        if (mounted) {
+          await _controller.reverse();
+          widget.onDismiss();
+        }
+      });
+    }
   }
 
   @override
