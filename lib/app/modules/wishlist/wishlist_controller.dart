@@ -44,7 +44,7 @@ class WishlistController extends GetxController {
       CustomToast.show('Removed Items from Wishlist');
     } else {
       wishlistItems.add(product);
-      CustomToast.show('Added to Wishlist! ❤️');
+      CustomToast.show('Added to Wishlist! ❤️', isSuccess: true);
     }
 
     if (_sessionManager.isLoggedIn()) {

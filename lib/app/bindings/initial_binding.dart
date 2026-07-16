@@ -6,6 +6,7 @@ import 'package:iron_street_app/app/data/repositories/product_repository/product
 import 'package:iron_street_app/app/modules/cart/cart_controller.dart';
 import 'package:iron_street_app/app/modules/wishlist/wishlist_controller.dart';
 import 'package:iron_street_app/app/modules/profile/profile_controller.dart';
+import 'package:iron_street_app/app/modules/home/network_controller.dart';
 import 'package:iron_street_app/app/data/repositories/cart_repository/cart_repository.dart';
 import 'package:iron_street_app/app/data/repositories/wishlist_repository/wishlist_repository.dart';
 import 'package:iron_street_app/app/data/repositories/user_repository/user_repository.dart';
@@ -32,5 +33,6 @@ class InitialBinding extends Bindings {
     Get.put(CartController(), permanent: true);
     Get.put(WishlistController(), permanent: true);
     Get.put(ProfileController(), permanent: true);
+    Get.put(NetworkController(), permanent: true);
   }
 }

@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CustomToast {
-  static void show(String message) {
+  static void show(String message, {bool isSuccess = false, bool isError = false}) {
     final overlayState = Get.key.currentState?.overlay;
 
     if (overlayState == null) {
@@ -13,7 +13,9 @@ class CustomToast {
       Get.rawSnackbar(
         message: message,
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFF1E1E1E),
+        backgroundColor: isError
+            ? const Color(0xFFB71C1C)
+            : (isSuccess ? const Color(0xFF1B5E20) : const Color(0xFF1E1E1E)),
         margin: const EdgeInsets.all(16),
         borderRadius: 8,
       );
@@ -25,6 +27,8 @@ class CustomToast {
     overlayEntry = OverlayEntry(
       builder: (context) => _ToastWidget(
         message: message,
+        isSuccess: isSuccess,
+        isError: isError,
         onDismiss: () {
           overlayEntry.remove();
         },
@@ -37,10 +41,14 @@ class CustomToast {
 
 class _ToastWidget extends StatefulWidget {
   final String message;
+  final bool isSuccess;
+  final bool isError;
   final VoidCallback onDismiss;
 
   const _ToastWidget({
     required this.message,
+    required this.isSuccess,
+    required this.isError,
     required this.onDismiss,
   });
 
@@ -48,8 +56,7 @@ class _ToastWidget extends StatefulWidget {
   State<_ToastWidget> createState() => _ToastWidgetState();
 }
 
-class _ToastWidgetState extends State<_ToastWidget>
-    with SingleTickerProviderStateMixin {
+class _ToastWidgetState extends State<_ToastWidget> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacityAnimation;
   late Animation<Offset> _slideAnimation;
@@ -92,6 +99,13 @@ class _ToastWidgetState extends State<_ToastWidget>
 
   @override
   Widget build(BuildContext context) {
+    Color bgColor = const Color(0xFF1E1E1E);
+    if (widget.isError) {
+      bgColor = const Color(0xFFB71C1C);
+    } else if (widget.isSuccess) {
+      bgColor = const Color(0xFF1B5E20);
+    }
+
     return SafeArea(
       child: Align(
         alignment: Alignment.topCenter,
@@ -104,10 +118,9 @@ class _ToastWidgetState extends State<_ToastWidget>
               child: Material(
                 color: Colors.transparent,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E1E1E).withOpacity(0.95),
+                    color: bgColor.withOpacity(0.95),
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(

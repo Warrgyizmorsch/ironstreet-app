@@ -6,6 +6,7 @@ import 'package:iron_street_app/app/data/network/base_api_service.dart';
 import 'package:iron_street_app/app/utills/constant/app_urls.dart';
 import 'package:iron_street_app/app/data/exceptions/app_exceptions.dart';
 import 'package:iron_street_app/app/data/local/session_manager.dart';
+import 'package:iron_street_app/app/modules/home/network_controller.dart';
 
 class NetworkApiServices extends BaseApiServices {
   late final Dio _dio;
@@ -211,6 +212,18 @@ class CartInterceptor extends Interceptor {
   @override
   Future<void> onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
+    if (Get.isRegistered<NetworkController>() &&
+        Get.find<NetworkController>().isOffline.value) {
+      handler.reject(
+        DioException(
+          requestOptions: options,
+          type: DioExceptionType.connectionError,
+          error: const SocketException('No Internet Connection'),
+        ),
+      );
+      return;
+    }
+
     final isCustomApi =
         options.path.contains('/iron-app/') || options.path.contains('/yith/');
 

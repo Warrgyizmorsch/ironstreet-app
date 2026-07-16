@@ -219,7 +219,7 @@ class WishlistItemCard extends StatelessWidget {
                         category: "Furniture",
                       ),
                     );
-                    CustomToast.show('Added to Cart');
+                    CustomToast.show('Added to Cart', isSuccess: true);
                   },
                   icon: const Icon(Icons.shopping_bag_outlined, size: 14),
                   label: Text(
