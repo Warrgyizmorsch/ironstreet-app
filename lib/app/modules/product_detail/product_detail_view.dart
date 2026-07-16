@@ -17,6 +17,7 @@ import '../../widgets/product_card.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'package:iron_street_app/app/modules/home/home_controller.dart';
+import '../../widgets/custom_toast.dart';
 import 'product_detail_controller.dart';
 import '../cart/cart_controller.dart';
 import '../wishlist/wishlist_controller.dart';
@@ -352,7 +353,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                       isHearted ? Colors.red : Colors.black87,
                                 ),
                                 onPressed: () {
-                                  if (!Get.find<SessionManager>().isLoggedIn()) {
+                                  if (!Get.find<SessionManager>()
+                                      .isLoggedIn()) {
                                     _showLoginRequiredDialog();
                                     return;
                                   }
@@ -682,41 +684,43 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          onPressed: prod.purchasable &&
-                                  prod.stockStatus == 'instock'
-                              ? () {
-                                  if (!Get.find<SessionManager>().isLoggedIn()) {
-                                    _showLoginRequiredDialog();
-                                    return;
-                                  }
-                                  if (productInCart) {
-                                    Get.toNamed(Routes.CART);
-                                  } else {
-                                    cartController.addToCart(Product(
-                                        id: prod.id.toString(),
-                                        name: prod.name,
-                                        brand: brandName.isNotEmpty
-                                            ? brandName
-                                            : "LuxeLiving by Iron Street",
-                                        price: price,
-                                        oldPrice: oldPrice,
-                                        discount: discount,
-                                        rating:
-                                            double.tryParse(prod.averageRating) ??
+                          onPressed:
+                              prod.purchasable && prod.stockStatus == 'instock'
+                                  ? () {
+                                      if (!Get.find<SessionManager>()
+                                          .isLoggedIn()) {
+                                        _showLoginRequiredDialog();
+                                        return;
+                                      }
+                                      if (productInCart) {
+                                        Get.toNamed(Routes.CART);
+                                      } else {
+                                        cartController.addToCart(Product(
+                                            id: prod.id.toString(),
+                                            name: prod.name,
+                                            brand: brandName.isNotEmpty
+                                                ? brandName
+                                                : "LuxeLiving by Iron Street",
+                                            price: price,
+                                            oldPrice: oldPrice,
+                                            discount: discount,
+                                            rating: double.tryParse(
+                                                    prod.averageRating) ??
                                                 0.0,
-                                        reviewsCount: prod.ratingCount,
-                                        image: prod.images.first.src,
-                                        images: [prod.images.first.src],
-                                        description: prod.description,
-                                        deliveryText: 'Available',
-                                        dimensions: dimensions,
-                                        material: material,
-                                        category: prod.categories.isNotEmpty
-                                            ? prod.categories.first.name
-                                            : 'Furniture'));
-                                  }
-                                }
-                              : null,
+                                            reviewsCount: prod.ratingCount,
+                                            image: prod.images.first.src,
+                                            images: [prod.images.first.src],
+                                            description: prod.description,
+                                            deliveryText: 'Available',
+                                            dimensions: dimensions,
+                                            material: material,
+                                            category: prod.categories.isNotEmpty
+                                                ? prod.categories.first.name
+                                                : 'Furniture'));
+                                        CustomToast.show('Added to Cart');
+                                      }
+                                    }
+                                  : null,
                           icon: Icon(
                             productInCart
                                 ? Icons.shopping_cart_checkout

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/data/repositories/wishlist_repository/wishlist_repository.dart';
+import 'package:iron_street_app/app/widgets/custom_toast.dart';
 
 class WishlistController extends GetxController {
   final WishlistRepository wishlistRepository = Get.find<WishlistRepository>();
@@ -40,20 +41,10 @@ class WishlistController extends GetxController {
     // Optimistic UI updates
     if (exists) {
       wishlistItems.removeWhere((item) => item.id == product.id);
-      Get.snackbar(
-        'Removed from Wishlist',
-        '${product.name} removed.',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 1),
-      );
+      CustomToast.show('Removed Items from Wishlist');
     } else {
       wishlistItems.add(product);
-      Get.snackbar(
-        'Added to Wishlist',
-        '${product.name} added! ❤️',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 1),
-      );
+      CustomToast.show('Added to Wishlist! ❤️');
     }
 
     if (_sessionManager.isLoggedIn()) {

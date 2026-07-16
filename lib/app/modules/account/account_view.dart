@@ -1,12 +1,9 @@
 // ignore_for_file: deprecated_member_use
 
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import 'account_controller.dart';
@@ -31,8 +28,6 @@ class AccountView extends GetView<AccountController> {
     final regPassController = TextEditingController();
     final regFirstController = TextEditingController();
     final regLastController = TextEditingController();
-
-    log(Get.find<SessionManager>().getToken().toString());
 
     final RxBool isLoginTab = true.obs;
 

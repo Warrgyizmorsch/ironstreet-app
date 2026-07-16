@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'cart_controller.dart';
 import '../../routes/app_pages.dart';
 import '../wishlist/wishlist_controller.dart';
+import '../../widgets/custom_toast.dart';
 import '../../data/models/product_list_model.dart';
 import '../../utills/theme/app_colors.dart';
 import '../address/address_controller.dart';
@@ -372,11 +373,7 @@ class CartItemCard extends StatelessWidget {
                       );
                     }
                     controller.removeItem(prod.id);
-                    Get.snackbar(
-                      'Wishlist',
-                      'Moved "${prod.name}" to Wishlist',
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
+                    CustomToast.show('Moved to Wishlist');
                   },
                   icon: const Icon(Icons.favorite_border, size: 14),
                   label: Text(
@@ -401,11 +398,7 @@ class CartItemCard extends StatelessWidget {
                   ),
                   onPressed: () {
                     controller.removeItem(prod.id);
-                    Get.snackbar(
-                      'Removed',
-                      'Removed "${prod.name}" from Cart',
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
+                    CustomToast.show('Removed from Cart');
                   },
                   icon: const Icon(Icons.close, size: 14),
                   label: Text(

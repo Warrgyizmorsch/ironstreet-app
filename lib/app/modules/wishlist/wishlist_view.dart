@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:iron_street_app/app/modules/home/home_controller.dart';
 import 'wishlist_controller.dart';
 import '../cart/cart_controller.dart';
+import '../../widgets/custom_toast.dart';
 import '../../data/models/product_list_model.dart';
 import '../../data/models/product_model.dart';
 import '../../utills/theme/app_colors.dart';
@@ -218,11 +219,7 @@ class WishlistItemCard extends StatelessWidget {
                         category: "Furniture",
                       ),
                     );
-                    Get.snackbar(
-                      'Added to Cart',
-                      'Added "${prod.name}" to Cart',
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
+                    CustomToast.show('Added to Cart');
                   },
                   icon: const Icon(Icons.shopping_bag_outlined, size: 14),
                   label: Text(
@@ -248,11 +245,11 @@ class WishlistItemCard extends StatelessWidget {
                   ),
                   onPressed: () {
                     wishlistCtrl.toggleWishlist(prod);
-                    Get.snackbar(
-                      'Removed',
-                      'Removed "${prod.name}" from Wishlist',
-                      snackPosition: SnackPosition.BOTTOM,
-                    );
+                    // Get.snackbar(
+                    //   'Removed',
+                    //   'Removed "${prod.name}" from Wishlist',
+                    //   snackPosition: SnackPosition.BOTTOM,
+                    // );
                   },
                   icon: const Icon(Icons.close, size: 14),
                   label: Text(
@@ -400,4 +397,3 @@ class EmptyWishlistState extends StatelessWidget {
     );
   }
 }
-
