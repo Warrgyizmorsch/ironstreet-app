@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import '../../data/models/product_model.dart';
 import '../../data/models/cart_response_model.dart';
 import '../../data/repositories/cart_repository/cart_repository.dart';
@@ -116,7 +117,7 @@ class CartController extends GetxController {
         _updateAddresses(cartResp);
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to add item to cart: $e');
+      CustomToast.show('Failed to add item to cart: $e', isError: true);
     }
   }
 
@@ -146,7 +147,7 @@ class CartController extends GetxController {
             _updateTotals(cartResp.totals);
           }
         } catch (e) {
-          Get.snackbar('Error', 'Failed to update quantity: $e');
+          CustomToast.show('Failed to update quantity: $e', isError: true);
         }
       }
     }
@@ -171,7 +172,7 @@ class CartController extends GetxController {
           _updateTotals(cartResp.totals);
         }
       } catch (e) {
-        Get.snackbar('Error', 'Failed to remove item: $e');
+        CustomToast.show('Failed to remove item: $e', isError: true);
       }
     }
   }

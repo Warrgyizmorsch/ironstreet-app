@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import 'package:iron_street_app/app/data/models/category_model.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/data/models/product_tag_model.dart';
@@ -240,7 +241,7 @@ class HomeController extends GetxController {
       selectMainCategory(0);
     } catch (e) {
       log('Error fetching categories: $e');
-      Get.snackbar('Error', 'Failed to load categories');
+      CustomToast.show('Failed to load categories', isError: true);
     } finally {
       isCategoriesLoading.value = false;
     }
@@ -273,7 +274,7 @@ class HomeController extends GetxController {
         hasMoreProducts.value = false;
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load products');
+      CustomToast.show('Failed to load products', isError: true);
     } finally {
       isProductsLoading.value = false;
     }
@@ -304,7 +305,7 @@ class HomeController extends GetxController {
       }
     } catch (e) {
       productPage--; // Revert page count if the API call fails
-      Get.snackbar('Error', 'Failed to load more products');
+      CustomToast.show('Failed to load more products', isError: true);
     } finally {
       isFetchingMoreProducts.value = false;
     }

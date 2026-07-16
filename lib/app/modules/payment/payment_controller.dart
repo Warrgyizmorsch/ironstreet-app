@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import '../cart/cart_controller.dart';
 import '../checkout/checkout_controller.dart';
 import '../orders/orders_controller.dart';
@@ -72,7 +73,7 @@ class PaymentController extends GetxController {
   Future<void> processPayment({bool simulateFailure = false}) async {
     final method = selectedMethod;
     if (method == null) {
-      Get.snackbar('Error', 'Please select a payment method.');
+      CustomToast.show('Please select a payment method.', isError: true);
       return;
     }
 

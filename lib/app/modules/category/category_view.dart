@@ -39,6 +39,7 @@ class CategoryView extends GetView<HomeController> {
               color: Colors.white,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
+                
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 itemCount:
                     controller.mainCategories.length, // 3. LIVE API Categories

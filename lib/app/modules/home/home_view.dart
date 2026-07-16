@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -300,17 +301,15 @@ class HomeView extends GetView<HomeController> {
           if (await canLaunchUrl(whatsappUrl)) {
             await launchUrl(whatsappUrl, mode: LaunchMode.externalApplication);
           } else {
-            Get.snackbar(
-              'Error',
+            CustomToast.show(
               'Could not launch WhatsApp. Please make sure it is installed.',
-              snackPosition: SnackPosition.BOTTOM,
+              isError: true,
             );
           }
         } catch (e) {
-          Get.snackbar(
-            'Error',
+          CustomToast.show(
             'An error occurred: $e',
-            snackPosition: SnackPosition.BOTTOM,
+            isError: true,
           );
         }
       },
@@ -335,8 +334,7 @@ class HomeView extends GetView<HomeController> {
             if (categoryId != null) {
               Get.toNamed(Routes.CATEGORY, arguments: categoryId);
             } else {
-              Get.snackbar(
-                  'Promo Tapped', 'Opening selection: "${banner.title}"');
+              CustomToast.show('Opening selection: "${banner.title}"');
             }
           },
         ),
@@ -1093,8 +1091,9 @@ class HomeView extends GetView<HomeController> {
                   onPressed: () {
                     if (nameController.text.trim().isEmpty ||
                         phoneController.text.trim().isEmpty) {
-                      Get.snackbar('Error',
-                          'Please fill out your Name and Phone Number.');
+                      CustomToast.show(
+                          'Please fill out your Name and Phone Number.',
+                          isError: true);
                       return;
                     }
                     isSubmitted.value = true;
@@ -1317,7 +1316,7 @@ class HomeView extends GetView<HomeController> {
     try {
       await launchUrl(url, mode: LaunchMode.externalApplication);
     } catch (e) {
-      Get.snackbar('Error', 'Could not open map: $e');
+      CustomToast.show('Could not open map: $e', isError: true);
     }
   }
 
@@ -1327,10 +1326,9 @@ class HomeView extends GetView<HomeController> {
     try {
       await launchUrl(url);
     } catch (e) {
-      Get.snackbar(
-        'Call Failed',
+      CustomToast.show(
         'This device does not support phone calls or dialer is unavailable.',
-        snackPosition: SnackPosition.BOTTOM,
+        isError: true,
       );
     }
   }

@@ -29,7 +29,7 @@ class NetworkController extends GetxController {
       final result = await InternetAddress.lookup('google.com')
           .timeout(const Duration(seconds: 3));
       final bool hasNet = result.isNotEmpty && result[0].rawAddress.isNotEmpty;
-
+      
       _updateConnectionStatus(!hasNet);
     } catch (_) {
       _updateConnectionStatus(true);

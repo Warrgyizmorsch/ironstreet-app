@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
@@ -67,12 +66,9 @@ class WishlistController extends GetxController {
         } else {
           wishlistItems.removeWhere((item) => item.id == product.id);
         }
-        Get.snackbar(
-          'Sync Failed',
+        CustomToast.show(
           'Could not synchronize wishlist with server.',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color(0xFFFFEBEE),
-          colorText: const Color(0xFFC62828),
+          isError: true,
         );
       }
     }

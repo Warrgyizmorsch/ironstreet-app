@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/data/repositories/user_repository/user_repository.dart';
 import '../address/address_controller.dart';
@@ -51,10 +52,9 @@ class AccountController extends GetxController {
     final cleanPassword = pass.trim();
 
     if (cleanUsername.isEmpty || cleanPassword.isEmpty) {
-      Get.snackbar(
-        'Error',
+      CustomToast.show(
         'Please enter both username/email and password.',
-        snackPosition: SnackPosition.BOTTOM,
+        isError: true,
       );
       return;
     }
@@ -96,23 +96,20 @@ class AccountController extends GetxController {
           Get.find<ProfileController>().fetchProfile();
         }
 
-        Get.snackbar(
-          'Success',
+        CustomToast.show(
           'Logged in successfully as $displayName!',
-          snackPosition: SnackPosition.BOTTOM,
+          isSuccess: true,
         );
       } else {
-        Get.snackbar(
-          'Error',
+        CustomToast.show(
           'Invalid response from authorization server.',
-          snackPosition: SnackPosition.BOTTOM,
+          isError: true,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Login Failed',
+      CustomToast.show(
         e.toString().replaceAll('Exception: ', '').replaceAll('FetchDataException: ', ''),
-        snackPosition: SnackPosition.BOTTOM,
+        isError: true,
       );
     } finally {
       isLoading.value = false;
@@ -133,10 +130,9 @@ class AccountController extends GetxController {
     final cleanLast = lastName.trim();
 
     if (cleanUsername.isEmpty || cleanEmail.isEmpty || cleanPassword.isEmpty || cleanFirst.isEmpty || cleanLast.isEmpty) {
-      Get.snackbar(
-        'Error',
+      CustomToast.show(
         'Please fill in all register fields.',
-        snackPosition: SnackPosition.BOTTOM,
+        isError: true,
       );
       return;
     }
@@ -156,25 +152,21 @@ class AccountController extends GetxController {
       final String msg = response['message'] ?? 'Registration complete!';
 
       if (success) {
-        Get.snackbar(
-          'Registered Successfully',
+        CustomToast.show(
           msg,
-          snackPosition: SnackPosition.BOTTOM,
         );
         // Automatically login the newly registered user
         await login(cleanUsername, cleanPassword);
       } else {
-        Get.snackbar(
-          'Registration Failed',
+        CustomToast.show(
           msg,
-          snackPosition: SnackPosition.BOTTOM,
+          isError: true,
         );
       }
     } catch (e) {
-      Get.snackbar(
-        'Registration Failed',
+      CustomToast.show(
         e.toString().replaceAll('Exception: ', '').replaceAll('FetchDataException: ', ''),
-        snackPosition: SnackPosition.BOTTOM,
+        isError: true,
       );
     } finally {
       isRegisterLoading.value = false;
@@ -225,10 +217,8 @@ class AccountController extends GetxController {
         ordCtrl.activeOrderDetail.value = null;
       }
 
-      Get.snackbar(
-        'Signed Out',
+      CustomToast.show(
         'You have been logged out of Iron Street.',
-        snackPosition: SnackPosition.BOTTOM,
       );
     } catch (_) {}
   }

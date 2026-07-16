@@ -25,6 +25,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import 'package:iron_street_app/app/data/models/product_detail_model.dart';
 import 'package:iron_street_app/app/data/models/product_review_model.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
@@ -68,7 +69,7 @@ class ProductDetailController extends GetxController {
     if (productId != 0) {
       fetchProductDetail(productId);
     } else {
-      Get.snackbar('Error', 'Invalid product id');
+      CustomToast.show('Invalid product id', isError: true);
     }
   }
 
@@ -106,7 +107,7 @@ class ProductDetailController extends GetxController {
   //     productDetail.value = ProductDetailModel.fromJson(response);
 
   //   } catch (e) {
-  //     Get.snackbar('Error', 'Failed to load product detail');
+  //     CustomToast.show('Failed to load product detail', isError: true);
   //   } finally {
   //     isLoading.value = false;
   //   }
@@ -137,7 +138,7 @@ class ProductDetailController extends GetxController {
         fetchProductReviews(id),
       ]);
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load product detail');
+      CustomToast.show('Failed to load product detail', isError: true);
     } finally {
       isLoading.value = false;
     }
@@ -152,7 +153,7 @@ class ProductDetailController extends GetxController {
           .toList();
       reviewsList.assignAll(fetchedReviews);
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load reviews');
+      CustomToast.show('Failed to load reviews', isError: true);
     } finally {
       isReviewsLoading.value = false;
     }
@@ -203,7 +204,7 @@ class ProductDetailController extends GetxController {
 
       relatedProducts.assignAll(fetchedProducts);
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load related products');
+      CustomToast.show('Failed to load related products', isError: true);
     } finally {
       isRelatedProductsLoading.value = false;
     }
@@ -215,7 +216,7 @@ class ProductDetailController extends GetxController {
 
   void openRelatedProduct(ProductListModel product) {
     if (product.id == 0) {
-      Get.snackbar('Error', 'Invalid related product id');
+      CustomToast.show('Invalid related product id', isError: true);
       return;
     }
     // Get.toNamed(Routes.PRODUCT_DETAIL,

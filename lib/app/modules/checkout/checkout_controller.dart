@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../data/repositories/checkout_repository/checkout_repository.dart';
 import '../../data/repositories/order_repository/order_repository.dart';
@@ -63,11 +64,9 @@ class CheckoutController extends GetxController {
           ));
     } catch (e) {
       isProcessing.value = false;
-      Get.snackbar(
-        'Payment Completion Error',
+      CustomToast.show(
         'Payment was successful (ID: ${response.paymentId}), but we failed to update the order. Please contact support. Error: $e',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 8),
+        isError: true,
       );
     }
   }
@@ -77,10 +76,8 @@ class CheckoutController extends GetxController {
 
     // Check if the user cancelled the payment
     if (response.code == Razorpay.PAYMENT_CANCELLED || response.code == 2) {
-      Get.snackbar(
-        'Payment Cancelled',
+      CustomToast.show(
         'You cancelled the payment process.',
-        snackPosition: SnackPosition.BOTTOM,
       );
       return;
     }
@@ -99,17 +96,13 @@ class CheckoutController extends GetxController {
       appliedCoupon.value = cleanCode;
       // 10% additional discount on the cart subtotal
       couponDiscount.value = cartCtrl.subtotal * 0.10;
-      Get.snackbar(
-        'Coupon Applied',
+      CustomToast.show(
         'Successfully applied coupon: $cleanCode (10% Off)',
-        snackPosition: SnackPosition.BOTTOM,
       );
       return true;
     } else {
-      Get.snackbar(
-        'Invalid Coupon',
+      CustomToast.show(
         'The entered code is not valid or expired.',
-        snackPosition: SnackPosition.BOTTOM,
       );
       return false;
     }
@@ -118,10 +111,8 @@ class CheckoutController extends GetxController {
   void removeCoupon() {
     appliedCoupon.value = '';
     couponDiscount.value = 0.0;
-    Get.snackbar(
-      'Coupon Removed',
+    CustomToast.show(
       'Coupon discount was removed.',
-      snackPosition: SnackPosition.BOTTOM,
     );
   }
 
@@ -133,18 +124,14 @@ class CheckoutController extends GetxController {
   Future<void> proceedToPayment() async {
     final addr = cartCtrl.shippingAddress.value;
     if (addr == null || addr.address1.isEmpty) {
-      Get.snackbar(
-        'Address Required',
+      CustomToast.show(
         'Please select or add a shipping address to proceed.',
-        snackPosition: SnackPosition.BOTTOM,
       );
       return;
     }
     if (cartCtrl.cartItems.isEmpty) {
-      Get.snackbar(
-        'Empty Cart',
+      CustomToast.show(
         'Your cart is empty. Please add items to checkout.',
-        snackPosition: SnackPosition.BOTTOM,
       );
       return;
     }
@@ -167,10 +154,9 @@ class CheckoutController extends GetxController {
       final orderId = int.tryParse(orderIdStr);
       if (orderId == null) {
         isProcessing.value = false;
-        Get.snackbar(
-          'Error',
+        CustomToast.show(
           'Failed to retrieve valid order ID from checkout.',
-          snackPosition: SnackPosition.BOTTOM,
+          isError: true,
         );
         return;
       }
@@ -197,10 +183,9 @@ class CheckoutController extends GetxController {
       _razorpay.open(options);
     } catch (e) {
       isProcessing.value = false;
-      Get.snackbar(
-        'Checkout Error',
+      CustomToast.show(
         e.toString().replaceAll('Exception:', '').trim(),
-        snackPosition: SnackPosition.BOTTOM,
+        isError: true,
       );
     }
   }

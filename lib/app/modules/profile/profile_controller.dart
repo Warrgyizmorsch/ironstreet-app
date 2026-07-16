@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:get/get.dart';
+import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import '../../data/models/user_model.dart';
 import '../../data/local/session_manager.dart';
 import '../../data/repositories/user_repository/user_repository.dart';
@@ -69,10 +70,9 @@ class ProfileController extends GetxController {
     final newEmail = emailEditVal.value.trim();
 
     if (newName.isEmpty) {
-      Get.snackbar(
-        'Error',
+      CustomToast.show(
         'Name cannot be empty',
-        snackPosition: SnackPosition.BOTTOM,
+        isError: true,
       );
       return;
     }
@@ -80,10 +80,9 @@ class ProfileController extends GetxController {
     // Basic email format check before hitting the API
     final emailRegex = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.]+$');
     if (newEmail.isEmpty || !emailRegex.hasMatch(newEmail)) {
-      Get.snackbar(
-        'Error',
+      CustomToast.show(
         'Please enter a valid email address',
-        snackPosition: SnackPosition.BOTTOM,
+        isError: true,
       );
       return;
     }
@@ -93,10 +92,9 @@ class ProfileController extends GetxController {
 
       final token = _sessionManager.getToken();
       if (token.isEmpty) {
-        Get.snackbar(
-          'Error',
+        CustomToast.show(
           'You are not logged in.',
-          snackPosition: SnackPosition.BOTTOM,
+          isError: true,
         );
         return;
       }
@@ -121,10 +119,9 @@ class ProfileController extends GetxController {
 
       isEditing.value = false;
 
-      Get.snackbar(
-        'Success',
+      CustomToast.show(
         'Profile updated successfully!',
-        snackPosition: SnackPosition.BOTTOM,
+        isSuccess: true,
       );
 
       log('[ProfileController] Profile updated: ${updated.name}');
@@ -133,10 +130,9 @@ class ProfileController extends GetxController {
           .toString()
           .replaceAll('Exception: ', '')
           .replaceAll('FetchDataException: ', '');
-      Get.snackbar(
-        'Update Failed',
+      CustomToast.show(
         message,
-        snackPosition: SnackPosition.BOTTOM,
+        isError: true,
       );
       log('[ProfileController] ERROR updating profile: $e');
     } finally {

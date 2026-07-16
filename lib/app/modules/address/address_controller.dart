@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import '../../data/models/address_model.dart';
 import '../../data/repositories/address_repository/address_repository.dart';
 import '../cart/cart_controller.dart';
@@ -73,13 +73,9 @@ class AddressController extends GetxController {
       if (errMsg.contains('invalid_state') || errMsg.contains('is not valid')) {
         errMsg = "Invalid state code selected. If country is India, please enter a valid 2-letter state code (e.g., KA for Karnataka, MH for Maharashtra, DL for Delhi) or type the full name (e.g. Karnataka).";
       }
-      Get.snackbar(
-        'Address Sync Failed',
+      CustomToast.show(
         errMsg,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: const Color(0xFFFFEBEE),
-        colorText: const Color(0xFFC62828),
-        duration: const Duration(seconds: 5),
+        isError: true,
       );
     }
   }

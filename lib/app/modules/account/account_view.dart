@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
+import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import 'account_controller.dart';
 import '../../routes/app_pages.dart';
 import 'legal_policies_view.dart';
@@ -466,7 +467,7 @@ class AccountView extends GetView<AccountController> {
         } else if (targetRoute != null) {
           Get.toNamed(targetRoute);
         } else {
-          Get.snackbar('Console', 'Opening customized configurations: "$text"');
+          CustomToast.show('Opening customized configurations: "$text"');
         }
       },
     );
