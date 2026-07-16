@@ -66,8 +66,10 @@ class CartController extends GetxController {
     billingAddress.value = cartResp.billingAddress;
 
     // Sync back to AddressController
-    if (Get.isRegistered<AddressController>() && cartResp.shippingAddress != null) {
-      Get.find<AddressController>().syncFromWooCommerce(cartResp.shippingAddress);
+    if (Get.isRegistered<AddressController>() &&
+        cartResp.shippingAddress != null) {
+      Get.find<AddressController>()
+          .syncFromWooCommerce(cartResp.shippingAddress);
     }
   }
 
@@ -117,13 +119,14 @@ class CartController extends GetxController {
         _updateAddresses(cartResp);
       }
     } catch (e) {
-      CustomToast.show('Failed to add item to cart: $e', isError: true);
+      CustomToast.show('Failed to add item to cart', isError: true);
     }
   }
 
   // Update item quantity in WooCommerce cart
   Future<void> updateQuantity(String productId, int delta) async {
-    final item = cartItems.firstWhereOrNull((item) => item.product.id == productId);
+    final item =
+        cartItems.firstWhereOrNull((item) => item.product.id == productId);
     if (item != null) {
       int nextQty = item.quantity.value + delta;
       if (nextQty <= 0) {
@@ -147,7 +150,7 @@ class CartController extends GetxController {
             _updateTotals(cartResp.totals);
           }
         } catch (e) {
-          CustomToast.show('Failed to update quantity: $e', isError: true);
+          CustomToast.show('Failed to update quantity', isError: true);
         }
       }
     }
@@ -155,7 +158,8 @@ class CartController extends GetxController {
 
   // Remove an item from the WooCommerce cart
   Future<void> removeItem(String productId) async {
-    final item = cartItems.firstWhereOrNull((item) => item.product.id == productId);
+    final item =
+        cartItems.firstWhereOrNull((item) => item.product.id == productId);
     if (item != null) {
       try {
         final response = await cartRepository.removeCartItem(key: item.key);
@@ -172,7 +176,7 @@ class CartController extends GetxController {
           _updateTotals(cartResp.totals);
         }
       } catch (e) {
-        CustomToast.show('Failed to remove item: $e', isError: true);
+        CustomToast.show('Failed to remove item', isError: true);
       }
     }
   }
