@@ -24,9 +24,9 @@ class CartView extends GetView<CartController> {
       Get.put(AddressController());
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.fetchCart();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   controller.fetchCart();
+    // });
 
     final formatCurrency = NumberFormat.currency(
       locale: 'en_IN',

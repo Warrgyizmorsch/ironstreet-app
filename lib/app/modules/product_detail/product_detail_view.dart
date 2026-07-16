@@ -351,24 +351,29 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                   color:
                                       isHearted ? Colors.red : Colors.black87,
                                 ),
-                                onPressed: () =>
-                                    wishlistController.toggleWishlist(
-                                  ProductListModel(
-                                    id: prod.id,
-                                    name: prod.name,
-                                    price: price,
-                                    oldPrice: oldPrice,
-                                    discount: discount,
-                                    image: prod.images.first.src,
-                                    brand: brandName.isNotEmpty
-                                        ? brandName
-                                        : "LuxeLiving by Iron Street",
-                                    rating:
-                                        double.tryParse(prod.averageRating) ??
-                                            0.0,
-                                    reviewsCount: prod.ratingCount,
-                                  ),
-                                ),
+                                onPressed: () {
+                                  if (!Get.find<SessionManager>().isLoggedIn()) {
+                                    _showLoginRequiredDialog();
+                                    return;
+                                  }
+                                  wishlistController.toggleWishlist(
+                                    ProductListModel(
+                                      id: prod.id,
+                                      name: prod.name,
+                                      price: price,
+                                      oldPrice: oldPrice,
+                                      discount: discount,
+                                      image: prod.images.first.src,
+                                      brand: brandName.isNotEmpty
+                                          ? brandName
+                                          : "LuxeLiving by Iron Street",
+                                      rating:
+                                          double.tryParse(prod.averageRating) ??
+                                              0.0,
+                                      reviewsCount: prod.ratingCount,
+                                    ),
+                                  );
+                                },
                               ),
                             );
                           }),

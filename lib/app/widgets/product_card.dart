@@ -7,6 +7,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
+import 'package:iron_street_app/app/data/local/session_manager.dart';
+import 'package:iron_street_app/app/modules/home/home_controller.dart';
 import '../data/models/product_list_model.dart';
 import '../modules/wishlist/wishlist_controller.dart';
 import '../routes/app_pages.dart';
@@ -97,7 +99,13 @@ class ProductCard extends StatelessWidget {
                     );
 
                     return GestureDetector(
-                      onTap: () => wishlistController.toggleWishlist(product),
+                      onTap: () {
+                        if (!Get.find<SessionManager>().isLoggedIn()) {
+                          _showLoginRequiredDialog();
+                          return;
+                        }
+                        wishlistController.toggleWishlist(product);
+                      },
                       child: Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
@@ -260,4 +268,66 @@ class ProductCard extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showLoginRequiredDialog() {
+  Get.dialog(
+    AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      title: Text(
+        'Login Required',
+        style: GoogleFonts.poppins(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+          color: Colors.black87,
+        ),
+      ),
+      content: Text(
+        'Please login or register to add items to your wishlist and continue shopping.',
+        style: GoogleFonts.poppins(
+          fontSize: 13,
+          color: Colors.grey[600],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Get.back(),
+          child: Text(
+            'Cancel',
+            style: GoogleFonts.poppins(
+              color: Colors.grey[600],
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            elevation: 0,
+          ),
+          onPressed: () {
+            Get.back(); // Close dialog
+            if (Get.isRegistered<HomeController>()) {
+              Get.find<HomeController>().currentIndex.value = 4;
+              Get.until((route) => Get.currentRoute == Routes.HOME);
+            } else {
+              Get.offAllNamed(Routes.HOME, arguments: {'tabIndex': 4});
+            }
+          },
+          child: Text(
+            'Login',
+            style: GoogleFonts.poppins(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
 }
