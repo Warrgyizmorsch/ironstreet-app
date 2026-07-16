@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -677,30 +678,38 @@ class ProductDetailView extends GetView<ProductDetailController> {
                           ),
                           onPressed: prod.purchasable &&
                                   prod.stockStatus == 'instock'
-                              ? () => productInCart
-                                  ? Get.toNamed(Routes.CART)
-                                  : cartController.addToCart(Product(
-                                      id: prod.id.toString(),
-                                      name: prod.name,
-                                      brand: brandName.isNotEmpty
-                                          ? brandName
-                                          : "LuxeLiving by Iron Street",
-                                      price: price,
-                                      oldPrice: oldPrice,
-                                      discount: discount,
-                                      rating:
-                                          double.tryParse(prod.averageRating) ??
-                                              0.0,
-                                      reviewsCount: prod.ratingCount,
-                                      image: prod.images.first.src,
-                                      images: [prod.images.first.src],
-                                      description: prod.description,
-                                      deliveryText: 'Available',
-                                      dimensions: dimensions,
-                                      material: material,
-                                      category: prod.categories.isNotEmpty
-                                          ? prod.categories.first.name
-                                          : 'Furniture'))
+                              ? () {
+                                  if (!Get.find<SessionManager>().isLoggedIn()) {
+                                    _showLoginRequiredDialog();
+                                    return;
+                                  }
+                                  if (productInCart) {
+                                    Get.toNamed(Routes.CART);
+                                  } else {
+                                    cartController.addToCart(Product(
+                                        id: prod.id.toString(),
+                                        name: prod.name,
+                                        brand: brandName.isNotEmpty
+                                            ? brandName
+                                            : "LuxeLiving by Iron Street",
+                                        price: price,
+                                        oldPrice: oldPrice,
+                                        discount: discount,
+                                        rating:
+                                            double.tryParse(prod.averageRating) ??
+                                                0.0,
+                                        reviewsCount: prod.ratingCount,
+                                        image: prod.images.first.src,
+                                        images: [prod.images.first.src],
+                                        description: prod.description,
+                                        deliveryText: 'Available',
+                                        dimensions: dimensions,
+                                        material: material,
+                                        category: prod.categories.isNotEmpty
+                                            ? prod.categories.first.name
+                                            : 'Furniture'));
+                                  }
+                                }
                               : null,
                           icon: Icon(
                             productInCart
@@ -742,6 +751,10 @@ class ProductDetailView extends GetView<ProductDetailController> {
                         onPressed: prod.purchasable &&
                                 prod.stockStatus == 'instock'
                             ? () async {
+                                if (!Get.find<SessionManager>().isLoggedIn()) {
+                                  _showLoginRequiredDialog();
+                                  return;
+                                }
                                 final bool productInCart =
                                     cartController.isInCart(prod.id.toString());
                                 if (!productInCart) {
@@ -1652,5 +1665,62 @@ class ProductDetailView extends GetView<ProductDetailController> {
   String _calculateDeliveryDate(String deliveryCondition) {
     final DateTime deliveryDate = DateTime.now().add(const Duration(days: 2));
     return DateFormat('d MMM, EEE').format(deliveryDate);
+  }
+
+  void _showLoginRequiredDialog() {
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Text(
+          'Login Required',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Colors.black87,
+          ),
+        ),
+        content: Text(
+          'Please login or register to add items to your cart and continue shopping.',
+          style: GoogleFonts.poppins(
+            fontSize: 13,
+            color: Colors.grey[600],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.poppins(
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              elevation: 0,
+            ),
+            onPressed: () {
+              Get.back(); // Close dialog
+              Get.toNamed(Routes.ACCOUNT); // Go to login
+            },
+            child: Text(
+              'Login',
+              style: GoogleFonts.poppins(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
