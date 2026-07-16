@@ -6,6 +6,9 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
+import 'package:iron_street_app/app/modules/home/home_controller.dart';
+import 'package:iron_street_app/app/modules/cart/cart_controller.dart';
+import 'package:iron_street_app/app/modules/wishlist/wishlist_controller.dart';
 
 class NetworkController extends GetxController {
   var isOffline = false.obs;
@@ -42,6 +45,18 @@ class NetworkController extends GetxController {
     _updateConnectionStatus(!hasNet);
   }
 
+  void _reloadDataOnRestoration() {
+    if (Get.isRegistered<HomeController>()) {
+      Get.find<HomeController>().loadInitialData();
+    }
+    if (Get.isRegistered<WishlistController>()) {
+      Get.find<WishlistController>().fetchWishlistFromServer();
+    }
+    if (Get.isRegistered<CartController>()) {
+      Get.find<CartController>().fetchCart();
+    }
+  }
+
   void _updateConnectionStatus(bool offline) {
     if (isOffline.value != offline) {
       isOffline.value = offline;
@@ -52,6 +67,10 @@ class NetworkController extends GetxController {
           Get.back(); // Close dialog
           _isDialogShown = false;
         }
+        
+        // Trigger re-fetch of all failed categories and data
+        _reloadDataOnRestoration();
+
         CustomToast.show(
           'Internet connection restored!',
           isSuccess: true,
@@ -137,6 +156,10 @@ class NetworkController extends GetxController {
                     _isDialogShown = false;
                   }
                   isOffline.value = false;
+                  
+                  // Trigger re-fetch of all failed categories and data
+                  _reloadDataOnRestoration();
+
                   CustomToast.show(
                     'Connection restored!',
                     isSuccess: true,
