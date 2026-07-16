@@ -25,7 +25,7 @@ class AppUrls {
   static const String tags = '$wcV3Base/products/tags';
 
   // 4. WooCommerce Store API (v1) Cart & Checkout Endpoints
-
+  
   static const String storeApiUrl = '$wpJsonBase/wc/store/v1';
   static const String cartUrl = '$storeApiUrl/cart';
   static const String cartAddItem = '$cartUrl/add-item';
@@ -35,8 +35,7 @@ class AppUrls {
 
   // 5. YITH / Custom Wishlist Endpoints
   static const String wishlist = '$wpJsonBase/yith/wishlist/v1/products';
-  static const String getWishlist =
-      '$wpJsonBase/iron-app/v1/wishlist/items?fresh=1';
+  static const String getWishlist = '$wpJsonBase/iron-app/v1/wishlist/items?fresh=1';
   static const String mutateWishlist = '$wpJsonBase/yith/wishlist/v1/items';
 
   // 6. WordPress REST API Endpoints (User Profile)

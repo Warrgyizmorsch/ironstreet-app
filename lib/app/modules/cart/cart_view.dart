@@ -28,6 +28,8 @@ class CartView extends GetView<CartController> {
       controller.fetchCart();
     });
 
+
+
     final formatCurrency = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
@@ -99,8 +101,7 @@ class CartView extends GetView<CartController> {
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   itemCount: controller.cartItems.length,
-                  physics: const BouncingScrollPhysics(
-                      parent: AlwaysScrollableScrollPhysics()),
+                  physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                   itemBuilder: (context, index) {
                     final item = controller.cartItems[index];
                     return CartItemCard(
@@ -157,12 +158,10 @@ class DeliveryLocationSection extends StatelessWidget {
             child: Obx(() {
               final wcAddr = cartCtrl.shippingAddress.value;
               String displayStr = 'Select Delivery Address';
-              if (wcAddr != null &&
-                  (wcAddr.city.isNotEmpty || wcAddr.postcode.isNotEmpty)) {
-                displayStr =
-                    'Delivery at ${wcAddr.city.isNotEmpty ? wcAddr.city : 'Selected Address'}${wcAddr.postcode.isNotEmpty ? ' - ${wcAddr.postcode}' : ''}';
+              if (wcAddr != null && (wcAddr.city.isNotEmpty || wcAddr.postcode.isNotEmpty)) {
+                displayStr = 'Delivery at ${wcAddr.city.isNotEmpty ? wcAddr.city : 'Selected Address'}${wcAddr.postcode.isNotEmpty ? ' - ${wcAddr.postcode}' : ''}';
               }
-
+              
               return Text(
                 displayStr,
                 style: GoogleFonts.poppins(
@@ -175,14 +174,12 @@ class DeliveryLocationSection extends StatelessWidget {
           ),
           Obx(() {
             final wcAddr = cartCtrl.shippingAddress.value;
-            final hasAddress = wcAddr != null &&
-                (wcAddr.city.isNotEmpty || wcAddr.address1.isNotEmpty);
-
+            final hasAddress = wcAddr != null && (wcAddr.city.isNotEmpty || wcAddr.address1.isNotEmpty);
+            
             return TextButton(
               onPressed: () {
                 if (hasAddress) {
-                  Get.to(() =>
-                      AddEditAddressView(address: wcAddr.toAddressModel()));
+                  Get.to(() => AddEditAddressView(address: wcAddr.toAddressModel()));
                 } else {
                   Get.to(() => const AddEditAddressView());
                 }

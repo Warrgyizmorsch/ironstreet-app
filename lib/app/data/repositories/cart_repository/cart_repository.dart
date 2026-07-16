@@ -6,7 +6,7 @@ class CartRepository {
 
   Future<dynamic> getCart() async {
     try {
-      final response = await _apiService.getApi('${AppUrls.cartUrl}?fresh=1');
+      final response = await _apiService.getApi(AppUrls.cartUrl);
       return response;
     } catch (e) {
       rethrow;
@@ -28,8 +28,7 @@ class CartRepository {
     }
   }
 
-  Future<dynamic> updateCartItem(
-      {required String key, required int quantity}) async {
+  Future<dynamic> updateCartItem({required String key, required int quantity}) async {
     try {
       final response = await _apiService.postApi(
         AppUrls.cartUpdateItem,
@@ -39,7 +38,6 @@ class CartRepository {
         },
       );
       return response;
-      
     } catch (e) {
       rethrow;
     }
