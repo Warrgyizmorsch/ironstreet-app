@@ -51,9 +51,23 @@ class AccountController extends GetxController {
     final cleanUsername = username.trim();
     final cleanPassword = pass.trim();
 
-    if (cleanUsername.isEmpty || cleanPassword.isEmpty) {
+    if (cleanUsername.isEmpty && cleanPassword.isEmpty) {
       CustomToast.show(
         'Please enter both username/email and password.',
+        isError: true,
+      );
+      return;
+    }
+    if (cleanUsername.isEmpty) {
+      CustomToast.show(
+        'Please enter username/email.',
+        isError: true,
+      );
+      return;
+    }
+    if (cleanPassword.isEmpty) {
+      CustomToast.show(
+        'Please enter password.',
         isError: true,
       );
       return;
@@ -108,7 +122,8 @@ class AccountController extends GetxController {
       }
     } catch (e) {
       CustomToast.show(
-        e.toString().replaceAll('Exception: ', '').replaceAll('FetchDataException: ', ''),
+        // e.toString().replaceAll('Exception: ', '').replaceAll('FetchDataException: ', ''),
+        'Something went wrong. try again!',
         isError: true,
       );
     } finally {
@@ -129,7 +144,11 @@ class AccountController extends GetxController {
     final cleanFirst = firstName.trim();
     final cleanLast = lastName.trim();
 
-    if (cleanUsername.isEmpty || cleanEmail.isEmpty || cleanPassword.isEmpty || cleanFirst.isEmpty || cleanLast.isEmpty) {
+    if (cleanUsername.isEmpty ||
+        cleanEmail.isEmpty ||
+        cleanPassword.isEmpty ||
+        cleanFirst.isEmpty ||
+        cleanLast.isEmpty) {
       CustomToast.show(
         'Please fill in all register fields.',
         isError: true,
@@ -165,7 +184,10 @@ class AccountController extends GetxController {
       }
     } catch (e) {
       CustomToast.show(
-        e.toString().replaceAll('Exception: ', '').replaceAll('FetchDataException: ', ''),
+        e
+            .toString()
+            .replaceAll('Exception: ', '')
+            .replaceAll('FetchDataException: ', ''),
         isError: true,
       );
     } finally {
