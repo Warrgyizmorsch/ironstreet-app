@@ -633,7 +633,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                             ),
                           _buildProductInfoSection(prod),
 
-                          _buildReviewsSection(controller),
+                          _buildReviewsSection(context, controller),
                           _buildRelatedProductsSection(controller),
                         ],
                       ),
@@ -1252,7 +1252,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
     return ((oldPrice - newPrice) / oldPrice) * 100;
   }
 
-  Widget _buildReviewsSection(ProductDetailController controller) {
+  Widget _buildReviewsSection(BuildContext context, ProductDetailController controller) {
     return Container(
       margin: const EdgeInsets.only(bottom: 24, top: 12),
       decoration: const BoxDecoration(
@@ -1266,25 +1266,36 @@ class ProductDetailView extends GetView<ProductDetailController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Customer Reviews',
-                style: GoogleFonts.poppins(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF222222),
-                ),
-              ),
               Obx(() {
                 final count = controller.reviewsList.length;
                 return Text(
-                  count > 0 ? '$count Review${count > 1 ? 's' : ''}' : '',
+                  count > 0 ? 'Customer Reviews ($count)' : 'Customer Reviews',
                   style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[600],
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF222222),
                   ),
                 );
               }),
+              TextButton.icon(
+                onPressed: () {
+                  if (!Get.find<SessionManager>().isLoggedIn()) {
+                    _showLoginRequiredDialog();
+                    return;
+                  }
+                  _showAddReviewBottomSheet(context, controller);
+                },
+                icon: const Icon(Icons.edit_outlined,
+                    size: 16, color: AppColors.primary),
+                label: Text(
+                  'Write a Review',
+                  style: GoogleFonts.poppins(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -1347,6 +1358,32 @@ class ProductDetailView extends GetView<ProductDetailController> {
                       style: GoogleFonts.poppins(
                         fontSize: 11,
                         color: Colors.grey[500],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: AppColors.primary),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        if (!Get.find<SessionManager>().isLoggedIn()) {
+                          _showLoginRequiredDialog();
+                          return;
+                        }
+                        _showAddReviewBottomSheet(context, controller);
+                      },
+                      icon: const Icon(Icons.edit_outlined,
+                          size: 14, color: AppColors.primary),
+                      label: Text(
+                        'Write a Review',
+                        style: GoogleFonts.poppins(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
                       ),
                     ),
                   ],
@@ -1736,6 +1773,247 @@ class ProductDetailView extends GetView<ProductDetailController> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showAddReviewBottomSheet(
+    BuildContext context,
+    ProductDetailController controller,
+  ) {
+    final reviewTextController = TextEditingController();
+    final RxInt selectedRating = 5.obs;
+    final RxString ratingText = 'Excellent'.obs;
+
+    void updateRatingText(int rating) {
+      switch (rating) {
+        case 5:
+          ratingText.value = 'Excellent';
+          break;
+        case 4:
+          ratingText.value = 'Good';
+          break;
+        case 3:
+          ratingText.value = 'Average';
+          break;
+        case 2:
+          ratingText.value = 'Poor';
+          break;
+        case 1:
+          ratingText.value = 'Very Poor';
+          break;
+      }
+    }
+
+    final sessionManager = Get.find<SessionManager>();
+    final reviewerName = sessionManager.getName();
+    final reviewerEmail = sessionManager.getEmail();
+
+    Get.bottomSheet(
+      Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 20,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Write a Review',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 20, color: Colors.grey),
+                    onPressed: () => Get.back(),
+                  ),
+                ],
+              ),
+              const Divider(color: Color(0xFFF1F1F1)),
+              const SizedBox(height: 12),
+
+              // Reviewer details
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFAF9F6),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: const Color(0xFFF1F1F1)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.person_outline, size: 16, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Reviewing as: $reviewerName ($reviewerEmail)',
+                        style: GoogleFonts.poppins(
+                          fontSize: 11,
+                          color: Colors.grey[700],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Star selection
+              Text(
+                'Rate this product',
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Obx(() => Row(
+                        children: List.generate(5, (index) {
+                          final int starValue = index + 1;
+                          return GestureDetector(
+                            onTap: () {
+                              selectedRating.value = starValue;
+                              updateRatingText(starValue);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Icon(
+                                starValue <= selectedRating.value
+                                    ? Icons.star
+                                    : Icons.star_border,
+                                size: 32,
+                                color: starValue <= selectedRating.value
+                                    ? Colors.amber[700]
+                                    : Colors.grey[400],
+                              ),
+                            ),
+                          );
+                        }),
+                      )),
+                  const SizedBox(width: 8),
+                  Obx(() => Text(
+                        ratingText.value,
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber[800],
+                        ),
+                      )),
+                ],
+              ),
+              const SizedBox(height: 20),
+
+              // Review comment field
+              Text(
+                'Review details',
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: reviewTextController,
+                maxLines: 4,
+                style: GoogleFonts.poppins(fontSize: 13),
+                decoration: InputDecoration(
+                  hintText: 'Share your experience with this product...',
+                  hintStyle: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[400]),
+                  contentPadding: const EdgeInsets.all(12),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Color(0xFFE5E5E5)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Color(0xFFE5E5E5)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: AppColors.primary),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Action buttons
+              Obx(() {
+                final bool isSubmitting = controller.isSubmittingReview.value;
+                return SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    onPressed: isSubmitting
+                        ? null
+                        : () async {
+                            final String text = reviewTextController.text.trim();
+                            if (text.isEmpty) {
+                              CustomToast.show('Please enter your review text',
+                                  isError: true);
+                              return;
+                            }
+                            final bool success = await controller.submitReview(
+                              review: text,
+                              rating: selectedRating.value,
+                            );
+                            if (success) {
+                              Get.back(); // Close bottom sheet
+                            }
+                          },
+                    child: isSubmitting
+                        ? const Center(
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            ),
+                          )
+                        : Text(
+                            'Submit Review',
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
     );
   }
 }

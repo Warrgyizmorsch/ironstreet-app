@@ -84,6 +84,30 @@ class ProductRepository {
     }
   }
 
+  Future<dynamic> submitProductReview({
+    required int productId,
+    required String reviewer,
+    required String email,
+    required String review,
+    required int rating,
+  }) async {
+    final String url = '${AppUrls.baseUrl}/products/reviews';
+    final Map<String, dynamic> data = {
+      'product_id': productId,
+      'reviewer': reviewer,
+      'reviewer_email': email,
+      'review': review,
+      'rating': rating,
+    };
+
+    try {
+      dynamic response = await _apiService.postApi(url, data: data);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<dynamic> fetchRelatedProductsByIds({
     required List<int> productIds,
   }) async {

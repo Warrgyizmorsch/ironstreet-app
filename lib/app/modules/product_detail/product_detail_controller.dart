@@ -29,6 +29,7 @@ import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import 'package:iron_street_app/app/data/models/product_detail_model.dart';
 import 'package:iron_street_app/app/data/models/product_review_model.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
+import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/data/repositories/product_repository/product_repository.dart';
 
 class ProductDetailController extends GetxController {
@@ -207,6 +208,50 @@ class ProductDetailController extends GetxController {
       CustomToast.show('Failed to load related products', isError: true);
     } finally {
       isRelatedProductsLoading.value = false;
+    }
+  }
+
+  var isSubmittingReview = false.obs;
+
+  Future<bool> submitReview({
+    required String review,
+    required int rating,
+  }) async {
+    final prod = productDetail.value;
+    if (prod == null) return false;
+
+    final sessionManager = Get.find<SessionManager>();
+    final reviewerName = sessionManager.getName();
+    final reviewerEmail = sessionManager.getEmail();
+
+    try {
+      isSubmittingReview.value = true;
+
+      final response = await productRepository.submitProductReview(
+        productId: prod.id,
+        reviewer: reviewerName.isNotEmpty ? reviewerName : 'Anonymous',
+        email: reviewerEmail.isNotEmpty ? reviewerEmail : 'anonymous@example.com',
+        review: review,
+        rating: rating,
+      );
+
+      if (response != null) {
+        CustomToast.show('Review submitted successfully!', isSuccess: true);
+        // Refresh reviews list
+        await fetchProductReviews(prod.id);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      final errorMsg = e.toString().toLowerCase();
+      if (errorMsg.contains('comment_duplicate') || errorMsg.contains('duplicate')) {
+        CustomToast.show('You have already submitted a review for this product.', isError: true);
+      } else {
+        CustomToast.show('Failed to submit review. Please try again.', isError: true);
+      }
+      return false;
+    } finally {
+      isSubmittingReview.value = false;
     }
   }
 
