@@ -498,43 +498,51 @@ class ProductDetailView extends GetView<ProductDetailController> {
                           const SizedBox(height: 14),
                           Row(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.green[50],
-                                  border: Border.all(
-                                    color: Colors.green[100]!,
-                                  ),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
+                              GestureDetector(
+                                onTap: () =>
+                                    Get.toNamed(Routes.PRODUCT_REVIEWS),
                                 child: Row(
                                   children: [
-                                    const Icon(
-                                      Icons.star,
-                                      color: Colors.green,
-                                      size: 12,
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.green[50],
+                                        border: Border.all(
+                                          color: Colors.green[100]!,
+                                        ),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.star,
+                                            color: Colors.green,
+                                            size: 12,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            prod.averageRating,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green,
+                                              fontSize: 11,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                    const SizedBox(width: 4),
+                                    const SizedBox(width: 12),
                                     Text(
-                                      prod.averageRating,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green,
+                                      '${prod.ratingCount} Buyer Ratings',
+                                      style: GoogleFonts.poppins(
                                         fontSize: 11,
+                                        color: Colors.grey[600],
                                       ),
                                     ),
                                   ],
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                '${prod.ratingCount} Buyer Ratings',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 11,
-                                  color: Colors.grey[600],
                                 ),
                               ),
                               const Spacer(),
@@ -682,44 +690,44 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            onPressed:
-                                prod.purchasable && prod.stockStatus == 'instock'
-                                    ? () {
-                                        if (!Get.find<SessionManager>()
-                                            .isLoggedIn()) {
-                                          _showLoginRequiredDialog();
-                                          return;
-                                        }
-                                        if (productInCart) {
-                                          Get.toNamed(Routes.CART);
-                                        } else {
-                                          cartController.addToCart(Product(
-                                              id: prod.id.toString(),
-                                              name: prod.name,
-                                              brand: brandName.isNotEmpty
-                                                  ? brandName
-                                                  : "LuxeLiving by Iron Street",
-                                              price: price,
-                                              oldPrice: oldPrice,
-                                              discount: discount,
-                                              rating: double.tryParse(
-                                                      prod.averageRating) ??
-                                                  0.0,
-                                              reviewsCount: prod.ratingCount,
-                                              image: prod.images.first.src,
-                                              images: [prod.images.first.src],
-                                              description: prod.description,
-                                              deliveryText: 'Available',
-                                              dimensions: dimensions,
-                                              material: material,
-                                              category: prod.categories.isNotEmpty
-                                                  ? prod.categories.first.name
-                                                  : 'Furniture'));
-                                          CustomToast.show('Added to Cart',
-                                              isSuccess: true);
-                                        }
-                                      }
-                                    : null,
+                            onPressed: prod.purchasable &&
+                                    prod.stockStatus == 'instock'
+                                ? () {
+                                    if (!Get.find<SessionManager>()
+                                        .isLoggedIn()) {
+                                      _showLoginRequiredDialog();
+                                      return;
+                                    }
+                                    if (productInCart) {
+                                      Get.toNamed(Routes.CART);
+                                    } else {
+                                      cartController.addToCart(Product(
+                                          id: prod.id.toString(),
+                                          name: prod.name,
+                                          brand: brandName.isNotEmpty
+                                              ? brandName
+                                              : "LuxeLiving by Iron Street",
+                                          price: price,
+                                          oldPrice: oldPrice,
+                                          discount: discount,
+                                          rating: double.tryParse(
+                                                  prod.averageRating) ??
+                                              0.0,
+                                          reviewsCount: prod.ratingCount,
+                                          image: prod.images.first.src,
+                                          images: [prod.images.first.src],
+                                          description: prod.description,
+                                          deliveryText: 'Available',
+                                          dimensions: dimensions,
+                                          material: material,
+                                          category: prod.categories.isNotEmpty
+                                              ? prod.categories.first.name
+                                              : 'Furniture'));
+                                      CustomToast.show('Added to Cart',
+                                          isSuccess: true);
+                                    }
+                                  }
+                                : null,
                             icon: Icon(
                               productInCart
                                   ? Icons.shopping_cart_checkout
@@ -748,65 +756,66 @@ class ProductDetailView extends GetView<ProductDetailController> {
                         height: 48,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                prod.purchasable && prod.stockStatus == 'instock'
-                                    ? AppColors.primary
-                                    : Colors.grey,
+                            backgroundColor: prod.purchasable &&
+                                    prod.stockStatus == 'instock'
+                                ? AppColors.primary
+                                : Colors.grey,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
                             elevation: 0,
                           ),
-                          onPressed: prod.purchasable &&
-                                  prod.stockStatus == 'instock'
-                              ? () async {
-                                  if (!Get.find<SessionManager>().isLoggedIn()) {
-                                    _showLoginRequiredDialog();
-                                    return;
-                                  }
-                                  final bool productInCart =
-                                      cartController.isInCart(prod.id.toString());
-                                  if (!productInCart) {
-                                    // Show progress loader dialog
-                                    Get.dialog(
-                                      const Center(
-                                        child: CircularProgressIndicator(
-                                          color: AppColors.primary,
-                                        ),
-                                      ),
-                                      barrierDismissible: false,
-                                    );
+                          onPressed:
+                              prod.purchasable && prod.stockStatus == 'instock'
+                                  ? () async {
+                                      if (!Get.find<SessionManager>()
+                                          .isLoggedIn()) {
+                                        _showLoginRequiredDialog();
+                                        return;
+                                      }
+                                      final bool productInCart = cartController
+                                          .isInCart(prod.id.toString());
+                                      if (!productInCart) {
+                                        // Show progress loader dialog
+                                        Get.dialog(
+                                          const Center(
+                                            child: CircularProgressIndicator(
+                                              color: AppColors.primary,
+                                            ),
+                                          ),
+                                          barrierDismissible: false,
+                                        );
 
-                                    // Wait for product to be added to remote WooCommerce cart
-                                    await cartController.addToCart(Product(
-                                        id: prod.id.toString(),
-                                        name: prod.name,
-                                        brand: brandName.isNotEmpty
-                                            ? brandName
-                                            : "LuxeLiving by Iron Street",
-                                        price: price,
-                                        oldPrice: oldPrice,
-                                        discount: discount,
-                                        rating:
-                                            double.tryParse(prod.averageRating) ??
+                                        // Wait for product to be added to remote WooCommerce cart
+                                        await cartController.addToCart(Product(
+                                            id: prod.id.toString(),
+                                            name: prod.name,
+                                            brand: brandName.isNotEmpty
+                                                ? brandName
+                                                : "LuxeLiving by Iron Street",
+                                            price: price,
+                                            oldPrice: oldPrice,
+                                            discount: discount,
+                                            rating: double.tryParse(
+                                                    prod.averageRating) ??
                                                 0.0,
-                                        reviewsCount: prod.ratingCount,
-                                        image: prod.images.first.src,
-                                        images: [prod.images.first.src],
-                                        description: prod.description,
-                                        deliveryText: 'Available',
-                                        dimensions: dimensions,
-                                        material: material,
-                                        category: prod.categories.isNotEmpty
-                                            ? prod.categories.first.name
-                                            : 'Furniture'));
+                                            reviewsCount: prod.ratingCount,
+                                            image: prod.images.first.src,
+                                            images: [prod.images.first.src],
+                                            description: prod.description,
+                                            deliveryText: 'Available',
+                                            dimensions: dimensions,
+                                            material: material,
+                                            category: prod.categories.isNotEmpty
+                                                ? prod.categories.first.name
+                                                : 'Furniture'));
 
-                                    // Dismiss progress loader
-                                    Get.back();
-                                  }
-                                  Get.toNamed(Routes.CHECKOUT);
-                                }
-                              : null,
+                                        // Dismiss progress loader
+                                        Get.back();
+                                      }
+                                      Get.toNamed(Routes.CHECKOUT);
+                                    }
+                                  : null,
                           child: Text(
                             'Buy Now',
                             style: GoogleFonts.poppins(
@@ -1252,7 +1261,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
     return ((oldPrice - newPrice) / oldPrice) * 100;
   }
 
-  Widget _buildReviewsSection(BuildContext context, ProductDetailController controller) {
+  Widget _buildReviewsSection(
+      BuildContext context, ProductDetailController controller) {
     return Container(
       margin: const EdgeInsets.only(bottom: 24, top: 12),
       decoration: const BoxDecoration(
@@ -1856,7 +1866,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.person_outline, size: 16, color: Colors.grey),
+                    const Icon(Icons.person_outline,
+                        size: 16, color: Colors.grey),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -1937,7 +1948,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                 style: GoogleFonts.poppins(fontSize: 13),
                 decoration: InputDecoration(
                   hintText: 'Share your experience with this product...',
-                  hintStyle: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[400]),
+                  hintStyle: GoogleFonts.poppins(
+                      fontSize: 12, color: Colors.grey[400]),
                   contentPadding: const EdgeInsets.all(12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -1972,7 +1984,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                     onPressed: isSubmitting
                         ? null
                         : () async {
-                            final String text = reviewTextController.text.trim();
+                            final String text =
+                                reviewTextController.text.trim();
                             if (text.isEmpty) {
                               CustomToast.show('Please enter your review text',
                                   isError: true);
@@ -1993,7 +2006,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
                               ),
                             ),
                           )
