@@ -1,6 +1,5 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -60,233 +59,269 @@ class AccountView extends GetView<AccountController> {
         ? Get.find<ProfileController>()
         : Get.put(ProfileController(), permanent: true);
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      physics: const BouncingScrollPhysics(),
-      children: [
-        // Profile Brief Card — powered by ProfileController (live API data)
-        Obx(() {
-          final user = profCtrl.userProfile.value;
-          final isLoading = profCtrl.isLoading.value;
-
-          // Display name: prefer full API name, fall back to JWT display name
-          final displayName =
-              user?.name.isNotEmpty == true ? user!.name : accCtrl.name.value;
-
-          // Email: prefer API email, fall back to JWT email
-          final displayEmail = user?.email.isNotEmpty == true
-              ? user!.email
-              : accCtrl.email.value;
-
-          // Member status from roles
-          final memberStatus = user?.memberStatus ?? 'Member';
-
-          // Joined date
-          final joinedDate = user?.joinedDate ?? '';
-
-          // Avatar initials
-          final initials = displayName.trim().isNotEmpty
-              ? displayName
-                  .trim()
-                  .split(' ')
-                  .where((w) => w.isNotEmpty)
-                  .map((n) => n[0])
-                  .join('')
-                  .toUpperCase()
-              : 'U';
-
-          // Avatar image URL from WP user URL field
-          final avatarUrl = user?.profileImage ?? '';
-
-          return Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFF1F1F1)),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight,
             ),
-            child: Row(
-              children: [
-                // Avatar: real image if available, else initials circle
-                isLoading
-                    ? Container(
-                        width: 58,
-                        height: 58,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFFFF0E6),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Center(
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                        ),
-                      )
-                    : avatarUrl.isNotEmpty
-                        ? ClipOval(
-                            child: Image.network(
-                              avatarUrl,
-                              width: 58,
-                              height: 58,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) =>
-                                  _initialsCircle(initials),
-                            ),
-                          )
-                        : _initialsCircle(initials),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        displayName,
-                        style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF222222)),
-                      ),
-                      Text(
-                        displayEmail,
-                        style: GoogleFonts.poppins(
-                            fontSize: 10, color: Colors.grey),
-                      ),
-                      if (joinedDate.isNotEmpty) ...[
-                        const SizedBox(height: 2),
-                        Text(
-                          joinedDate,
-                          style: GoogleFonts.poppins(
-                              fontSize: 9, color: Colors.grey.shade400),
-                        ),
-                      ],
-                      const SizedBox(height: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+            child: IntrinsicHeight(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Profile Brief Card — powered by ProfileController (live API data)
+                    Obx(() {
+                      final user = profCtrl.userProfile.value;
+                      final isLoading = profCtrl.isLoading.value;
+
+                      // Display name: prefer full API name, fall back to JWT display name
+                      final displayName = user?.name.isNotEmpty == true
+                          ? user!.name
+                          : accCtrl.name.value;
+
+                      // Email: prefer API email, fall back to JWT email
+                      final displayEmail = user?.email.isNotEmpty == true
+                          ? user!.email
+                          : accCtrl.email.value;
+
+                      // Member status from roles
+                      final memberStatus = user?.memberStatus ?? 'Member';
+
+                      // Joined date
+                      final joinedDate = user?.joinedDate ?? '';
+
+                      // Avatar initials
+                      final initials = displayName.trim().isNotEmpty
+                          ? displayName
+                              .trim()
+                              .split(' ')
+                              .where((w) => w.isNotEmpty)
+                              .map((n) => n[0])
+                              .join('')
+                              .toUpperCase()
+                          : 'U';
+
+                      // Avatar image URL from WP user URL field
+                      final avatarUrl = user?.profileImage ?? '';
+
+                      return Container(
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFFFF0E6),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: const Color(0xFFFFD4C0)),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFF1F1F1)),
                         ),
-                        child: Text(
-                          memberStatus.toUpperCase(),
+                        child: Row(
+                          children: [
+                            // Avatar: real image if available, else initials circle
+                            isLoading
+                                ? Container(
+                                    width: 58,
+                                    height: 58,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFFFFF0E6),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Center(
+                                      child: SizedBox(
+                                        width: 20,
+                                        height: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: AppColors.primary,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : avatarUrl.isNotEmpty
+                                    ? ClipOval(
+                                        child: Image.network(
+                                          avatarUrl,
+                                          width: 58,
+                                          height: 58,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) =>
+                                              _initialsCircle(initials),
+                                        ),
+                                      )
+                                    : _initialsCircle(initials),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    displayName,
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color(0xFF222222)),
+                                  ),
+                                  Text(
+                                    displayEmail,
+                                    style: GoogleFonts.poppins(
+                                        fontSize: 10, color: Colors.grey),
+                                  ),
+                                  if (joinedDate.isNotEmpty) ...[
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      joinedDate,
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 9,
+                                          color: Colors.grey.shade400),
+                                    ),
+                                  ],
+                                  const SizedBox(height: 6),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFFFF0E6),
+                                      borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                          color: const Color(0xFFFFD4C0)),
+                                    ),
+                                    child: Text(
+                                      memberStatus.toUpperCase(),
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 8,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primary),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
+                    const SizedBox(height: 20),
+
+                    _buildSectionHeader('Account Settings'),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFF1F1F1)),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildSettingsRow(
+                            'Profile details',
+                            leadingIcon: Icons.person_outline_rounded,
+                            targetRoute: Routes.PROFILE,
+                          ),
+                          const Divider(
+                            height: 1,
+                            thickness: 0.17,
+                            color: Colors.grey,
+                          ),
+                          _buildSettingsRow(
+                            'My Address',
+                            leadingIcon: Icons.location_on_outlined,
+                            targetRoute: Routes.ADDRESS_LIST,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    _buildSectionHeader('Purchases & History'),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFF1F1F1)),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildSettingsRow(
+                            'My Orders',
+                            leadingIcon: Icons.shopping_bag_outlined,
+                            targetRoute: Routes.ORDERS,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    _buildSectionHeader('Support & Legal'),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xFFF1F1F1)),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildSettingsRow(
+                            'Legal, Terms & Conditions',
+                            leadingIcon: Icons.description_outlined,
+                            onTap: () =>
+                                Get.to(() => const LegalPoliciesView()),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
+                    const SizedBox(height: 24),
+
+                    // Logout Secure Button
+                    SizedBox(
+                      height: 48,
+                      child: OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.red[600],
+                          side: BorderSide(color: Colors.red[100]!),
+                          backgroundColor: Colors.red[50],
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                        ),
+                        onPressed: () => accCtrl.logout(),
+                        icon: const Icon(Icons.logout, size: 16),
+                        label: Text(
+                          'Sign Out of Account',
                           style: GoogleFonts.poppins(
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary),
+                              fontSize: 12, fontWeight: FontWeight.w800),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        }),
-        const SizedBox(height: 12),
-
-        // Quick Stats row
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFFF1F1F1)),
-          ),
-          child: Row(
-            children: [
-              _buildStatCol('1', 'Active Order'),
-              Container(color: const Color(0xFFF1F1F1), width: 1.5, height: 35),
-              _buildStatCol('12', 'Total Orders'),
-              Container(color: const Color(0xFFF1F1F1), width: 1.5, height: 35),
-              _buildStatCol('₹1,45,000', 'Total Saved'),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        // Active tracking item
-        _buildActiveTrackingSection(),
-        const SizedBox(height: 16),
-
-        // General list settings
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFF1F1F1)),
-          ),
-          child: Column(
-            children: [
-              _buildSettingsRow('Profile details', targetRoute: Routes.PROFILE),
-              const Divider(height: 1),
-              _buildSettingsRow('My Orders', targetRoute: Routes.ORDERS),
-              const Divider(height: 1),
-              _buildSettingsRow('My Address', targetRoute: Routes.ADDRESS_LIST),
-              const Divider(height: 1),
-              // _buildSettingsRow('My Reviews & Ratings'),
-              // const Divider(height: 1),
-              // _buildSettingsRow('Help Desk & Support Center'),
-              // const Divider(height: 1),
-              _buildSettingsRow(
-                'Legal, Terms & Conditions',
-                onTap: () => Get.to(() => const LegalPoliciesView()),
               ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 24),
-
-        // Logout Secure Button
-        SizedBox(
-          height: 48,
-          child: OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.red[600],
-              side: BorderSide(color: Colors.red[100]!),
-              backgroundColor: Colors.red[50],
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            ),
-            onPressed: () => accCtrl.logout(),
-            icon: const Icon(Icons.logout, size: 16),
-            label: Text(
-              'Sign Out of Account',
-              style: GoogleFonts.poppins(
-                  fontSize: 12, fontWeight: FontWeight.w800),
             ),
           ),
-        )
-      ],
+        );
+      },
     );
   }
 
-  Widget _buildStatCol(String num, String label) {
-    return Expanded(
-      child: Column(
-        children: [
-          Text(
-            num,
-            style: GoogleFonts.poppins(
-                fontSize: 14,
-                fontWeight: FontWeight.w800,
-                color: AppColors.primary),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            label.toUpperCase(),
-            style: GoogleFonts.poppins(
-                fontSize: 8, color: Colors.grey, fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildStatCol(String num, String label) {
+  //   return Expanded(
+  //     child: Column(
+  //       children: [
+  //         Text(
+  //           num,
+  //           style: GoogleFonts.poppins(
+  //               fontSize: 14,
+  //               fontWeight: FontWeight.w800,
+  //               color: AppColors.primary),
+  //         ),
+  //         const SizedBox(height: 2),
+  //         Text(
+  //           label.toUpperCase(),
+  //           style: GoogleFonts.poppins(
+  //               fontSize: 8, color: Colors.grey, fontWeight: FontWeight.bold),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   /// Reusable initials avatar circle (fallback when no profile image)
   Widget _initialsCircle(String initials) {
@@ -308,150 +343,169 @@ class AccountView extends GetView<AccountController> {
     );
   }
 
-  Widget _buildActiveTrackingSection() {
-    return GestureDetector(
-      // onTap: () => Get.to(() => const OrderDetailView(orderId: 'ord_recent_1')),
-      onTap: () => Get.toNamed(Routes.ORDER_DETAIL, arguments: 'ord_recent_1'),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFF1F1F1)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.local_shipping,
-                        color: AppColors.primary, size: 18),
-                    const SizedBox(width: 6),
-                    Text(
-                      'RECENT ORDER',
-                      style: GoogleFonts.poppins(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey),
-                    ),
-                  ],
-                ),
-                Text(
-                  '#IS-7341-ORDER',
-                  style: GoogleFonts.poppins(
-                      fontSize: 9,
-                      color: Colors.grey,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: SizedBox(
-                    width: 38,
-                    height: 38,
-                    child: CachedNetworkImage(
-                      imageUrl:
-                          'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=100&auto=format&fit=crop&q=80',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Ayaana Sheesham Wood Sofa Cum Bed',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.poppins(
-                            fontSize: 11, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'Quantity: 1 | Honey Finish',
-                        style: GoogleFonts.poppins(
-                            fontSize: 9, color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const Divider(height: 24),
+  // Widget _buildActiveTrackingSection() {
+  //   return GestureDetector(
+  //     // onTap: () => Get.to(() => const OrderDetailView(orderId: 'ord_recent_1')),
+  //     onTap: () => Get.toNamed(Routes.ORDER_DETAIL, arguments: 'ord_recent_1'),
+  //     child: Container(
+  //       padding: const EdgeInsets.all(16),
+  //       decoration: BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.circular(16),
+  //         border: Border.all(color: const Color(0xFFF1F1F1)),
+  //       ),
+  //       child: Column(
 
-            // Simple dynamic timeline steps tracking
-            _buildTimelineStep(
-                'Order Dispatched from Bengaluru Hub', 'June 12, 10:14 AM',
-                isCompleted: true),
-            _buildTimelineStep(
-                'In-Transit: Nearing Delivery City', 'June 13, 08:30 AM',
-                isCurrent: true),
-          ],
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Row(
+  //                 children: [
+  //                   const Icon(Icons.local_shipping,
+  //                       color: AppColors.primary, size: 18),
+  //                   const SizedBox(width: 6),
+  //                   Text(
+  //                     'RECENT ORDER',
+  //                     style: GoogleFonts.poppins(
+  //                         fontSize: 10,
+  //                         fontWeight: FontWeight.bold,
+  //                         color: Colors.grey),
+  //                   ),
+  //                 ],
+  //               ),
+  //               Text(
+  //                 '#IS-7341-ORDER',
+  //                 style: GoogleFonts.poppins(
+  //                     fontSize: 9,
+  //                     color: Colors.grey,
+  //                     fontWeight: FontWeight.bold),
+  //               ),
+  //             ],
+  //           ),
+  //           const SizedBox(height: 12),
+  //           Row(
+  //             children: [
+  //               ClipRRect(
+  //                 borderRadius: BorderRadius.circular(6),
+  //                 child: SizedBox(
+  //                   width: 38,
+  //                   height: 38,
+  //                   child: CachedNetworkImage(
+  //                     imageUrl:
+  //                         'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=100&auto=format&fit=crop&q=80',
+  //                     fit: BoxFit.cover,
+  //                   ),
+  //                 ),
+  //               ),
+  //               const SizedBox(width: 12),
+  //               Expanded(
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     Text(
+  //                       'Ayaana Sheesham Wood Sofa Cum Bed',
+  //                       maxLines: 1,
+  //                       overflow: TextOverflow.ellipsis,
+  //                       style: GoogleFonts.poppins(
+  //                           fontSize: 11, fontWeight: FontWeight.bold),
+  //                     ),
+  //                     Text(
+  //                       'Quantity: 1 | Honey Finish',
+  //                       style: GoogleFonts.poppins(
+  //                           fontSize: 9, color: Colors.grey),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //           const Divider(height: 24),
+  //
+  //           // Simple dynamic timeline steps tracking
+  //           _buildTimelineStep(
+  //               'Order Dispatched from Bengaluru Hub', 'June 12, 10:14 AM',
+  //               isCompleted: true),
+  //           _buildTimelineStep(
+  //               'In-Transit: Nearing Delivery City', 'June 13, 08:30 AM',
+  //               isCurrent: true),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+  //
+  // Widget _buildTimelineStep(String label, String timing,
+  //     {bool isCompleted = false, bool isCurrent = false}) {
+  //   return Row(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Column(
+  //         children: [
+  //           Container(
+  //             width: 8,
+  //             height: 8,
+  //             decoration: BoxDecoration(
+  //               shape: BoxShape.circle,
+  //               color: isCompleted || isCurrent
+  //                   ? Colors.green[600]
+  //                   : Colors.grey[300],
+  //             ),
+  //           ),
+  //           Container(
+  //             width: 1.5,
+  //             height: 24,
+  //             color: isCompleted ? Colors.green[200] : Colors.grey[200],
+  //           ),
+  //         ],
+  //       ),
+  //       const SizedBox(width: 12),
+  //       Expanded(
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Text(
+  //               label,
+  //               style: GoogleFonts.poppins(
+  //                 fontSize: 10,
+  //                 fontWeight: FontWeight.bold,
+  //                 color:
+  //                     isCurrent ? AppColors.primary : const Color(0xFF222222),
+  //               ),
+  //             ),
+  //             Text(
+  //               timing,
+  //               style: GoogleFonts.poppins(fontSize: 8, color: Colors.grey),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4.0, bottom: 6.0),
+      child: Text(
+        title.toUpperCase(),
+        style: GoogleFonts.poppins(
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey[600],
+          letterSpacing: 0.8,
         ),
       ),
     );
   }
 
-  Widget _buildTimelineStep(String label, String timing,
-      {bool isCompleted = false, bool isCurrent = false}) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Column(
-          children: [
-            Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isCompleted || isCurrent
-                    ? Colors.green[600]
-                    : Colors.grey[300],
-              ),
-            ),
-            Container(
-              width: 1.5,
-              height: 24,
-              color: isCompleted ? Colors.green[200] : Colors.grey[200],
-            ),
-          ],
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: GoogleFonts.poppins(
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                  color:
-                      isCurrent ? AppColors.primary : const Color(0xFF222222),
-                ),
-              ),
-              Text(
-                timing,
-                style: GoogleFonts.poppins(fontSize: 8, color: Colors.grey),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildSettingsRow(String text,
-      {String? targetRoute, VoidCallback? onTap}) {
+      {required IconData leadingIcon,
+      String? targetRoute,
+      VoidCallback? onTap}) {
     return ListTile(
+      leading: Icon(leadingIcon, color: AppColors.primary, size: 20),
       title: Text(
         text,
         style: GoogleFonts.poppins(
@@ -459,7 +513,8 @@ class AccountView extends GetView<AccountController> {
             fontWeight: FontWeight.w600,
             color: const Color(0xFF444444)),
       ),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 12),
+      trailing:
+          const Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
       dense: true,
       onTap: () {
         if (onTap != null) {

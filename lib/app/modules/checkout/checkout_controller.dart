@@ -168,7 +168,8 @@ class CheckoutController extends GetxController {
       final double totalAmountInPaise = checkoutTotal * 100;
 
       final options = {
-        'key': 'rzp_test_TCubW9gX0V2fux',
+        'key': 'rzp_live_S9b3ahb0GRXV0w',
+        // 'key': 'rzp_test_TCubW9gX0V2fux',
         'amount': totalAmountInPaise.toInt(),
         'name': 'Iron Street',
         'description': 'Order #$orderNumber',

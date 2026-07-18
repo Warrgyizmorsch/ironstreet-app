@@ -438,6 +438,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                     initialIndex: index,
                                   );
                                 },
+                               
                                 child: Container(
                                   width: 54,
                                   height: 54,
@@ -717,7 +718,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                             category: prod.categories.isNotEmpty
                                                 ? prod.categories.first.name
                                                 : 'Furniture'));
-                                        CustomToast.show('Added to Cart', isSuccess: true);
+                                        CustomToast.show('Added to Cart',
+                                            isSuccess: true);
                                       }
                                     }
                                   : null,

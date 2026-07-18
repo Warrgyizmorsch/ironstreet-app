@@ -74,16 +74,18 @@ class CartView extends GetView<CartController> {
       ),
       body: Obx(() {
         if (controller.cartItems.isEmpty) {
-          return RefreshIndicator(
-            onRefresh: () => controller.fetchCart(),
-            color: AppColors.primary,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: SizedBox(
-                height: MediaQuery.of(context).size.height - 120,
-                child: const EmptyCartState(),
-              ),
+          return
+              // RefreshIndicator(
+              //   onRefresh: () => controller.fetchCart(),
+              //   color: AppColors.primary,
+              //   child:
+              SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height - 120,
+              child: const EmptyCartState(),
             ),
+            // ),
           );
         }
 
