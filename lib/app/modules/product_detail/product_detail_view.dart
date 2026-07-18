@@ -657,166 +657,169 @@ class ProductDetailView extends GetView<ProductDetailController> {
                   top: BorderSide(color: Color(0xFFF1F1F1)),
                 ),
               ),
-              child: Row(
-                children: [
-                  // Add to Cart Button
-                  Expanded(
-                    child: Obx(() {
-                      final bool productInCart =
-                          cartController.isInCart(prod.id.toString());
+              child: SafeArea(
+                top: false,
+                child: Row(
+                  children: [
+                    // Add to Cart Button
+                    Expanded(
+                      child: Obx(() {
+                        final bool productInCart =
+                            cartController.isInCart(prod.id.toString());
 
-                      return SizedBox(
-                        height: 48,
-                        child: OutlinedButton.icon(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.primary,
-                            side: BorderSide(
-                              color: prod.purchasable &&
-                                      prod.stockStatus == 'instock'
-                                  ? AppColors.primary
-                                  : Colors.grey,
+                        return SizedBox(
+                          height: 48,
+                          child: OutlinedButton.icon(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.primary,
+                              side: BorderSide(
+                                color: prod.purchasable &&
+                                        prod.stockStatus == 'instock'
+                                    ? AppColors.primary
+                                    : Colors.grey,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
+                            onPressed:
+                                prod.purchasable && prod.stockStatus == 'instock'
+                                    ? () {
+                                        if (!Get.find<SessionManager>()
+                                            .isLoggedIn()) {
+                                          _showLoginRequiredDialog();
+                                          return;
+                                        }
+                                        if (productInCart) {
+                                          Get.toNamed(Routes.CART);
+                                        } else {
+                                          cartController.addToCart(Product(
+                                              id: prod.id.toString(),
+                                              name: prod.name,
+                                              brand: brandName.isNotEmpty
+                                                  ? brandName
+                                                  : "LuxeLiving by Iron Street",
+                                              price: price,
+                                              oldPrice: oldPrice,
+                                              discount: discount,
+                                              rating: double.tryParse(
+                                                      prod.averageRating) ??
+                                                  0.0,
+                                              reviewsCount: prod.ratingCount,
+                                              image: prod.images.first.src,
+                                              images: [prod.images.first.src],
+                                              description: prod.description,
+                                              deliveryText: 'Available',
+                                              dimensions: dimensions,
+                                              material: material,
+                                              category: prod.categories.isNotEmpty
+                                                  ? prod.categories.first.name
+                                                  : 'Furniture'));
+                                          CustomToast.show('Added to Cart',
+                                              isSuccess: true);
+                                        }
+                                      }
+                                    : null,
+                            icon: Icon(
+                              productInCart
+                                  ? Icons.shopping_cart_checkout
+                                  : Icons.shopping_bag_outlined,
+                              size: 18,
+                            ),
+                            label: Text(
+                              prod.stockStatus == 'instock'
+                                  ? productInCart
+                                      ? 'Go to Cart'
+                                      : 'Add to Cart'
+                                  : 'Out of Stock',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(width: 12),
+                    // Buy Now Button
+                    Expanded(
+                      child: SizedBox(
+                        height: 48,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                prod.purchasable && prod.stockStatus == 'instock'
+                                    ? AppColors.primary
+                                    : Colors.grey,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
+                            elevation: 0,
                           ),
-                          onPressed:
-                              prod.purchasable && prod.stockStatus == 'instock'
-                                  ? () {
-                                      if (!Get.find<SessionManager>()
-                                          .isLoggedIn()) {
-                                        _showLoginRequiredDialog();
-                                        return;
-                                      }
-                                      if (productInCart) {
-                                        Get.toNamed(Routes.CART);
-                                      } else {
-                                        cartController.addToCart(Product(
-                                            id: prod.id.toString(),
-                                            name: prod.name,
-                                            brand: brandName.isNotEmpty
-                                                ? brandName
-                                                : "LuxeLiving by Iron Street",
-                                            price: price,
-                                            oldPrice: oldPrice,
-                                            discount: discount,
-                                            rating: double.tryParse(
-                                                    prod.averageRating) ??
-                                                0.0,
-                                            reviewsCount: prod.ratingCount,
-                                            image: prod.images.first.src,
-                                            images: [prod.images.first.src],
-                                            description: prod.description,
-                                            deliveryText: 'Available',
-                                            dimensions: dimensions,
-                                            material: material,
-                                            category: prod.categories.isNotEmpty
-                                                ? prod.categories.first.name
-                                                : 'Furniture'));
-                                        CustomToast.show('Added to Cart',
-                                            isSuccess: true);
-                                      }
-                                    }
-                                  : null,
-                          icon: Icon(
-                            productInCart
-                                ? Icons.shopping_cart_checkout
-                                : Icons.shopping_bag_outlined,
-                            size: 18,
-                          ),
-                          label: Text(
-                            prod.stockStatus == 'instock'
-                                ? productInCart
-                                    ? 'Go to Cart'
-                                    : 'Add to Cart'
-                                : 'Out of Stock',
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                  const SizedBox(width: 12),
-                  // Buy Now Button
-                  Expanded(
-                    child: SizedBox(
-                      height: 48,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              prod.purchasable && prod.stockStatus == 'instock'
-                                  ? AppColors.primary
-                                  : Colors.grey,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 0,
-                        ),
-                        onPressed: prod.purchasable &&
-                                prod.stockStatus == 'instock'
-                            ? () async {
-                                if (!Get.find<SessionManager>().isLoggedIn()) {
-                                  _showLoginRequiredDialog();
-                                  return;
-                                }
-                                final bool productInCart =
-                                    cartController.isInCart(prod.id.toString());
-                                if (!productInCart) {
-                                  // Show progress loader dialog
-                                  Get.dialog(
-                                    const Center(
-                                      child: CircularProgressIndicator(
-                                        color: AppColors.primary,
+                          onPressed: prod.purchasable &&
+                                  prod.stockStatus == 'instock'
+                              ? () async {
+                                  if (!Get.find<SessionManager>().isLoggedIn()) {
+                                    _showLoginRequiredDialog();
+                                    return;
+                                  }
+                                  final bool productInCart =
+                                      cartController.isInCart(prod.id.toString());
+                                  if (!productInCart) {
+                                    // Show progress loader dialog
+                                    Get.dialog(
+                                      const Center(
+                                        child: CircularProgressIndicator(
+                                          color: AppColors.primary,
+                                        ),
                                       ),
-                                    ),
-                                    barrierDismissible: false,
-                                  );
+                                      barrierDismissible: false,
+                                    );
 
-                                  // Wait for product to be added to remote WooCommerce cart
-                                  await cartController.addToCart(Product(
-                                      id: prod.id.toString(),
-                                      name: prod.name,
-                                      brand: brandName.isNotEmpty
-                                          ? brandName
-                                          : "LuxeLiving by Iron Street",
-                                      price: price,
-                                      oldPrice: oldPrice,
-                                      discount: discount,
-                                      rating:
-                                          double.tryParse(prod.averageRating) ??
-                                              0.0,
-                                      reviewsCount: prod.ratingCount,
-                                      image: prod.images.first.src,
-                                      images: [prod.images.first.src],
-                                      description: prod.description,
-                                      deliveryText: 'Available',
-                                      dimensions: dimensions,
-                                      material: material,
-                                      category: prod.categories.isNotEmpty
-                                          ? prod.categories.first.name
-                                          : 'Furniture'));
+                                    // Wait for product to be added to remote WooCommerce cart
+                                    await cartController.addToCart(Product(
+                                        id: prod.id.toString(),
+                                        name: prod.name,
+                                        brand: brandName.isNotEmpty
+                                            ? brandName
+                                            : "LuxeLiving by Iron Street",
+                                        price: price,
+                                        oldPrice: oldPrice,
+                                        discount: discount,
+                                        rating:
+                                            double.tryParse(prod.averageRating) ??
+                                                0.0,
+                                        reviewsCount: prod.ratingCount,
+                                        image: prod.images.first.src,
+                                        images: [prod.images.first.src],
+                                        description: prod.description,
+                                        deliveryText: 'Available',
+                                        dimensions: dimensions,
+                                        material: material,
+                                        category: prod.categories.isNotEmpty
+                                            ? prod.categories.first.name
+                                            : 'Furniture'));
 
-                                  // Dismiss progress loader
-                                  Get.back();
+                                    // Dismiss progress loader
+                                    Get.back();
+                                  }
+                                  Get.toNamed(Routes.CHECKOUT);
                                 }
-                                Get.toNamed(Routes.CHECKOUT);
-                              }
-                            : null,
-                        child: Text(
-                          'Buy Now',
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
+                              : null,
+                          child: Text(
+                            'Buy Now',
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
