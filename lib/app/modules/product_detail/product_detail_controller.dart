@@ -212,6 +212,14 @@ class ProductDetailController extends GetxController {
 
   void changeImage(int index) {
     selectedImageIndex.value = index;
+    if (imagePageController.hasClients &&
+        imagePageController.page?.round() != index) {
+      imagePageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   void openRelatedProduct(ProductListModel product) {

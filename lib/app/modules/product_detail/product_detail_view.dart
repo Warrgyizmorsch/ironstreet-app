@@ -433,12 +433,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               return GestureDetector(
                                 onTap: () {
                                   controller.changeImage(index);
-                                  _openImagePreview(
-                                    images: imageUrls,
-                                    initialIndex: index,
-                                  );
                                 },
-                               
                                 child: Container(
                                   width: 54,
                                   height: 54,
