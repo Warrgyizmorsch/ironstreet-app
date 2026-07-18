@@ -132,6 +132,7 @@ class PaymentController extends GetxController {
       discount: discount,
       deliveryCharges: delivery,
       totalAmount: grandTotal,
+      totalTax: cartCtrl.totalTax,
     );
 
     // Place the order

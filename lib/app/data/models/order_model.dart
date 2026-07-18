@@ -73,6 +73,7 @@ class OrderModel {
   final double discount;
   final double deliveryCharges;
   final double totalAmount;
+  final double totalTax;
 
   OrderModel({
     required this.id,
@@ -87,6 +88,7 @@ class OrderModel {
     required this.discount,
     required this.deliveryCharges,
     required this.totalAmount,
+    required this.totalTax,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -106,6 +108,7 @@ class OrderModel {
       discount: (json['discount'] ?? 0.0).toDouble(),
       deliveryCharges: (json['deliveryCharges'] ?? 0.0).toDouble(),
       totalAmount: (json['totalAmount'] ?? 0.0).toDouble(),
+      totalTax: (json['totalTax'] ?? 0.0).toDouble(),
     );
   }
 
@@ -147,7 +150,8 @@ class OrderModel {
     final double total = double.tryParse(json['total']?.toString() ?? '0.0') ?? 0.0;
     final double shippingCharges = double.tryParse(json['shipping_total']?.toString() ?? '0.0') ?? 0.0;
     final double discount = double.tryParse(json['discount_total']?.toString() ?? '0.0') ?? 0.0;
-    final double subtotal = total - shippingCharges + discount;
+    final double totalTax = double.tryParse(json['total_tax']?.toString() ?? '0.0') ?? 0.0;
+    final double subtotal = total - shippingCharges - totalTax + discount;
 
     final String paymentMethodTitle = json['payment_method_title'] ?? '';
     final String paymentMethodCode = json['payment_method'] ?? '';
@@ -176,6 +180,7 @@ class OrderModel {
       discount: discount,
       deliveryCharges: shippingCharges,
       totalAmount: total,
+      totalTax: totalTax,
     );
   }
 
@@ -193,6 +198,7 @@ class OrderModel {
       'discount': discount,
       'deliveryCharges': deliveryCharges,
       'totalAmount': totalAmount,
+      'totalTax': totalTax,
     };
   }
 
@@ -209,6 +215,7 @@ class OrderModel {
     double? discount,
     double? deliveryCharges,
     double? totalAmount,
+    double? totalTax,
   }) {
     return OrderModel(
       id: id ?? this.id,
@@ -223,6 +230,7 @@ class OrderModel {
       discount: discount ?? this.discount,
       deliveryCharges: deliveryCharges ?? this.deliveryCharges,
       totalAmount: totalAmount ?? this.totalAmount,
+      totalTax: totalTax ?? this.totalTax,
     );
   }
 }

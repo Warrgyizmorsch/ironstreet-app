@@ -363,8 +363,11 @@ class OrderDetailView extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     _buildPriceRow('Items Subtotal', order.subtotal),
-                    _buildPriceRow('Discount Applied', -order.discount, isDiscount: true),
+                    if (order.discount > 0)
+                      _buildPriceRow('Discount Applied', -order.discount, isDiscount: true),
                     _buildPriceRow('Delivery Charges', order.deliveryCharges),
+                    if (order.totalTax > 0)
+                      _buildPriceRow('Estimated Tax (GST)', order.totalTax),
                     const Divider(height: 24, thickness: 1),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -27,7 +27,7 @@ class OrderRepository {
   Future<dynamic> fetchOrderDetail({required int orderId}) async {
     try {
       final String url = '${AppUrls.orders}/$orderId'
-          '?_fields=id,number,status,date_created,total,shipping_total,discount_total,shipping,billing,payment_method,payment_method_title,transaction_id,line_items';
+          '?_fields=id,number,status,date_created,total,total_tax,shipping_total,discount_total,shipping,billing,payment_method,payment_method_title,transaction_id,line_items';
       final response = await _apiService.getApi(url);
       return response;
     } catch (e) {
