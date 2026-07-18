@@ -501,6 +501,7 @@ class CheckoutView extends GetView<CheckoutController> {
     final discount = checkCtrl.cartCtrl.discountAmount;
     final delivery = checkCtrl.cartCtrl.deliveryPrice;
     final couponDisc = checkCtrl.couponDiscount.value;
+    final tax = checkCtrl.cartCtrl.totalTax;
     final total = checkCtrl.checkoutTotal;
 
     return Container(
@@ -524,9 +525,10 @@ class CheckoutView extends GetView<CheckoutController> {
           ),
           const SizedBox(height: 12),
           _buildBillRow('Item Subtotal', subtotal),
-          _buildBillRow('Product Discounts', -discount, isDiscount: true),
+          if (discount > 0) _buildBillRow('Product Discounts', -discount, isDiscount: true),
           if (couponDisc > 0) _buildBillRow('Coupon Discount', -couponDisc, isDiscount: true),
           _buildBillRow('Delivery Charges', delivery),
+          if (tax > 0) _buildBillRow('Estimated Tax (GST)', tax),
           const Divider(height: 24, thickness: 1),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
