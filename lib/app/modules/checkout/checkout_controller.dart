@@ -92,10 +92,10 @@ class CheckoutController extends GetxController {
 
   bool applyCoupon(String code) {
     final cleanCode = code.trim().toUpperCase();
-    if (cleanCode == 'GOLDSTREET' || cleanCode == 'IRONSTREET') {
+    if (cleanCode == 'GOLD9842STREET' || cleanCode == 'IRON2153STREET') {
       appliedCoupon.value = cleanCode;
       // 10% additional discount on the cart subtotal
-      couponDiscount.value = cartCtrl.subtotal * 0.10;
+      // couponDiscount.value = cartCtrl.subtotal * 0.10;
       CustomToast.show(
         'Successfully applied coupon: $cleanCode (10% Off)',
       );

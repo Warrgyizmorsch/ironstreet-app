@@ -246,13 +246,19 @@ class CartItemCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Product Image
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: CachedNetworkImage(
-                    imageUrl: prod.image,
-                    width: 72,
-                    height: 72,
-                    fit: BoxFit.cover,
+                GestureDetector(
+                  onTap: () => Get.toNamed(
+                    Routes.PRODUCT_DETAIL,
+                    arguments: int.tryParse(prod.id) ?? 0,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: prod.image,
+                      width: 72,
+                      height: 72,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -261,51 +267,62 @@ class CartItemCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        prod.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xFF222222),
+                      GestureDetector(
+                        onTap: () => Get.toNamed(
+                          Routes.PRODUCT_DETAIL,
+                          arguments: int.tryParse(prod.id) ?? 0,
                         ),
-                      ),
-                      const SizedBox(height: 3),
-                      // Pricing Row
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            formatCurrency.format(prod.price),
-                            style: GoogleFonts.poppins(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.blackC,
-                            ),
-                          ),
-                          if (prod.oldPrice > prod.price) ...[
-                            const SizedBox(width: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Text(
-                              formatCurrency.format(prod.oldPrice),
+                              prod.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.poppins(
-                                fontSize: 9.5,
-                                color: Colors.grey,
-                                decoration: TextDecoration.lineThrough,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: const Color(0xFF222222),
                               ),
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              '${prod.discount.toStringAsFixed(0)}% OFF',
-                              style: GoogleFonts.poppins(
-                                fontSize: 9.5,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green[600],
-                              ),
+                            const SizedBox(height: 3),
+                            // Pricing Row
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  formatCurrency.format(prod.price),
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.blackC,
+                                  ),
+                                ),
+                                if (prod.oldPrice > prod.price) ...[
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    formatCurrency.format(prod.oldPrice),
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 9.5,
+                                      color: Colors.grey,
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    '${prod.discount.toStringAsFixed(0)}% OFF',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 9.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green[600],
+                                    ),
+                                  ),
+                                ],
+                              ],
                             ),
                           ],
-                        ],
+                        ),
                       ),
                       const SizedBox(height: 8),
                       // Quantity selector

@@ -91,7 +91,7 @@ class ProductRepository {
     required String review,
     required int rating,
   }) async {
-    final String url = '${AppUrls.baseUrl}/products/reviews';
+    const String url = '${AppUrls.baseUrl}/products/reviews';
     final Map<String, dynamic> data = {
       'product_id': productId,
       'reviewer': reviewer,

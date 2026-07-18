@@ -12,7 +12,7 @@ void main() async {
   await Get.putAsync(() => SessionManager().init());
   runApp(const IronStreetApp());
 }
- 
+
 class IronStreetApp extends StatelessWidget {
   const IronStreetApp({super.key});
 
