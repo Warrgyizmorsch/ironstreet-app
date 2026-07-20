@@ -95,7 +95,7 @@ class CategoryCard extends StatelessWidget {
         // Gives the card a modern, slightly wider rectangular shape
         width: 110,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius:
               BorderRadius.circular(16), // Smooth, modern rounded corners
           boxShadow: [
@@ -116,8 +116,9 @@ class CategoryCard extends StatelessWidget {
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(16)),
                 child: Container(
-                  color: const Color(
-                      0xFFF9F9F9), // Light background for transparent images
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF2D2D2D)
+                      : const Color(0xFFF9F9F9), // Dynamic background for transparent images
                   child: CachedNetworkImage(
                     imageUrl: category.image ?? '',
                     fit: BoxFit.cover,
@@ -156,8 +157,7 @@ class CategoryCard extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
-                      color: const Color(
-                          0xFF222222), // Deep charcoal instead of harsh black
+                      color: Theme.of(context).textTheme.bodyMedium?.color, // Dynamic text color
                       height: 1.1,
                     ),
                   ),

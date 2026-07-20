@@ -25,9 +25,11 @@ class CustomSearchBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         // color: Colors.white,
-        color: const Color(0xFFF6F6F6),
+        color: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF1E1E1E)
+            : const Color(0xFFF6F6F6),
 
-        border: Border.all(color: const Color(0xFFE5E5E5)),
+        border: Border.all(color: Theme.of(context).dividerColor),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -40,7 +42,7 @@ class CustomSearchBar extends StatelessWidget {
               onChanged: onChanged,
               style: GoogleFonts.poppins(
                 fontSize: 13,
-                color: const Color(0xFF222222),
+                color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
               decoration: InputDecoration(
                 hintText: placeholder,

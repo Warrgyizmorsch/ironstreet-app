@@ -23,18 +23,20 @@ class ProfileView extends GetView<ProfileController> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0.5,
         title: Text(
           'Profile details',
           style: GoogleFonts.poppins(
-            color: Colors.black,
+            color: Theme.of(context).textTheme.titleLarge?.color,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new,
+              color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color,
+              size: 20),
           onPressed: () => Get.back(),
         ),
         actions: [
@@ -102,12 +104,12 @@ class ProfileView extends GetView<ProfileController> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFF1F1F1)),
+                border: Border.all(color: Theme.of(context).dividerColor),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.01),
+                    color: Colors.black.withValues(alpha: 0.01),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -124,8 +126,10 @@ class ProfileView extends GetView<ProfileController> {
                         height: 90,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: const Color(0xFFFFF0E6),
-                          border: Border.all(color: AppColors.primary.withOpacity(0.2), width: 3),
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF3D2619)
+                              : const Color(0xFFFFF0E6),
+                          border: Border.all(color: AppColors.primary.withValues(alpha: 0.2), width: 3),
                         ),
                         alignment: Alignment.center,
                         child: user.profileImage.isNotEmpty
@@ -175,14 +179,16 @@ class ProfileView extends GetView<ProfileController> {
                     style: GoogleFonts.poppins(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF222222),
+                      color: Theme.of(context).textTheme.titleLarge?.color,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF0E6),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF3D2619)
+                          : const Color(0xFFFFF0E6),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
@@ -222,9 +228,9 @@ class ProfileView extends GetView<ProfileController> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFEFEFEF)),
+                border: Border.all(color: Theme.of(context).dividerColor),
               ),
               child: Column(
                 children: [
@@ -249,11 +255,11 @@ class ProfileView extends GetView<ProfileController> {
                       keyboardType: TextInputType.phone,
                     ),
                   ] else ...[
-                    _buildDetailRow('Full Name', user.name, Icons.person_outline),
+                    _buildDetailRow(context, 'Full Name', user.name, Icons.person_outline),
                     const Divider(height: 24),
-                    _buildDetailRow('Email Address', user.email, Icons.mail_outline_rounded),
+                    _buildDetailRow(context, 'Email Address', user.email, Icons.mail_outline_rounded),
                     const Divider(height: 24),
-                    _buildDetailRow('Phone Number', user.phone, Icons.phone_android_outlined),
+                    _buildDetailRow(context, 'Phone Number', user.phone, Icons.phone_android_outlined),
                   ],
                 ],
               ),
@@ -272,12 +278,12 @@ class ProfileView extends GetView<ProfileController> {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
-                        side: const BorderSide(color: Colors.grey),
+                        side: BorderSide(color: Theme.of(context).dividerColor),
                       ),
                       child: Text(
                         'CANCEL',
                         style: GoogleFonts.poppins(
-                            color: Colors.grey[700],
+                            color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
                             fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -327,10 +333,10 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value, IconData icon, {bool isReadOnly = false}) {
+  Widget _buildDetailRow(BuildContext context, String label, String value, IconData icon, {bool isReadOnly = false}) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: Colors.grey[600]),
+        Icon(icon, size: 20, color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7)),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -350,7 +356,7 @@ class ProfileView extends GetView<ProfileController> {
                 style: GoogleFonts.poppins(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: isReadOnly ? Colors.grey[600] : const Color(0xFF222222),
+                  color: isReadOnly ? Theme.of(context).textTheme.bodySmall?.color : Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
             ],
@@ -360,7 +366,7 @@ class ProfileView extends GetView<ProfileController> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.grey[100],
+              color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF2D2D2D) : Colors.grey[100],
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(

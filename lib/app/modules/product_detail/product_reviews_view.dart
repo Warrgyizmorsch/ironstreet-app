@@ -16,12 +16,13 @@ class ProductReviewsView extends StatelessWidget {
     final prodName = controller.productDetail.value?.name ?? 'Product Reviews';
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
           onPressed: () => Get.back(),
         ),
         title: Column(
@@ -30,7 +31,7 @@ class ProductReviewsView extends StatelessWidget {
             Text(
               'Customer Reviews',
               style: GoogleFonts.poppins(
-                color: Colors.black87,
+                color: Theme.of(context).textTheme.titleLarge?.color,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -39,7 +40,7 @@ class ProductReviewsView extends StatelessWidget {
             Text(
               prodName,
               style: GoogleFonts.poppins(
-                color: Colors.grey[500],
+                color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                 fontSize: 10,
                 fontWeight: FontWeight.w500,
               ),
@@ -116,9 +117,9 @@ class ProductReviewsView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFAF9F6),
+                  color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : const Color(0xFFFAF9F6),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFF1F1F1)),
+                  border: Border.all(color: Theme.of(context).dividerColor),
                 ),
                 child: Row(
                   children: [
@@ -133,7 +134,7 @@ class ProductReviewsView extends StatelessWidget {
                             style: GoogleFonts.poppins(
                               fontSize: 40,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                              color: Theme.of(context).textTheme.titleLarge?.color,
                             ),
                           ),
                           _buildReviewStars(average, size: 16),
@@ -154,7 +155,7 @@ class ProductReviewsView extends StatelessWidget {
                     Container(
                       height: 80,
                       width: 1,
-                      color: const Color(0xFFE5E5E5),
+                      color: Theme.of(context).dividerColor,
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                     ),
                     // Rating bars column
@@ -173,7 +174,7 @@ class ProductReviewsView extends StatelessWidget {
                                   style: GoogleFonts.poppins(
                                     fontSize: 10,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.grey[700],
+                                    color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
@@ -183,7 +184,7 @@ class ProductReviewsView extends StatelessWidget {
                                     child: LinearProgressIndicator(
                                       value: pct,
                                       minHeight: 6,
-                                      backgroundColor: const Color(0xFFE5E5E5),
+                                      backgroundColor: Theme.of(context).dividerColor,
                                       valueColor: AlwaysStoppedAnimation<Color>(
                                         stars >= 4
                                             ? Colors.green[600]!
@@ -222,7 +223,7 @@ class ProductReviewsView extends StatelessWidget {
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF222222),
+                  color: Theme.of(context).textTheme.titleMedium?.color,
                 ),
               ),
               const SizedBox(height: 16),
@@ -233,12 +234,12 @@ class ProductReviewsView extends StatelessWidget {
                 itemCount: reviews.length,
                 separatorBuilder: (context, index) => Container(
                   height: 1,
-                  color: const Color(0xFFF5F5F5),
+                  color: Theme.of(context).dividerColor,
                   margin: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 itemBuilder: (context, index) {
                   final review = reviews[index];
-                  return _buildReviewItem(review);
+                  return _buildReviewItem(context, review);
                 },
               ),
             ],
@@ -265,7 +266,7 @@ class ProductReviewsView extends StatelessWidget {
     );
   }
 
-  Widget _buildReviewItem(ProductReviewModel review) {
+  Widget _buildReviewItem(BuildContext context, ProductReviewModel review) {
     // Format date
     String dateStr = review.dateCreated;
     try {
@@ -294,7 +295,7 @@ class ProductReviewsView extends StatelessWidget {
               child: Container(
                 width: 36,
                 height: 36,
-                color: Colors.grey[200],
+                color: Theme.of(context).dividerColor,
                 child: avatarUrl.isNotEmpty
                     ? CachedNetworkImage(
                         imageUrl: avatarUrl,
@@ -304,7 +305,7 @@ class ProductReviewsView extends StatelessWidget {
                             initial,
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
-                              color: Colors.grey[700],
+                              color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
                               fontSize: 14,
                             ),
                           ),
@@ -314,7 +315,7 @@ class ProductReviewsView extends StatelessWidget {
                             initial,
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
-                              color: Colors.grey[700],
+                              color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
                               fontSize: 14,
                             ),
                           ),
@@ -325,7 +326,7 @@ class ProductReviewsView extends StatelessWidget {
                           initial,
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.bold,
-                            color: Colors.grey[700],
+                            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
                             fontSize: 14,
                           ),
                         ),
@@ -348,7 +349,7 @@ class ProductReviewsView extends StatelessWidget {
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: Theme.of(context).textTheme.titleSmall?.color,
                           ),
                         ),
                       ),
@@ -357,20 +358,20 @@ class ProductReviewsView extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                           decoration: BoxDecoration(
-                            color: Colors.green[50],
+                            color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E3524) : Colors.green[50],
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.verified, size: 10, color: Colors.green[700]),
+                              Icon(Icons.verified, size: 10, color: Theme.of(context).brightness == Brightness.dark ? Colors.green[300] : Colors.green[700]),
                               const SizedBox(width: 2),
                               Text(
                                 'Verified',
                                 style: GoogleFonts.poppins(
                                   fontSize: 8,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.green[700],
+                                  color: Theme.of(context).brightness == Brightness.dark ? Colors.green[300] : Colors.green[700],
                                 ),
                               ),
                             ],
@@ -384,7 +385,7 @@ class ProductReviewsView extends StatelessWidget {
                     dateStr,
                     style: GoogleFonts.poppins(
                       fontSize: 10,
-                      color: Colors.grey[500],
+                      color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -400,7 +401,7 @@ class ProductReviewsView extends StatelessWidget {
           _cleanHtml(review.review),
           style: GoogleFonts.poppins(
             fontSize: 12,
-            color: Colors.grey[800],
+            color: Theme.of(context).textTheme.bodyMedium?.color,
             height: 1.5,
           ),
         ),

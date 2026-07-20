@@ -34,7 +34,7 @@ class WhyChooseIronStreetSection extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
@@ -43,7 +43,7 @@ class WhyChooseIronStreetSection extends StatelessWidget {
             offset: Offset(0, 4),
           ),
         ],
-        border: Border.all(color: const Color(0xFFF3F3F3)),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         children: [
@@ -53,7 +53,7 @@ class WhyChooseIronStreetSection extends StatelessWidget {
             style: GoogleFonts.poppins(
               fontSize: 13,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF222222),
+              color: Theme.of(context).textTheme.titleMedium?.color,
             ),
           ),
           const SizedBox(height: 4),
@@ -84,8 +84,10 @@ class WhyChooseIronStreetSection extends StatelessWidget {
                       Container(
                         width: 44,
                         height: 44,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFFFF0E6),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF3D2619)
+                              : const Color(0xFFFFF0E6),
                           shape: BoxShape.circle,
                         ),
                         alignment: Alignment.center,
@@ -105,7 +107,7 @@ class WhyChooseIronStreetSection extends StatelessWidget {
                         style: GoogleFonts.poppins(
                           fontSize: 9,
                           fontWeight: FontWeight.w600,
-                          color: const Color(0xFF555555),
+                          color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
                         ),
                       ),
                     ],

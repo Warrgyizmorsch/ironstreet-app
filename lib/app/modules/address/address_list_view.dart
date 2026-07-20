@@ -20,18 +20,20 @@ class AddressListView extends GetView<AddressController> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0.5,
         title: Text(
           'Address Book',
           style: GoogleFonts.poppins(
-            color: Colors.black,
+            color: Theme.of(context).textTheme.titleLarge?.color,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new,
+              color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color,
+              size: 20),
           onPressed: () => Get.back(),
         ),
       ),
@@ -52,7 +54,7 @@ class AddressListView extends GetView<AddressController> {
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey[700],
+                    color: Theme.of(context).textTheme.titleMedium?.color,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -92,15 +94,15 @@ class AddressListView extends GetView<AddressController> {
             return Container(
               margin: const EdgeInsets.only(bottom: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: address.isDefault ? AppColors.primary.withOpacity(0.3) : const Color(0xFFEFEFEF),
+                  color: address.isDefault ? AppColors.primary.withValues(alpha: 0.3) : Theme.of(context).dividerColor,
                   width: address.isDefault ? 1.5 : 1.0,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.02),
+                    color: Colors.black.withValues(alpha: 0.02),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -120,8 +122,12 @@ class AddressListView extends GetView<AddressController> {
                               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
                                 color: address.isDefault
-                                    ? const Color(0xFFFFF0E6)
-                                    : const Color(0xFFF1F1F1),
+                                    ? (Theme.of(context).brightness == Brightness.dark
+                                        ? const Color(0xFF3D2619)
+                                        : const Color(0xFFFFF0E6))
+                                    : (Theme.of(context).brightness == Brightness.dark
+                                        ? const Color(0xFF2D2D2D)
+                                        : const Color(0xFFF1F1F1)),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
@@ -129,7 +135,9 @@ class AddressListView extends GetView<AddressController> {
                                 style: GoogleFonts.poppins(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
-                                  color: address.isDefault ? AppColors.primary : Colors.grey[700],
+                                  color: address.isDefault
+                                      ? AppColors.primary
+                                      : Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
                                 ),
                               ),
                             ),
@@ -205,7 +213,7 @@ class AddressListView extends GetView<AddressController> {
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: const Color(0xFF222222),
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -213,7 +221,7 @@ class AddressListView extends GetView<AddressController> {
                       address.fullAddress,
                       style: GoogleFonts.poppins(
                         fontSize: 12,
-                        color: Colors.grey[700],
+                        color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
                         height: 1.4,
                       ),
                     ),
@@ -226,7 +234,7 @@ class AddressListView extends GetView<AddressController> {
                           address.phone,
                           style: GoogleFonts.poppins(
                             fontSize: 12,
-                            color: Colors.grey[700],
+                            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
                           ),
                         ),
                       ],
@@ -243,10 +251,10 @@ class AddressListView extends GetView<AddressController> {
         return SafeArea(
           child: Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
               border: Border(
-                top: BorderSide(color: Color(0xFFF1F1F1)),
+                top: BorderSide(color: Theme.of(context).dividerColor),
               ),
             ),
             child: SizedBox(
@@ -265,7 +273,11 @@ class AddressListView extends GetView<AddressController> {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: reachedLimit ? Colors.grey[300] : AppColors.primary,
+                  backgroundColor: reachedLimit
+                      ? (Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF222222)
+                          : Colors.grey[300])
+                      : AppColors.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),

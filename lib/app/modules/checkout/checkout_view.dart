@@ -21,18 +21,20 @@ class CheckoutView extends GetView<CheckoutController> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0.5,
         title: Text(
           'Checkout',
           style: GoogleFonts.poppins(
-            color: Colors.black,
+            color: Theme.of(context).textTheme.titleLarge?.color,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new,
+              color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color,
+              size: 20),
           onPressed: () => Get.back(),
         ),
         actions: [
@@ -77,7 +79,7 @@ class CheckoutView extends GetView<CheckoutController> {
           padding: const EdgeInsets.all(16),
           children: [
             // Checkout Progress Tracker Indicator
-            _buildCheckoutProgress(),
+            _buildCheckoutProgress(context),
             const SizedBox(height: 16),
 
             // Shipping Address Section
@@ -85,15 +87,15 @@ class CheckoutView extends GetView<CheckoutController> {
             const SizedBox(height: 16),
 
             // Cart Items Summary Section
-            _buildItemsSummarySection(checkCtrl),
+            _buildItemsSummarySection(context, checkCtrl),
             const SizedBox(height: 16),
 
             // Promo Code Section
-            _buildPromoCodeSection(checkCtrl, couponTextCtrl),
+            _buildPromoCodeSection(context, checkCtrl, couponTextCtrl),
             const SizedBox(height: 16),
 
             // Bill Summary Section
-            _buildBillSummarySection(checkCtrl),
+            _buildBillSummarySection(context, checkCtrl),
             const SizedBox(height: 32),
           ],
         );
@@ -103,10 +105,10 @@ class CheckoutView extends GetView<CheckoutController> {
         return SafeArea(
           child: Container(
             padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: Colors.white,
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor,
               border: Border(
-                top: BorderSide(color: Color(0xFFF1F1F1)),
+                top: BorderSide(color: Theme.of(context).dividerColor),
               ),
             ),
             child: Row(
@@ -171,35 +173,35 @@ class CheckoutView extends GetView<CheckoutController> {
     );
   }
 
-  Widget _buildCheckoutProgress() {
+  Widget _buildCheckoutProgress(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFEFEFEF)),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildProgressStep('Delivery', isCompleted: true),
+          _buildProgressStep(context, 'Delivery', isCompleted: true),
           Icon(Icons.arrow_forward_ios, size: 10, color: Colors.grey[400]),
-          _buildProgressStep('Payment', isActive: true),
+          _buildProgressStep(context, 'Payment', isActive: true),
           Icon(Icons.arrow_forward_ios, size: 10, color: Colors.grey[400]),
-          _buildProgressStep('Success', isPending: true),
+          _buildProgressStep(context, 'Success', isPending: true),
         ],
       ),
     );
   }
 
-  Widget _buildProgressStep(String label, {bool isCompleted = false, bool isActive = false, bool isPending = false}) {
+  Widget _buildProgressStep(BuildContext context, String label, {bool isCompleted = false, bool isActive = false, bool isPending = false}) {
     Color color;
     FontWeight weight;
     if (isCompleted) {
       color = AppColors.primary;
       weight = FontWeight.bold;
     } else if (isActive) {
-      color = Colors.black87;
+      color = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black87;
       weight = FontWeight.bold;
     } else {
       color = Colors.grey[400]!;
@@ -226,9 +228,9 @@ class CheckoutView extends GetView<CheckoutController> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEFEFEF)),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Obx(() {
         final wcAddr = checkCtrl.cartCtrl.shippingAddress.value;
@@ -276,7 +278,7 @@ class CheckoutView extends GetView<CheckoutController> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFF0E6),
+                      color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF3D2619) : const Color(0xFFFFF0E6),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -291,19 +293,19 @@ class CheckoutView extends GetView<CheckoutController> {
                   const SizedBox(width: 8),
                   Text(
                     '${wcAddr.firstName} ${wcAddr.lastName}'.trim(),
-                    style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: const Color(0xFF222222)),
+                    style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 13, color: Theme.of(context).textTheme.titleSmall?.color),
                   ),
                 ],
               ),
               const SizedBox(height: 6),
               Text(
                 wcAddr.fullAddress,
-                style: GoogleFonts.poppins(fontSize: 11, color: Colors.grey[700], height: 1.4),
+                style: GoogleFonts.poppins(fontSize: 11, color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8), height: 1.4),
               ),
               const SizedBox(height: 6),
               Text(
                 'Mobile: ${wcAddr.phone}',
-                style: GoogleFonts.poppins(fontSize: 11, color: Colors.grey[700]),
+                style: GoogleFonts.poppins(fontSize: 11, color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8)),
               ),
             ] else ...[
               Padding(
@@ -320,13 +322,13 @@ class CheckoutView extends GetView<CheckoutController> {
     );
   }
 
-  Widget _buildItemsSummarySection(CheckoutController checkCtrl) {
+  Widget _buildItemsSummarySection(BuildContext context, CheckoutController checkCtrl) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEFEFEF)),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -369,7 +371,7 @@ class CheckoutView extends GetView<CheckoutController> {
                             item.product.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: const Color(0xFF222222)),
+                            style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
                           ),
                           Text(
                             'Qty: ${item.quantity.value} | ${item.product.material}',
@@ -381,7 +383,7 @@ class CheckoutView extends GetView<CheckoutController> {
                     const SizedBox(width: 8),
                     Text(
                       '₹${NumberFormat('#,##,###').format(item.product.price * item.quantity.value)}',
-                      style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: const Color(0xFF222222)),
+                      style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodyLarge?.color),
                     ),
                   ],
                 ),
@@ -393,13 +395,13 @@ class CheckoutView extends GetView<CheckoutController> {
     );
   }
 
-  Widget _buildPromoCodeSection(CheckoutController checkCtrl, TextEditingController couponTextCtrl) {
+  Widget _buildPromoCodeSection(BuildContext context, CheckoutController checkCtrl, TextEditingController couponTextCtrl) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEFEFEF)),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -425,15 +427,15 @@ class CheckoutView extends GetView<CheckoutController> {
                     hintStyle: GoogleFonts.poppins(fontSize: 11, color: Colors.grey[400]),
                     isDense: true,
                     filled: true,
-                    fillColor: const Color(0xFFF9F9F9),
+                    fillColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : const Color(0xFFF9F9F9),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[200]!),
+                      borderSide: BorderSide(color: Theme.of(context).dividerColor),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: Colors.grey[200]!),
+                      borderSide: BorderSide(color: Theme.of(context).dividerColor),
                     ),
                   ),
                 ),
@@ -450,7 +452,7 @@ class CheckoutView extends GetView<CheckoutController> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black87,
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.grey[800]! : Colors.black87,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
                   child: Text(
@@ -466,9 +468,9 @@ class CheckoutView extends GetView<CheckoutController> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.green[50],
+                color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E3524) : Colors.green[50],
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.green[100]!),
+                border: Border.all(color: Colors.green.withValues(alpha: 0.3)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -479,7 +481,7 @@ class CheckoutView extends GetView<CheckoutController> {
                       const SizedBox(width: 8),
                       Text(
                         'Coupon "${checkCtrl.appliedCoupon.value}" Active',
-                        style: GoogleFonts.poppins(fontSize: 11, color: Colors.green[800], fontWeight: FontWeight.bold),
+                        style: GoogleFonts.poppins(fontSize: 11, color: Theme.of(context).brightness == Brightness.dark ? Colors.green[300] : Colors.green[800], fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -496,7 +498,7 @@ class CheckoutView extends GetView<CheckoutController> {
     );
   }
 
-  Widget _buildBillSummarySection(CheckoutController checkCtrl) {
+  Widget _buildBillSummarySection(BuildContext context, CheckoutController checkCtrl) {
     final subtotal = checkCtrl.cartCtrl.subtotal;
     final discount = checkCtrl.cartCtrl.discountAmount;
     final delivery = checkCtrl.cartCtrl.deliveryPrice;
@@ -507,9 +509,9 @@ class CheckoutView extends GetView<CheckoutController> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFEFEFEF)),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -524,18 +526,18 @@ class CheckoutView extends GetView<CheckoutController> {
             ),
           ),
           const SizedBox(height: 12),
-          _buildBillRow('Item Subtotal', subtotal),
-          if (discount > 0) _buildBillRow('Product Discounts', -discount, isDiscount: true),
-          if (couponDisc > 0) _buildBillRow('Coupon Discount', -couponDisc, isDiscount: true),
-          _buildBillRow('Delivery Charges', delivery),
-          if (tax > 0) _buildBillRow('Estimated Tax (GST)', tax),
+          _buildBillRow(context, 'Item Subtotal', subtotal),
+          if (discount > 0) _buildBillRow(context, 'Product Discounts', -discount, isDiscount: true),
+          if (couponDisc > 0) _buildBillRow(context, 'Coupon Discount', -couponDisc, isDiscount: true),
+          _buildBillRow(context, 'Delivery Charges', delivery),
+          if (tax > 0) _buildBillRow(context, 'Estimated Tax (GST)', tax),
           const Divider(height: 24, thickness: 1),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 'To Pay',
-                style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: const Color(0xFF222222)),
+                style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: Theme.of(context).textTheme.titleSmall?.color),
               ),
               Text(
                 '₹${NumberFormat('#,##,###').format(total)}',
@@ -548,14 +550,14 @@ class CheckoutView extends GetView<CheckoutController> {
     );
   }
 
-  Widget _buildBillRow(String label, double val, {bool isDiscount = false}) {
+  Widget _buildBillRow(BuildContext context, String label, double val, {bool isDiscount = false}) {
     final formattedVal = NumberFormat('#,##,###').format(val.abs());
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[700])),
+          Text(label, style: GoogleFonts.poppins(fontSize: 12, color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8))),
           Text(
             isDiscount ? '-₹$formattedVal' : '₹$formattedVal',
             style: GoogleFonts.poppins(
@@ -563,7 +565,7 @@ class CheckoutView extends GetView<CheckoutController> {
               fontWeight: FontWeight.w600,
               color: isDiscount
                   ? Colors.green[700]
-                  : (val == 0.0 ? Colors.green[700] : const Color(0xFF444444)),
+                  : (val == 0.0 ? Colors.green[700] : Theme.of(context).textTheme.bodyLarge?.color),
             ),
           ),
         ],

@@ -24,7 +24,9 @@ class CategoryView extends GetView<HomeController> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? Theme.of(context).scaffoldBackgroundColor
+          : const Color(0xFFF6F6F6),
       body: Obx(() {
         // 2. Get LIVE products and loading state from HomeController
         final products = controller.products;
@@ -36,7 +38,7 @@ class CategoryView extends GetView<HomeController> {
             Container(
               height: 48,
               padding: const EdgeInsets.symmetric(vertical: 8),
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
 
@@ -67,12 +69,12 @@ class CategoryView extends GetView<HomeController> {
                           horizontal: 16, vertical: 6),
                       decoration: BoxDecoration(
                         color: isActive
-                            ? const Color(0xFFFFF0E6)
+                            ? (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF3D2619) : const Color(0xFFFFF0E6))
                             : Colors.transparent,
                         border: Border.all(
                           color: isActive
                               ? AppColors.primary
-                              : const Color(0xFFE5E5E5),
+                              : Theme.of(context).dividerColor,
                         ),
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -82,7 +84,7 @@ class CategoryView extends GetView<HomeController> {
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
                           color:
-                              isActive ? AppColors.primary : Colors.grey[700],
+                              isActive ? AppColors.primary : Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                         ),
                       ),
                     ),

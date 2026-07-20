@@ -47,9 +47,9 @@ class ProductCard extends StatelessWidget {
       child: Container(
         width: width,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFF1F1F1)),
+          border: Border.all(color: Theme.of(context).dividerColor),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.02),
@@ -161,7 +161,7 @@ class ProductCard extends StatelessWidget {
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
+                      color: Theme.of(context).cardColor.withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: const [
                         BoxShadow(
@@ -185,7 +185,7 @@ class ProductCard extends StatelessWidget {
                           style: GoogleFonts.poppins(
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
-                            color: Colors.grey[800],
+                            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
                           ),
                         ),
                         if (product.reviewsCount > 0) ...[
@@ -194,7 +194,7 @@ class ProductCard extends StatelessWidget {
                             '(${product.reviewsCount})',
                             style: GoogleFonts.poppins(
                               fontSize: 7,
-                              color: Colors.grey[600],
+                              color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -229,7 +229,7 @@ class ProductCard extends StatelessWidget {
                       style: GoogleFonts.poppins(
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xFF222222),
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                         height: 1.25,
                       ),
                     ),
@@ -244,7 +244,7 @@ class ProductCard extends StatelessWidget {
                         style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
-                          color: Colors.black,
+                          color: AppColors.blackC,
                         ),
                       ),
                       if (product.oldPrice > product.price) ...[

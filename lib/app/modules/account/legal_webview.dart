@@ -131,7 +131,7 @@ class _LegalWebViewState extends State<LegalWebView> {
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(Colors.white)
+      ..setBackgroundColor(Colors.transparent)
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (_) {
@@ -140,7 +140,8 @@ class _LegalWebViewState extends State<LegalWebView> {
             }
           },
           onPageFinished: (_) async {
-            await _removeWebsiteHeaderFooter();
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+            await _removeWebsiteHeaderFooter(isDark);
 
             if (mounted) {
               setState(() => _isLoading = false);
@@ -154,7 +155,7 @@ class _LegalWebViewState extends State<LegalWebView> {
       ..loadRequest(Uri.parse(widget.url));
   }
 
-  Future<void> _removeWebsiteHeaderFooter() async {
+  Future<void> _removeWebsiteHeaderFooter(bool isDark) async {
     await _controller.runJavaScript('''
       (function() {
         document.querySelectorAll(
@@ -163,7 +164,7 @@ class _LegalWebViewState extends State<LegalWebView> {
 
         document.body.style.margin = '0';
         document.body.style.padding = '0';
-        document.body.style.backgroundColor = '#ffffff';
+        document.body.style.backgroundColor = '${isDark ? "#121212" : "#ffffff"}';
 
         const main = document.querySelector('.main-container');
         if (main) {
@@ -187,12 +188,17 @@ class _LegalWebViewState extends State<LegalWebView> {
         document.querySelectorAll('h1').forEach(h1 => {
           h1.style.fontSize = '24px';
           h1.style.marginBottom = '20px';
+          h1.style.color = '${isDark ? "#ffffff" : "#222222"}';
         });
 
-        document.querySelectorAll('p, li').forEach(text => {
+        document.querySelectorAll('p, li, span, h2, h3, h4, h5, h6, div, td, th').forEach(text => {
+          if ($isDark) {
+            text.style.color = '#e0e0e0';
+          } else {
+            text.style.color = '#333333';
+          }
           text.style.fontSize = '14px';
           text.style.lineHeight = '1.7';
-          text.style.color = '#333333';
         });
       })();
     ''');
@@ -201,20 +207,21 @@ class _LegalWebViewState extends State<LegalWebView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
-        surfaceTintColor: Colors.white,
+        surfaceTintColor: Theme.of(context).appBarTheme.surfaceTintColor,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
           onPressed: () => Navigator.of(context).pop(),
         ),
         centerTitle: true,
         title: Text(
           'Iron Street',
           style: GoogleFonts.poppins(
-            color: Colors.black87,
+            color: Theme.of(context).textTheme.titleLarge?.color,
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),

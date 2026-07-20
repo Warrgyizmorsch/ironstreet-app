@@ -86,21 +86,24 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
     final isEdit = widget.address != null;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? Theme.of(context).scaffoldBackgroundColor
+          : Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0.5,
         title: Text(
           isEdit ? 'Edit Address' : 'Add Address',
           style: GoogleFonts.poppins(
-            color: Colors.black,
+            color: Theme.of(context).textTheme.titleLarge?.color,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new,
-              color: Colors.black, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new,
+              color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color,
+              size: 20),
           onPressed: () => Get.back(),
         ),
       ),
@@ -239,12 +242,12 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                   child: ChoiceChip(
                     avatar: Icon(icon,
                         size: 16,
-                        color: isSel ? Colors.white : Colors.grey[700]),
+                        color: isSel ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7)),
                     label: Text(type),
                     selected: isSel,
                     selectedColor: AppColors.primary,
                     labelStyle: GoogleFonts.poppins(
-                      color: isSel ? Colors.white : Colors.grey[700],
+                      color: isSel ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
                     ),
@@ -270,7 +273,7 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
                 style: GoogleFonts.poppins(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF222222),
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
               subtitle: Text(
@@ -291,10 +294,10 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(16),
-          decoration: const BoxDecoration(
-            color: Colors.white,
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
             border: Border(
-              top: BorderSide(color: Color(0xFFF1F1F1)),
+              top: BorderSide(color: Theme.of(context).dividerColor),
             ),
           ),
           child: SizedBox(
@@ -340,7 +343,7 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
           style: GoogleFonts.poppins(
             fontSize: 11,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF444444),
+            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: 6),
@@ -348,26 +351,28 @@ class _AddEditAddressViewState extends State<AddEditAddressView> {
           controller: controller,
           keyboardType: keyboardType,
           validator: validator,
-          style: GoogleFonts.poppins(fontSize: 13, color: Colors.black),
+          style: GoogleFonts.poppins(fontSize: 13, color: Theme.of(context).textTheme.bodyLarge?.color),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle:
                 GoogleFonts.poppins(fontSize: 12, color: Colors.grey[400]),
             isDense: true,
             filled: true,
-            fillColor: const Color(0xFFF9F9F9),
+            fillColor: Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFF2D2D2D)
+                : const Color(0xFFF9F9F9),
             prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, size: 18, color: Colors.grey[600])
+                ? Icon(prefixIcon, size: 18, color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7))
                 : null,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey[200]!),
+              borderSide: BorderSide(color: Theme.of(context).dividerColor),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey[200]!),
+              borderSide: BorderSide(color: Theme.of(context).dividerColor),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),

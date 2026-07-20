@@ -46,18 +46,19 @@ class ProductDetailView extends GetView<ProductDetailController> {
     return Obx(() {
       if (controller.isLoading.value) {
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black87),
+              icon: Icon(Icons.arrow_back,
+                  color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
               onPressed: () => Get.back(),
             ),
             title: Text(
               'Product Details',
               style: GoogleFonts.poppins(
-                color: Colors.black87,
+                color: Theme.of(context).textTheme.titleLarge?.color,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -71,18 +72,19 @@ class ProductDetailView extends GetView<ProductDetailController> {
 
       if (prod == null) {
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black87),
+              icon: Icon(Icons.arrow_back,
+                  color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
               onPressed: () => Get.back(),
             ),
             title: Text(
               'Product Details',
               style: GoogleFonts.poppins(
-                color: Colors.black87,
+                color: Theme.of(context).textTheme.titleLarge?.color,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
@@ -116,18 +118,19 @@ class ProductDetailView extends GetView<ProductDetailController> {
       final List<String> imageUrls = prod.images.map((e) => e.src).toList();
 
       return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black87),
+            icon: Icon(Icons.arrow_back,
+                color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
             onPressed: () => Get.back(),
           ),
           title: Text(
             'Product Details',
             style: GoogleFonts.poppins(
-              color: Colors.black87,
+              color: Theme.of(context).appBarTheme.titleTextStyle?.color,
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),
@@ -139,8 +142,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                 alignment: Alignment.center,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.favorite_border,
-                        color: Colors.black87),
+                    icon: Icon(Icons.favorite_border,
+                        color: Theme.of(context).appBarTheme.iconTheme?.color),
                     onPressed: () => Get.toNamed(Routes.WISHLIST),
                   ),
                   if (count > 0)
@@ -177,8 +180,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                 alignment: Alignment.center,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.shopping_bag_outlined,
-                        color: Colors.black87),
+                    icon: Icon(Icons.shopping_bag_outlined,
+                        color: Theme.of(context).appBarTheme.iconTheme?.color),
                     onPressed: () => Get.toNamed(Routes.CART),
                   ),
                   if (count > 0)
@@ -236,7 +239,10 @@ class ProductDetailView extends GetView<ProductDetailController> {
 
                               if (imageUrl.isEmpty) {
                                 return Container(
-                                  color: const Color(0xFFF7F7F7),
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? const Color(0xFF1E1E1E)
+                                      : const Color(0xFFF7F7F7),
                                   child: const Center(
                                     child: Icon(
                                       Icons.image_not_supported_outlined,
@@ -269,7 +275,10 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                     ),
                                     errorWidget: (context, url, error) =>
                                         Container(
-                                      color: const Color(0xFFF7F7F7),
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
+                                          ? const Color(0xFF1E1E1E)
+                                          : const Color(0xFFF7F7F7),
                                       child: const Center(
                                         child: Icon(
                                           Icons.broken_image_outlined,
@@ -294,7 +303,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                           right: 12,
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.9),
+                              color:
+                                  Theme.of(context).cardColor.withOpacity(0.9),
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
@@ -305,8 +315,13 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               ],
                             ),
                             child: IconButton(
-                              icon: const Icon(Icons.share_outlined,
-                                  size: 20, color: Colors.black87),
+                              icon: Icon(Icons.share_outlined,
+                                  size: 20,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color
+                                      ?.withOpacity(0.8)),
                               onPressed: () async {
                                 final box =
                                     context.findRenderObject() as RenderBox?;
@@ -333,7 +348,9 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                 wishlistController.isInWishlist(prod.id);
                             return Container(
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.9),
+                                color: Theme.of(context)
+                                    .cardColor
+                                    .withOpacity(0.9),
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
@@ -349,8 +366,13 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                       ? Icons.favorite
                                       : Icons.favorite_border,
                                   size: 20,
-                                  color:
-                                      isHearted ? Colors.red : Colors.black87,
+                                  color: isHearted
+                                      ? Colors.red
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color
+                                          ?.withOpacity(0.8),
                                 ),
                                 onPressed: () {
                                   if (!Get.find<SessionManager>()
@@ -442,7 +464,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                     border: Border.all(
                                       color: selected
                                           ? AppColors.primary
-                                          : const Color(0xFFE5E5E5),
+                                          : Theme.of(context).dividerColor,
                                       width: selected ? 2 : 1,
                                     ),
                                   ),
@@ -470,7 +492,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               style: GoogleFonts.poppins(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.grey[500],
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.color
+                                    ?.withOpacity(0.6),
                                 letterSpacing: 1.0,
                               ),
                             ),
@@ -480,7 +506,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                             style: GoogleFonts.poppins(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
-                              color: const Color(0xFF222222),
+                              color:
+                                  Theme.of(context).textTheme.titleLarge?.color,
                               height: 1.3,
                             ),
                           ),
@@ -491,7 +518,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               runSpacing: 8,
                               children: prod.categories
                                   .map(
-                                    (cat) => _buildSmallChip(cat.name, cat.id),
+                                    (cat) => _buildSmallChip(
+                                        context, cat.name, cat.id),
                                   )
                                   .toList(),
                             ),
@@ -509,9 +537,15 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: Colors.green[50],
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.green[950]
+                                            : Colors.green[50],
                                         border: Border.all(
-                                          color: Colors.green[100]!,
+                                          color: Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? Colors.green[900]!
+                                              : Colors.green[100]!,
                                         ),
                                         borderRadius: BorderRadius.circular(6),
                                       ),
@@ -539,7 +573,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                       '${prod.ratingCount} Buyer Ratings',
                                       style: GoogleFonts.poppins(
                                         fontSize: 11,
-                                        color: Colors.grey[600],
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.color
+                                            ?.withOpacity(0.8),
                                       ),
                                     ),
                                   ],
@@ -550,7 +588,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                 prod.sku.isNotEmpty ? 'SKU: ${prod.sku}' : '',
                                 style: GoogleFonts.poppins(
                                   fontSize: 10,
-                                  color: Colors.grey[500],
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color
+                                      ?.withOpacity(0.6),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -616,6 +658,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               tableTopMaterial.isNotEmpty ||
                               dimensions.isNotEmpty)
                             _buildQuickSpecs(
+                              context,
                               material: material,
                               tableTopMaterial: tableTopMaterial,
                               dimensions: dimensions,
@@ -629,20 +672,22 @@ class ProductDetailView extends GetView<ProductDetailController> {
 
                           if (prod.shortDescription.isNotEmpty)
                             _buildSectionExpandable(
+                              context,
                               'Short Description',
                               _cleanHtml(prod.shortDescription),
                             ),
                           if (prod.attributes.isNotEmpty)
-                            _buildAttributesSection(prod.attributes),
+                            _buildAttributesSection(context, prod.attributes),
                           if (careInstructions.isNotEmpty)
                             _buildSectionExpandable(
+                              context,
                               'Care Instructions',
                               careInstructions,
                             ),
-                          _buildProductInfoSection(prod),
+                          _buildProductInfoSection(context, prod),
 
                           _buildReviewsSection(context, controller),
-                          _buildRelatedProductsSection(controller),
+                          _buildRelatedProductsSection(context, controller),
                         ],
                       ),
                     ),
@@ -653,7 +698,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
@@ -661,8 +706,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                     offset: const Offset(0, -2),
                   ),
                 ],
-                border: const Border(
-                  top: BorderSide(color: Color(0xFFF1F1F1)),
+                border: Border(
+                  top: BorderSide(color: Theme.of(context).dividerColor),
                 ),
               ),
               child: SafeArea(
@@ -853,7 +898,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
     );
   }
 
-  Widget _buildRelatedProductsSection(ProductDetailController controller) {
+  Widget _buildRelatedProductsSection(BuildContext context, ProductDetailController controller) {
     return Obx(() {
       if (controller.isRelatedProductsLoading.value) {
         return Column(
@@ -898,7 +943,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
             style: GoogleFonts.poppins(
               fontSize: 15,
               fontWeight: FontWeight.bold,
-              color: const Color(0xFF222222),
+              color: Theme.of(context).textTheme.titleMedium?.color,
             ),
           ),
           const SizedBox(height: 12),
@@ -944,9 +989,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
     );
   }
 
-  Widget _buildSmallChip(String title, int categoryId) {
+  Widget _buildSmallChip(BuildContext context, String title, int categoryId) {
     return Material(
-      color: const Color(0xFFF7F7F7),
+      color: Theme.of(context).brightness == Brightness.dark
+          ? const Color(0xFF2D2D2D)
+          : const Color(0xFFF7F7F7),
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
@@ -957,7 +1004,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFE5E5E5)),
+            border: Border.all(color: Theme.of(context).dividerColor),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -966,15 +1013,19 @@ class ProductDetailView extends GetView<ProductDetailController> {
                 title,
                 style: GoogleFonts.poppins(
                   fontSize: 10,
-                  color: const Color(0xFF222222),
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
                   fontWeight: FontWeight.w400,
                 ),
               ),
               const SizedBox(width: 4),
-              const Icon(
+              Icon(
                 Icons.chevron_right,
                 size: 11,
-                color: Color(0xFF888888),
+                color: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.color
+                    ?.withOpacity(0.6),
               ),
             ],
           ),
@@ -983,7 +1034,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
     );
   }
 
-  Widget _buildQuickSpecs({
+  Widget _buildQuickSpecs(
+    BuildContext context, {
     required String material,
     required String tableTopMaterial,
     required String dimensions,
@@ -991,25 +1043,28 @@ class ProductDetailView extends GetView<ProductDetailController> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFFAF9F6),
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFF1F1F1)),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle('Quick Specifications'),
+          _buildSectionTitle(context, 'Quick Specifications'),
           const SizedBox(height: 10),
-          if (material.isNotEmpty) _buildInfoRow('Frame Material', material),
+          if (material.isNotEmpty)
+            _buildInfoRow(context, 'Frame Material', material),
           if (tableTopMaterial.isNotEmpty)
-            _buildInfoRow('Table Top Material', tableTopMaterial),
-          if (dimensions.isNotEmpty) _buildInfoRow('Dimensions', dimensions),
+            _buildInfoRow(context, 'Table Top Material', tableTopMaterial),
+          if (dimensions.isNotEmpty)
+            _buildInfoRow(context, 'Dimensions', dimensions),
         ],
       ),
     );
   }
 
-  Widget _buildAttributesSection(List<dynamic> attributes) {
+  Widget _buildAttributesSection(
+      BuildContext context, List<dynamic> attributes) {
     final visibleAttributes = attributes.where((attr) {
       return attr.visible == true && attr.options.isNotEmpty;
     }).toList();
@@ -1020,9 +1075,9 @@ class ProductDetailView extends GetView<ProductDetailController> {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: Color(0xFFF5F5F5)),
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
         ),
       ),
       child: ExpansionTile(
@@ -1034,18 +1089,19 @@ class ProductDetailView extends GetView<ProductDetailController> {
           style: GoogleFonts.poppins(
             fontSize: 11,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF444444),
+            color: Theme.of(context).textTheme.titleSmall?.color,
           ),
         ),
         children: [
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFEFEFEF)),
+              border: Border.all(color: Theme.of(context).dividerColor),
             ),
             child: Column(
               children: visibleAttributes.map((attr) {
                 return _buildInfoRow(
+                  context,
                   attr.name,
                   attr.options.join(', '),
                 );
@@ -1057,7 +1113,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
     );
   }
 
-  Widget _buildProductInfoSection(dynamic prod) {
+  Widget _buildProductInfoSection(BuildContext context, dynamic prod) {
     final List<Map<String, String>> rows = [
       {'label': 'Product ID', 'value': prod.id.toString()},
       {'label': 'SKU', 'value': prod.sku},
@@ -1072,9 +1128,9 @@ class ProductDetailView extends GetView<ProductDetailController> {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: Color(0xFFF5F5F5)),
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
         ),
       ),
       child: ExpansionTile(
@@ -1085,14 +1141,14 @@ class ProductDetailView extends GetView<ProductDetailController> {
           style: GoogleFonts.poppins(
             fontSize: 11,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF444444),
+            color: Theme.of(context).textTheme.titleSmall?.color,
           ),
         ),
         children: [
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFEFEFEF)),
+              border: Border.all(color: Theme.of(context).dividerColor),
             ),
             child: Column(
               children: rows
@@ -1100,6 +1156,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                       (row) => row['value'] != null && row['value']!.isNotEmpty)
                   .map(
                     (row) => _buildInfoRow(
+                      context,
                       row['label']!,
                       row['value']!,
                     ),
@@ -1112,16 +1169,17 @@ class ProductDetailView extends GetView<ProductDetailController> {
     );
   }
 
-  Widget _buildSectionExpandable(String head, String detail) {
+  Widget _buildSectionExpandable(
+      BuildContext context, String head, String detail) {
     if (detail.trim().isEmpty) {
       return const SizedBox.shrink();
     }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: Color(0xFFF5F5F5)),
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
         ),
       ),
       child: ExpansionTile(
@@ -1131,7 +1189,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
           style: GoogleFonts.poppins(
             fontSize: 11,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF444444),
+            color: Theme.of(context).textTheme.titleSmall?.color,
           ),
         ),
         tilePadding: EdgeInsets.zero,
@@ -1143,7 +1201,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
               detail,
               style: GoogleFonts.poppins(
                 fontSize: 11,
-                color: Colors.grey[700],
+                color: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.color
+                    ?.withOpacity(0.7),
                 height: 1.5,
               ),
             ),
@@ -1153,16 +1215,16 @@ class ProductDetailView extends GetView<ProductDetailController> {
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(BuildContext context, String label, String value) {
     if (value.trim().isEmpty) {
       return const SizedBox.shrink();
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: Color(0xFFF5F5F5)),
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
         ),
       ),
       child: Row(
@@ -1174,7 +1236,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
               label,
               style: GoogleFonts.poppins(
                 fontSize: 10,
-                color: Colors.grey[500],
+                color: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.color
+                    ?.withOpacity(0.6),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -1185,7 +1251,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
               value,
               style: GoogleFonts.poppins(
                 fontSize: 10.5,
-                color: Colors.black87,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.w600,
                 height: 1.4,
               ),
@@ -1196,12 +1262,12 @@ class ProductDetailView extends GetView<ProductDetailController> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
     return Text(
       title,
       style: GoogleFonts.poppins(
         fontSize: 12,
-        color: Colors.black87,
+        color: Theme.of(context).textTheme.titleMedium?.color,
         fontWeight: FontWeight.bold,
       ),
     );
@@ -1265,9 +1331,9 @@ class ProductDetailView extends GetView<ProductDetailController> {
       BuildContext context, ProductDetailController controller) {
     return Container(
       margin: const EdgeInsets.only(bottom: 24, top: 12),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: Color(0xFFF5F5F5)),
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
         ),
       ),
       child: Column(
@@ -1283,7 +1349,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                   style: GoogleFonts.poppins(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF222222),
+                    color: Theme.of(context).textTheme.titleLarge?.color,
                   ),
                 );
               }),
@@ -1326,7 +1392,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                         'Loading reviews...',
                         style: GoogleFonts.poppins(
                           fontSize: 12,
-                          color: Colors.grey[500],
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.color
+                              ?.withOpacity(0.6),
                         ),
                       ),
                     ],
@@ -1341,16 +1411,20 @@ class ProductDetailView extends GetView<ProductDetailController> {
                 padding: const EdgeInsets.all(20),
                 margin: const EdgeInsets.only(bottom: 12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFAF9F6),
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFF1F1F1)),
+                  border: Border.all(color: Theme.of(context).dividerColor),
                 ),
                 child: Column(
                   children: [
                     Icon(
                       Icons.rate_review_outlined,
                       size: 36,
-                      color: Colors.grey[400],
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.color
+                          ?.withOpacity(0.4),
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -1358,7 +1432,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                       style: GoogleFonts.poppins(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey[700],
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.color
+                            ?.withOpacity(0.8),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -1367,7 +1445,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
                         fontSize: 11,
-                        color: Colors.grey[500],
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.color
+                            ?.withOpacity(0.6),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -1419,9 +1501,9 @@ class ProductDetailView extends GetView<ProductDetailController> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFAF9F6),
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFFF1F1F1)),
+                    border: Border.all(color: Theme.of(context).dividerColor),
                   ),
                   child: Row(
                     children: [
@@ -1436,7 +1518,10 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               style: GoogleFonts.poppins(
                                 fontSize: 40,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.color,
                               ),
                             ),
                             _buildReviewStars(average, size: 16),
@@ -1446,7 +1531,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
                                 fontSize: 10,
-                                color: Colors.grey[600],
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.color
+                                    ?.withOpacity(0.6),
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -1457,7 +1546,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                       Container(
                         height: 70,
                         width: 1,
-                        color: const Color(0xFFE5E5E5),
+                        color: Theme.of(context).dividerColor,
                         margin: const EdgeInsets.symmetric(horizontal: 12),
                       ),
                       // Rating bars column
@@ -1476,7 +1565,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                     style: GoogleFonts.poppins(
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.grey[700],
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
+                                          ?.color
+                                          ?.withOpacity(0.8),
                                     ),
                                   ),
                                   const SizedBox(width: 8),
@@ -1487,7 +1580,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                         value: pct,
                                         minHeight: 6,
                                         backgroundColor:
-                                            const Color(0xFFE5E5E5),
+                                            Theme.of(context).dividerColor,
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
                                           stars >= 4
@@ -1507,7 +1600,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                       textAlign: TextAlign.end,
                                       style: GoogleFonts.poppins(
                                         fontSize: 10,
-                                        color: Colors.grey[600],
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.color
+                                            ?.withOpacity(0.6),
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -1523,7 +1620,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                 ),
                 const SizedBox(height: 20),
                 // Display the first review
-                _buildReviewItem(reviews.first),
+                _buildReviewItem(context, reviews.first),
                 if (total > 1) ...[
                   const SizedBox(height: 16),
                   SizedBox(
@@ -1574,7 +1671,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
     );
   }
 
-  Widget _buildReviewItem(ProductReviewModel review) {
+  Widget _buildReviewItem(BuildContext context, ProductReviewModel review) {
     // Format date
     String dateStr = review.dateCreated;
     try {
@@ -1603,7 +1700,9 @@ class ProductDetailView extends GetView<ProductDetailController> {
               child: Container(
                 width: 36,
                 height: 36,
-                color: Colors.grey[200],
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFF2D2D2D)
+                    : Colors.grey[200],
                 child: avatarUrl.isNotEmpty
                     ? CachedNetworkImage(
                         imageUrl: avatarUrl,
@@ -1613,7 +1712,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                             initial,
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
-                              color: Colors.grey[700],
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.color
+                                  ?.withOpacity(0.6),
                               fontSize: 14,
                             ),
                           ),
@@ -1623,7 +1726,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                             initial,
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
-                              color: Colors.grey[700],
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.color
+                                  ?.withOpacity(0.6),
                               fontSize: 14,
                             ),
                           ),
@@ -1634,7 +1741,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                           initial,
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.bold,
-                            color: Colors.grey[700],
+                            color: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.color
+                                ?.withOpacity(0.6),
                             fontSize: 14,
                           ),
                         ),
@@ -1657,7 +1768,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
                           style: GoogleFonts.poppins(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color:
+                                Theme.of(context).textTheme.titleSmall?.color,
                           ),
                         ),
                       ),
@@ -1667,7 +1779,10 @@ class ProductDetailView extends GetView<ProductDetailController> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 4, vertical: 2),
                           decoration: BoxDecoration(
-                            color: Colors.green[50],
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                    ? Colors.green[950]
+                                    : Colors.green[50],
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Row(
@@ -1695,7 +1810,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                     dateStr,
                     style: GoogleFonts.poppins(
                       fontSize: 10,
-                      color: Colors.grey[500],
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.color
+                          ?.withOpacity(0.6),
                     ),
                   ),
                 ],
@@ -1711,7 +1830,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
           _cleanHtml(review.review),
           style: GoogleFonts.poppins(
             fontSize: 12,
-            color: Colors.grey[800],
+            color:
+                Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8),
             height: 1.5,
           ),
         ),
@@ -1735,14 +1855,18 @@ class ProductDetailView extends GetView<ProductDetailController> {
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            color: Colors.black87,
+            color: Theme.of(Get.context!).textTheme.titleLarge?.color,
           ),
         ),
         content: Text(
           'Please login or register to add items to your cart and continue shopping.',
           style: GoogleFonts.poppins(
             fontSize: 13,
-            color: Colors.grey[600],
+            color: Theme.of(Get.context!)
+                .textTheme
+                .bodyMedium
+                ?.color
+                ?.withOpacity(0.8),
           ),
         ),
         actions: [
@@ -1820,9 +1944,9 @@ class ProductDetailView extends GetView<ProductDetailController> {
 
     Get.bottomSheet(
       Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         padding: EdgeInsets.only(
           left: 16,
@@ -1844,7 +1968,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                     style: GoogleFonts.poppins(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: Theme.of(context).textTheme.titleLarge?.color,
                     ),
                   ),
                   IconButton(
@@ -1853,16 +1977,18 @@ class ProductDetailView extends GetView<ProductDetailController> {
                   ),
                 ],
               ),
-              const Divider(color: Color(0xFFF1F1F1)),
+              Divider(color: Theme.of(context).dividerColor),
               const SizedBox(height: 12),
 
               // Reviewer details
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFAF9F6),
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF2D2D2D)
+                      : const Color(0xFFFAF9F6),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: const Color(0xFFF1F1F1)),
+                  border: Border.all(color: Theme.of(context).dividerColor),
                 ),
                 child: Row(
                   children: [
@@ -1874,7 +2000,11 @@ class ProductDetailView extends GetView<ProductDetailController> {
                         'Reviewing as: $reviewerName ($reviewerEmail)',
                         style: GoogleFonts.poppins(
                           fontSize: 11,
-                          color: Colors.grey[700],
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.color
+                              ?.withOpacity(0.8),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -1890,7 +2020,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: Theme.of(context).textTheme.titleSmall?.color,
                 ),
               ),
               const SizedBox(height: 8),
@@ -1938,7 +2068,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                 style: GoogleFonts.poppins(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+                  color: Theme.of(context).textTheme.titleSmall?.color,
                 ),
               ),
               const SizedBox(height: 8),
@@ -1953,11 +2083,13 @@ class ProductDetailView extends GetView<ProductDetailController> {
                   contentPadding: const EdgeInsets.all(12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: Color(0xFFE5E5E5)),
+                    borderSide:
+                        BorderSide(color: Theme.of(context).dividerColor),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: Color(0xFFE5E5E5)),
+                    borderSide:
+                        BorderSide(color: Theme.of(context).dividerColor),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),

@@ -20,10 +20,10 @@ class OrdersView extends GetView<OrdersController> {
         : Get.put(OrdersController());
 
     final ScrollController scrollController = ScrollController();
-    
+
     // Add scroll listener to load next page when scrolled near bottom
     scrollController.addListener(() {
-      if (scrollController.position.pixels >= 
+      if (scrollController.position.pixels >=
           scrollController.position.maxScrollExtent - 200) {
         ordCtrl.loadNextPage();
       }
@@ -34,18 +34,21 @@ class OrdersView extends GetView<OrdersController> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0.5,
         title: Text(
           'My Orders',
           style: GoogleFonts.poppins(
-            color: Colors.black,
+            color: Theme.of(context).textTheme.titleLarge?.color,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+          icon: Icon(Icons.arrow_back_ios_new,
+              color: Theme.of(context).appBarTheme.iconTheme?.color ??
+                  Theme.of(context).textTheme.titleLarge?.color,
+              size: 20),
           onPressed: () => Get.back(),
         ),
       ),
@@ -71,29 +74,37 @@ class OrdersView extends GetView<OrdersController> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline_rounded, size: 64, color: Colors.red[300]),
+                    Icon(Icons.error_outline_rounded,
+                        size: 64, color: Colors.red[300]),
                     const SizedBox(height: 16),
                     Text(
                       'Failed to load orders',
-                      style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.poppins(
+                          fontSize: 15, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Check your internet connection and swipe down to try again.',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.poppins(fontSize: 11, color: Colors.grey),
+                      style:
+                          GoogleFonts.poppins(fontSize: 11, color: Colors.grey),
                     ),
                     const SizedBox(height: 16),
                     OutlinedButton.icon(
                       onPressed: () => ordCtrl.fetchUserOrders(),
-                      icon: const Icon(Icons.refresh, size: 16, color: AppColors.primary),
+                      icon: const Icon(Icons.refresh,
+                          size: 16, color: AppColors.primary),
                       label: Text(
                         'RETRY',
-                        style: GoogleFonts.poppins(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 11),
+                        style: GoogleFonts.poppins(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11),
                       ),
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: AppColors.primary),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
                       ),
                     ),
                   ],
@@ -111,16 +122,22 @@ class OrdersView extends GetView<OrdersController> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.shopping_bag_outlined, size: 80, color: Colors.grey[400]),
+                    Icon(Icons.shopping_bag_outlined,
+                        size: 80, color: Colors.grey[400]),
                     const SizedBox(height: 16),
                     Text(
                       'No Orders Placed Yet',
-                      style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.grey[700]),
+                      style: GoogleFonts.poppins(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color:
+                              Theme.of(context).textTheme.titleMedium?.color),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Your purchase history will appear here.',
-                      style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey),
+                      style:
+                          GoogleFonts.poppins(fontSize: 12, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -145,177 +162,213 @@ class OrdersView extends GetView<OrdersController> {
               }
 
               final order = ordCtrl.orders[index];
-            
-            // Build Status Chip decoration
-            Color statusColor;
-            Color statusBg;
-            switch (order.status.toLowerCase()) {
-              case 'pending':
-                statusColor = Colors.orange[800]!;
-                statusBg = Colors.orange[50]!;
-                break;
-              case 'processing':
-                statusColor = Colors.blue[800]!;
-                statusBg = Colors.blue[50]!;
-                break;
-              case 'dispatched':
-              case 'shipped':
-                statusColor = AppColors.primary;
-                statusBg = const Color(0xFFFFF0E6);
-                break;
-              case 'delivered':
-                statusColor = Colors.green[800]!;
-                statusBg = Colors.green[50]!;
-                break;
-              case 'cancelled':
-              default:
-                statusColor = Colors.red[800]!;
-                statusBg = Colors.red[50]!;
-                break;
-            }
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFEFEFEF)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.01),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: InkWell(
-                onTap: () => Get.to(() => OrderDetailView(orderId: order.id)),
-                borderRadius: BorderRadius.circular(16),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            order.orderNumber,
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                              color: const Color(0xFF222222),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: statusBg,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              order.status.toUpperCase(),
+              // Build Status Chip decoration
+              Color statusColor;
+              Color statusBg;
+              final isDark = Theme.of(context).brightness == Brightness.dark;
+              switch (order.status.toLowerCase()) {
+                case 'pending':
+                  statusColor =
+                      isDark ? Colors.orange[400]! : Colors.orange[800]!;
+                  statusBg = isDark
+                      ? Colors.orange[900]!.withValues(alpha: 0.2)
+                      : Colors.orange[50]!;
+                  break;
+                case 'processing':
+                  statusColor = isDark ? Colors.blue[300]! : Colors.blue[800]!;
+                  statusBg = isDark
+                      ? Colors.blue[900]!.withValues(alpha: 0.2)
+                      : Colors.blue[50]!;
+                  break;
+                case 'dispatched':
+                case 'shipped':
+                  statusColor = AppColors.primary;
+                  statusBg = isDark
+                      ? AppColors.primary.withValues(alpha: 0.15)
+                      : const Color(0xFFFFF0E6);
+                  break;
+                case 'delivered':
+                  statusColor =
+                      isDark ? Colors.green[400]! : Colors.green[800]!;
+                  statusBg = isDark
+                      ? Colors.green[900]!.withValues(alpha: 0.2)
+                      : Colors.green[50]!;
+                  break;
+                case 'cancelled':
+                default:
+                  statusColor = isDark ? Colors.red[400]! : Colors.red[800]!;
+                  statusBg = isDark
+                      ? Colors.red[900]!.withValues(alpha: 0.2)
+                      : Colors.red[50]!;
+                  break;
+              }
+
+              return Container(
+                margin: const EdgeInsets.only(bottom: 16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Theme.of(context).dividerColor),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.01),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: InkWell(
+                  onTap: () => Get.to(() => OrderDetailView(orderId: order.id)),
+                  borderRadius: BorderRadius.circular(16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              order.orderNumber,
                               style: GoogleFonts.poppins(
-                                fontSize: 9,
                                 fontWeight: FontWeight.bold,
-                                color: statusColor,
+                                fontSize: 13,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.color,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        dateFormatter.format(order.orderDate),
-                        style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey),
-                      ),
-                      const Divider(height: 24),
-                      
-                      // Order Items Thumbnails Row
-                      Row(
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              height: 50,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: order.items.length,
-                                itemBuilder: (context, itemIndex) {
-                                  final item = order.items[itemIndex];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: Container(
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        border: Border.all(color: const Color(0xFFECECEC)),
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: CachedNetworkImage(
-                                          imageUrl: item.product.image,
-                                          fit: BoxFit.cover,
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: statusBg,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                order.status.toUpperCase(),
+                                style: GoogleFonts.poppins(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                  color: statusColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          dateFormatter.format(order.orderDate),
+                          style: GoogleFonts.poppins(
+                              fontSize: 10, color: Colors.grey),
+                        ),
+                        const Divider(
+                          height: 24,
+                          thickness: 0.3,
+                        ),
+
+                        // Order Items Thumbnails Row
+                        Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 50,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: order.items.length,
+                                  itemBuilder: (context, itemIndex) {
+                                    final item = order.items[itemIndex];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 8),
+                                      child: Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          border: Border.all(
+                                              color: Theme.of(context)
+                                                  .dividerColor),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: CachedNetworkImage(
+                                            imageUrl: item.product.image,
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                },
+                                    );
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 16),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                '₹${NumberFormat('#,##,###').format(order.totalAmount)}',
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 14,
-                                  color: AppColors.primary,
+                            const SizedBox(width: 16),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  '₹${NumberFormat('#,##,###').format(order.totalAmount)}',
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 14,
+                                    color: AppColors.primary,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                '${order.items.length} ${order.items.length == 1 ? 'Item' : 'Items'}',
-                                style: GoogleFonts.poppins(fontSize: 10, color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const Divider(height: 24),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Need help with this order?',
-                            style: GoogleFonts.poppins(fontSize: 11, color: Colors.grey[700]),
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                'VIEW DETAILS',
-                                style: GoogleFonts.poppins(
+                                Text(
+                                  '${order.items.length} ${order.items.length == 1 ? 'Item' : 'Items'}',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 10, color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const Divider(
+                          height: 24,
+                          thickness: 0.3,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Need help with this order?',
+                              style: GoogleFonts.poppins(
                                   fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color
+                                      ?.withValues(alpha: 0.8)),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  'VIEW DETAILS',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primary,
+                                  ),
                                 ),
-                              ),
-                              const Icon(Icons.arrow_forward_ios, size: 10, color: AppColors.primary),
-                            ],
-                          ),
-                        ],
-                      )
-                    ],
+                                const Icon(Icons.arrow_forward_ios,
+                                    size: 10, color: AppColors.primary),
+                              ],
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-        );
-      }),
-    ),
-  );
-}
+              );
+            },
+          );
+        }),
+      ),
+    );
+  }
 }

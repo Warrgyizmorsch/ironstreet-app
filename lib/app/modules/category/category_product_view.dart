@@ -30,13 +30,17 @@ class CategoryProductView extends GetView<CategoryController> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? Theme.of(context).scaffoldBackgroundColor
+          : const Color(0xFFF6F6F6),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0.5,
         leading: isPushed
             ? IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87, size: 20),
+                icon: Icon(Icons.arrow_back_ios_new,
+                    color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color,
+                    size: 20),
                 onPressed: () => Get.back(),
               )
             : null,
@@ -58,7 +62,8 @@ class CategoryProductView extends GetView<CategoryController> {
               alignment: Alignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.favorite_border, color: Colors.black87),
+                  icon: Icon(Icons.favorite_border,
+                      color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
                   onPressed: () => Get.toNamed(Routes.WISHLIST),
                 ),
                 if (count > 0)
@@ -95,7 +100,8 @@ class CategoryProductView extends GetView<CategoryController> {
               alignment: Alignment.center,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.shopping_bag_outlined, color: Colors.black87),
+                  icon: Icon(Icons.shopping_bag_outlined,
+                      color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
                   onPressed: () => Get.toNamed(Routes.CART),
                 ),
                 if (count > 0)
@@ -131,10 +137,10 @@ class CategoryProductView extends GetView<CategoryController> {
       ),
       bottomNavigationBar: Container(
         height: 56,
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
           border: Border(
-            top: BorderSide(color: Color(0xFFF1F1F1)),
+            top: BorderSide(color: Theme.of(context).dividerColor),
           ),
         ),
         child: SafeArea(
@@ -148,7 +154,7 @@ class CategoryProductView extends GetView<CategoryController> {
                     'SORT',
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF222222),
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontSize: 12,
                     ),
                   ),
@@ -157,7 +163,7 @@ class CategoryProductView extends GetView<CategoryController> {
               Container(
                 width: 1,
                 height: 24,
-                color: const Color(0xFFE5E5E5),
+                color: Theme.of(context).dividerColor,
               ),
               Expanded(
                 child: TextButton.icon(
@@ -167,7 +173,7 @@ class CategoryProductView extends GetView<CategoryController> {
                     'FILTER',
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF222222),
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                       fontSize: 12,
                     ),
                   ),
@@ -205,7 +211,7 @@ class CategoryProductView extends GetView<CategoryController> {
                         style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF222222),
+                          color: Theme.of(context).textTheme.titleLarge?.color,
                         ),
                       );
                     }),
@@ -243,10 +249,10 @@ class CategoryProductView extends GetView<CategoryController> {
                             margin: const EdgeInsets.only(right: 8),
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                             decoration: BoxDecoration(
-                              color: isActive ? AppColors.primary : Colors.white,
+                              color: isActive ? AppColors.primary : Theme.of(context).cardColor,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: isActive ? AppColors.primary : const Color(0xFFE5E5E5),
+                                color: isActive ? AppColors.primary : Theme.of(context).dividerColor,
                               ),
                             ),
                             child: Center(
@@ -255,7 +261,7 @@ class CategoryProductView extends GetView<CategoryController> {
                                 style: GoogleFonts.poppins(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
-                                  color: isActive ? Colors.white : Colors.grey[700],
+                                  color: isActive ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                                 ),
                               ),
                             ),
@@ -351,9 +357,9 @@ class CategoryProductView extends GetView<CategoryController> {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -367,7 +373,7 @@ class CategoryProductView extends GetView<CategoryController> {
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF222222),
+                    color: Theme.of(context).textTheme.titleLarge?.color,
                   ),
                 ),
                 IconButton(
@@ -438,7 +444,7 @@ class CategoryProductView extends GetView<CategoryController> {
         style: GoogleFonts.poppins(
           fontSize: 12,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? AppColors.primary : Colors.black87,
+          color: isSelected ? AppColors.primary : Theme.of(Get.context!).textTheme.bodyMedium?.color,
         ),
       ),
       trailing: isSelected
@@ -451,9 +457,9 @@ class CategoryProductView extends GetView<CategoryController> {
     Get.bottomSheet(
       Container(
         padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -467,7 +473,7 @@ class CategoryProductView extends GetView<CategoryController> {
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF222222),
+                    color: Theme.of(context).textTheme.titleLarge?.color,
                   ),
                 ),
                 IconButton(
@@ -538,7 +544,7 @@ class CategoryProductView extends GetView<CategoryController> {
         style: GoogleFonts.poppins(
           fontSize: 12,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? AppColors.primary : Colors.black87,
+          color: isSelected ? AppColors.primary : Theme.of(Get.context!).textTheme.bodyMedium?.color,
         ),
       ),
       trailing: isSelected
@@ -560,7 +566,9 @@ class _StickyChipsDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: const Color(0xFFF6F6F6), // Matches Scaffold background
+      color: Theme.of(context).brightness == Brightness.dark
+          ? Theme.of(context).scaffoldBackgroundColor
+          : const Color(0xFFF6F6F6), // Matches Scaffold background
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: child,
     );

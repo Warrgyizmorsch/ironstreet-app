@@ -32,18 +32,21 @@ class WishlistView extends GetView<WishlistController> {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? Theme.of(context).scaffoldBackgroundColor
+          : const Color(0xFFF6F6F6),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0.5,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
           onPressed: () => Get.back(),
         ),
         title: Text(
           'WISHLIST',
           style: GoogleFonts.poppins(
-            color: Colors.black87,
+            color: Theme.of(context).textTheme.titleLarge?.color,
             fontWeight: FontWeight.bold,
             fontSize: 15,
             letterSpacing: 0.5,
@@ -96,9 +99,9 @@ class WishlistItemCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF1F1F1)),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,7 +150,7 @@ class WishlistItemCard extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
-                                color: const Color(0xFF222222),
+                                color: Theme.of(context).textTheme.bodyLarge?.color,
                               ),
                             ),
                             const SizedBox(height: 6),
@@ -197,7 +200,7 @@ class WishlistItemCard extends StatelessWidget {
           ),
           Divider(
             height: 1,
-            color: Colors.grey.shade300,
+            color: Theme.of(context).dividerColor,
             thickness: 1,
           ),
           // Actions bar
@@ -212,7 +215,7 @@ class WishlistItemCard extends StatelessWidget {
                   ),
                   onPressed: () {
                     if (!Get.find<SessionManager>().isLoggedIn()) {
-                      _showLoginRequiredDialog();
+                      _showLoginRequiredDialog(context);
                       return;
                     }
                     cartController.addToCart(
@@ -251,7 +254,7 @@ class WishlistItemCard extends StatelessWidget {
               Container(
                 width: 1,
                 height: 24,
-                color: Colors.grey.shade300,
+                color: Theme.of(context).dividerColor,
               ),
               // Remove Action
               Expanded(
@@ -285,7 +288,7 @@ class WishlistItemCard extends StatelessWidget {
     );
   }
 
-  void _showLoginRequiredDialog() {
+  void _showLoginRequiredDialog(BuildContext context) {
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(
@@ -296,14 +299,14 @@ class WishlistItemCard extends StatelessWidget {
           style: GoogleFonts.poppins(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            color: Colors.black87,
+            color: Theme.of(context).textTheme.titleLarge?.color,
           ),
         ),
         content: Text(
           'Please login or register to add items to your cart and continue shopping.',
           style: GoogleFonts.poppins(
             fontSize: 13,
-            color: Colors.grey[600],
+            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
           ),
         ),
         actions: [
@@ -312,7 +315,7 @@ class WishlistItemCard extends StatelessWidget {
             child: Text(
               'Cancel',
               style: GoogleFonts.poppins(
-                color: Colors.grey[600],
+                color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -370,7 +373,7 @@ class EmptyWishlistState extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF222222),
+                color: Theme.of(context).textTheme.titleMedium?.color,
               ),
             ),
             const SizedBox(height: 6),
@@ -379,7 +382,7 @@ class EmptyWishlistState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 10,
-                color: Colors.grey[500],
+                color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
               ),
             ),
             const SizedBox(height: 24),

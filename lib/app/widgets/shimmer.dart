@@ -47,11 +47,17 @@ class _ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
             return LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: const [
-                Color(0xFFEBEBF4),
-                Color(0xFFF4F4F4),
-                Color(0xFFEBEBF4),
-              ],
+              colors: Theme.of(context).brightness == Brightness.dark
+                  ? const [
+                      Color(0xFF1E1E1E),
+                      Color(0xFF2D2D2D),
+                      Color(0xFF1E1E1E),
+                    ]
+                  : const [
+                      Color(0xFFEBEBF4),
+                      Color(0xFFF4F4F4),
+                      Color(0xFFEBEBF4),
+                    ],
               stops: const [
                 0.1,
                 0.3,
@@ -90,9 +96,9 @@ class CategoryCardShimmer extends StatelessWidget {
       child: Container(
         width: 110,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFF1F1F1)),
+          border: Border.all(color: Theme.of(context).dividerColor),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -145,9 +151,9 @@ class ProductCardShimmer extends StatelessWidget {
       child: Container(
         width: width,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFF1F1F1)),
+          border: Border.all(color: Theme.of(context).dividerColor),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -426,9 +432,9 @@ class OrderCardShimmer extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: const Color(0xFFF1F1F1)),
+          border: Border.all(color: Theme.of(context).dividerColor),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

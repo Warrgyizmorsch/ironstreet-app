@@ -18,10 +18,10 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     final wishlistController = Get.find<WishlistController>();
 
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       elevation: 0.5,
       leading: IconButton(
-        icon: const Icon(Icons.menu, color: Colors.black87),
+        icon: Icon(Icons.menu, color: Theme.of(context).appBarTheme.iconTheme?.color),
         onPressed: onMenuClick,
       ),
       title: Text(
@@ -43,7 +43,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
             alignment: Alignment.center,
             children: [
               IconButton(
-                icon: const Icon(Icons.favorite_border, color: Colors.black87),
+                icon: Icon(Icons.favorite_border, color: Theme.of(context).appBarTheme.iconTheme?.color),
                 onPressed: () => Get.toNamed(Routes.WISHLIST),
               ),
               if (count > 0)
@@ -82,8 +82,8 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
             alignment: Alignment.center,
             children: [
               IconButton(
-                icon: const Icon(Icons.shopping_bag_outlined,
-                    color: Colors.black87),
+                icon: Icon(Icons.shopping_bag_outlined,
+                    color: Theme.of(context).appBarTheme.iconTheme?.color),
                 onPressed: () => Get.toNamed(Routes.CART),
               ),
               if (count > 0)

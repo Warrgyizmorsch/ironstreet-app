@@ -9,18 +9,21 @@ class LegalPoliciesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F6F6),
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? Theme.of(context).scaffoldBackgroundColor
+          : const Color(0xFFF6F6F6),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(Icons.arrow_back,
+              color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
           'Legal, Terms & Conditions',
           style: GoogleFonts.poppins(
-            color: Colors.black87,
+            color: Theme.of(context).textTheme.titleLarge?.color,
             fontWeight: FontWeight.bold,
             fontSize: 15,
           ),
@@ -32,31 +35,35 @@ class LegalPoliciesView extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFF1F1F1)),
+              border: Border.all(color: Theme.of(context).dividerColor),
             ),
             child: Column(
               children: [
                 _buildPolicyRow(
+                  context,
                   title: 'Terms & Conditions',
                   subtitle: 'Our user agreements and site regulations',
                   url: 'https://ironstreets.com/terms-conditions/',
                 ),
                 // const Divider(height: 1),
                 _buildPolicyRow(
+                  context,
                   title: 'Privacy Policy',
                   subtitle: 'How we manage and protect user data',
                   url: 'https://ironstreets.com/privacy-policy/',
                 ),
                 // const Divider(height: 1),
                 _buildPolicyRow(
+                  context,
                   title: 'Refund Policy',
                   subtitle: 'Return, refund, and replacement criteria',
                   url: 'https://ironstreets.com/refund-policy/',
                 ),
                 // const Divider(height: 1),
                 _buildPolicyRow(
+                  context,
                   title: 'Furniture Insurance Policy',
                   subtitle: 'Damage coverage and shipping guarantees',
                   url:
@@ -70,7 +77,8 @@ class LegalPoliciesView extends StatelessWidget {
     );
   }
 
-  Widget _buildPolicyRow({
+  Widget _buildPolicyRow(
+    BuildContext context, {
     required String title,
     required String subtitle,
     required String url,
@@ -85,7 +93,7 @@ class LegalPoliciesView extends StatelessWidget {
         style: GoogleFonts.poppins(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: const Color(0xFF444444),
+          color: Theme.of(context).textTheme.titleSmall?.color,
         ),
       ),
       subtitle: Text(

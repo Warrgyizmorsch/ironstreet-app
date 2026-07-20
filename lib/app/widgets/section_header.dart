@@ -33,7 +33,7 @@ class SectionHeader extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
-                    color: const Color(0xFF222222),
+                    color: Theme.of(context).textTheme.titleMedium?.color,
                   ),
                 ),
                 if (subtitle.isNotEmpty) ...[
@@ -43,7 +43,7 @@ class SectionHeader extends StatelessWidget {
                     style: GoogleFonts.poppins(
                       fontSize: 9,
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey[400],
+                      color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
                     ),
                   ),
                 ]

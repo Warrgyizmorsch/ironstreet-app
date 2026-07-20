@@ -31,7 +31,7 @@ class DeliveryDetailsSection extends StatelessWidget {
           style: GoogleFonts.poppins(
             fontSize: 13,
             fontWeight: FontWeight.bold,
-            color: const Color(0xFF222222),
+            color: Theme.of(context).textTheme.titleMedium?.color,
           ),
         ),
         const SizedBox(height: 12),
@@ -43,10 +43,10 @@ class DeliveryDetailsSection extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: AppColors.primary.withOpacity(0.05),
+              color: AppColors.primary.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -65,7 +65,7 @@ class DeliveryDetailsSection extends StatelessWidget {
                     text: TextSpan(
                       style: GoogleFonts.poppins(
                         fontSize: 11,
-                        color: Colors.black87,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                       ),
                       children: [
                         TextSpan(
@@ -104,10 +104,10 @@ class DeliveryDetailsSection extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
-              color: const Color(0xFFFAF9F6),
+              color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : const Color(0xFFFAF9F6),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: const Color(0xFFF1F1F1),
+                color: Theme.of(context).dividerColor,
                 width: 1,
               ),
             ),
@@ -124,15 +124,15 @@ class DeliveryDetailsSection extends StatelessWidget {
                     text: TextSpan(
                       style: GoogleFonts.poppins(
                         fontSize: 11,
-                        color: Colors.grey[700],
+                        color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
                       ),
                       children: [
                         const TextSpan(text: 'Delivery by '),
                         TextSpan(
                           text: estimatedDeliveryDate,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
                           ),
                         ),
                       ],
