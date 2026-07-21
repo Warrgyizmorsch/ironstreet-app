@@ -12,7 +12,8 @@ class SplashView extends GetView<SplashController> {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF121212) : const Color(0xFFFAFAFA),
+      backgroundColor:
+          isDark ? const Color(0xFF121212) : const Color(0xFFFAFAFA),
       body: TweenAnimationBuilder<double>(
         tween: Tween<double>(begin: 0.0, end: 1.0),
         duration: const Duration(milliseconds: 1200),
@@ -30,7 +31,7 @@ class SplashView extends GetView<SplashController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Stylized Luxury Monogram Logo
+              // Stylized Luxury Logo Container
               Container(
                 width: 110,
                 height: 110,
@@ -51,27 +52,12 @@ class SplashView extends GetView<SplashController> {
                     shape: BoxShape.circle,
                     color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                   ),
+                  // padding: const EdgeInsets.all(18),
                   child: Center(
-                    child: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'I',
-                            style: GoogleFonts.playfairDisplay(
-                              fontSize: 48,
-                              fontWeight: FontWeight.w900,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                          TextSpan(
-                            text: 'S',
-                            style: GoogleFonts.playfairDisplay(
-                              fontSize: 48,
-                              fontWeight: FontWeight.w900,
-                              color: isDark ? Colors.white : AppColors.blackC,
-                            ),
-                          ),
-                        ],
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/logo/ironstreetlogo.png',
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
