@@ -31,6 +31,8 @@ import 'package:iron_street_app/app/data/models/product_review_model.dart';
 import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/data/repositories/product_repository/product_repository.dart';
+import 'package:iron_street_app/app/data/repositories/delivery_repository/delivery_repository.dart';
+import 'package:iron_street_app/app/modules/cart/cart_controller.dart';
 
 class ProductDetailController extends GetxController {
   final ProductRepository productRepository = Get.find<ProductRepository>();
@@ -45,6 +47,13 @@ class ProductDetailController extends GetxController {
 
   var selectedImageIndex = 0.obs;
   var quantity = 1.obs;
+
+  // Delhivery Pincode Serviceability variables
+  final DeliveryRepository _deliveryRepository = DeliveryRepository();
+  var isCheckingPincode = false.obs;
+  var enteredPincode = ''.obs;
+  var pincodeResult = Rxn<Map<String, dynamic>>();
+  var pincodeError = ''.obs;
 
   int productId = 0;
 
@@ -133,6 +142,9 @@ class ProductDetailController extends GetxController {
       }
       _startImageAutoScroll();
 
+      // Trigger automatic pincode check from address if available
+      autoCheckSavedAddressPincode();
+
       // IMPORTANT: Load related products and reviews after product detail loaded
       await Future.wait([
         fetchRelatedProducts(detail.relatedIds),
@@ -187,6 +199,57 @@ class ProductDetailController extends GetxController {
         selectedImageIndex.value = nextPage;
       },
     );
+  }
+
+  Future<void> checkDelhiveryPincode(String pincode) async {
+    final cleaned = pincode.trim();
+    if (cleaned.length != 6 || int.tryParse(cleaned) == null) {
+      pincodeError.value = 'Please enter a valid 6-digit pincode';
+      pincodeResult.value = null;
+      return;
+    }
+
+    try {
+      isCheckingPincode.value = true;
+      pincodeError.value = '';
+      enteredPincode.value = cleaned;
+
+      final response = await _deliveryRepository.checkPincodeServiceability(cleaned);
+
+      if (response != null && response['delivery_codes'] != null) {
+        final List deliveryCodes = response['delivery_codes'];
+        if (deliveryCodes.isNotEmpty) {
+          final postalCodeData = deliveryCodes.first['postal_code'];
+          if (postalCodeData != null) {
+            pincodeResult.value = Map<String, dynamic>.from(postalCodeData);
+            return;
+          }
+        }
+      }
+      pincodeResult.value = {'unserviceable': true};
+    } catch (e) {
+      pincodeError.value = 'Failed to verify pincode serviceability';
+      pincodeResult.value = null;
+    } finally {
+      isCheckingPincode.value = false;
+    }
+  }
+
+  void autoCheckSavedAddressPincode() {
+    try {
+      if (Get.isRegistered<CartController>()) {
+        final cartController = Get.find<CartController>();
+        final shippingAddr = cartController.shippingAddress.value;
+        if (shippingAddr != null && shippingAddr.postcode.isNotEmpty) {
+          final pincode = shippingAddr.postcode.trim();
+          if (pincode.length == 6 && int.tryParse(pincode) != null) {
+            checkDelhiveryPincode(pincode);
+          }
+        }
+      }
+    } catch (e) {
+      // Silent catch
+    }
   }
 
   Future<void> fetchRelatedProducts(List<int> relatedIds) async {
