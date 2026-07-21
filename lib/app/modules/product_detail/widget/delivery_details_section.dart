@@ -7,13 +7,11 @@ import 'package:iron_street_app/app/modules/product_detail/product_detail_contro
 
 class DeliveryDetailsSection extends StatefulWidget {
   final AddressModel? selectedAddress;
-  final String? estimatedDeliveryDate;
   final VoidCallback? onAddressTap;
 
   const DeliveryDetailsSection({
     super.key,
     required this.selectedAddress,
-    required this.estimatedDeliveryDate,
     required this.onAddressTap,
   });
 
@@ -54,8 +52,6 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasDeliveryDate = widget.estimatedDeliveryDate != null &&
-        widget.estimatedDeliveryDate!.isNotEmpty;
     final controller = Get.find<ProductDetailController>();
 
     return Column(
@@ -333,16 +329,9 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
           }
 
           final liveDate = controller.estimatedDelhiveryDate.value;
-          final bool showLiveDate = liveDate.isNotEmpty;
-          final bool showWooDate = !showLiveDate && hasDeliveryDate;
-
-          if (!showLiveDate && !showWooDate) {
+          if (liveDate.isEmpty) {
             return const SizedBox.shrink();
           }
-
-          final String dateText =
-              showLiveDate ? liveDate : widget.estimatedDeliveryDate!;
-          final String sourceText = showLiveDate ? ' (Delhivery Express)' : '';
 
           return Padding(
             padding: const EdgeInsets.only(top: 8.0),
@@ -350,16 +339,10 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: showLiveDate
-                    ? Colors.green.withValues(alpha: 0.03)
-                    : (Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF1E1E1E)
-                        : const Color(0xFFFAF9F6)),
+                color: Colors.green.withValues(alpha: 0.03),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: showLiveDate
-                      ? Colors.green.withValues(alpha: 0.1)
-                      : Theme.of(context).dividerColor,
+                  color: Colors.green.withValues(alpha: 0.1),
                   width: 1,
                 ),
               ),
@@ -367,7 +350,7 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                 children: [
                   Icon(
                     Icons.local_shipping_outlined,
-                    color: showLiveDate ? Colors.green[700] : AppColors.primary,
+                    color: Colors.green[700],
                     size: 18,
                   ),
                   const SizedBox(width: 10),
@@ -385,19 +368,14 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                         children: [
                           const TextSpan(text: 'Estimated Delivery:  '),
                           TextSpan(
-                            text: dateText,
+                            text: liveDate,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: showLiveDate
-                                  ? Colors.green[700]
-                                  : Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.color,
+                              color: Colors.green[700],
                             ),
                           ),
                           TextSpan(
-                            text: sourceText,
+                            text: ' (Delhivery Express)',
                             style: TextStyle(
                               fontSize: 9,
                               fontWeight: FontWeight.w500,

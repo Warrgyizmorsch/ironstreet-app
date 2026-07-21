@@ -112,8 +112,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
           _getAttributeValue(prod, 'Table Top Material');
       final String dimensions =
           _getAttributeValue(prod, 'Dimensions(L x W x H)');
-      final String deliveryCondition =
-          _getAttributeValue(prod, 'Delivery Condition');
       final String careInstructions =
           _getAttributeValue(prod, 'Care Instructions');
 
@@ -641,8 +639,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                 selectedAddress: cartController
                                     .shippingAddress.value
                                     ?.toAddressModel(),
-                                estimatedDeliveryDate:
-                                    _calculateDeliveryDate(deliveryCondition),
                                 onAddressTap: () {
                                   final wcAddr =
                                       cartController.shippingAddress.value;
@@ -1841,11 +1837,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
         ),
       ],
     );
-  }
-
-  String _calculateDeliveryDate(String deliveryCondition) {
-    final DateTime deliveryDate = DateTime.now().add(const Duration(days: 2));
-    return DateFormat('d MMM, EEE').format(deliveryDate);
   }
 
   void _showLoginRequiredDialog() {
