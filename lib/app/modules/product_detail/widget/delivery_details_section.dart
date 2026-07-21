@@ -33,13 +33,15 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
   @override
   void didUpdateWidget(covariant DeliveryDetailsSection oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.selectedAddress?.postalCode != oldWidget.selectedAddress?.postalCode) {
+    if (widget.selectedAddress?.postalCode !=
+        oldWidget.selectedAddress?.postalCode) {
       _updatePincodeFromAddress();
     }
   }
 
   void _updatePincodeFromAddress() {
-    if (widget.selectedAddress != null && widget.selectedAddress!.postalCode.isNotEmpty) {
+    if (widget.selectedAddress != null &&
+        widget.selectedAddress!.postalCode.isNotEmpty) {
       _pinController.text = widget.selectedAddress!.postalCode;
     }
   }
@@ -52,8 +54,8 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasDeliveryDate =
-        widget.estimatedDeliveryDate != null && widget.estimatedDeliveryDate!.isNotEmpty;
+    final bool hasDeliveryDate = widget.estimatedDeliveryDate != null &&
+        widget.estimatedDeliveryDate!.isNotEmpty;
     final controller = Get.find<ProductDetailController>();
 
     return Column(
@@ -148,18 +150,23 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                   ),
                   decoration: InputDecoration(
                     hintText: 'Enter 6-digit Pincode',
-                    hintStyle: GoogleFonts.poppins(fontSize: 11, color: Colors.grey),
-                    prefixIcon: const Icon(Icons.location_on_outlined, size: 16),
+                    hintStyle:
+                        GoogleFonts.poppins(fontSize: 11, color: Colors.grey),
+                    prefixIcon:
+                        const Icon(Icons.location_on_outlined, size: 16),
                     counterText: '',
                     isDense: true,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Theme.of(context).dividerColor),
+                      borderSide:
+                          BorderSide(color: Theme.of(context).dividerColor),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                      borderSide: const BorderSide(
+                          color: AppColors.primary, width: 1.5),
                     ),
                   ),
                 ),
@@ -191,7 +198,8 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                           height: 16,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         )
                       : Text(
@@ -218,7 +226,10 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
               padding: const EdgeInsets.only(top: 8.0, left: 4.0),
               child: Text(
                 error,
-                style: GoogleFonts.poppins(color: Colors.red, fontSize: 10, fontWeight: FontWeight.w500),
+                style: GoogleFonts.poppins(
+                    color: Colors.red,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500),
               ),
             );
           }
@@ -237,12 +248,16 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red, size: 16),
+                    const Icon(Icons.error_outline,
+                        color: Colors.red, size: 16),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         'Currently not serviceable to pincode ${controller.enteredPincode.value}',
-                        style: GoogleFonts.poppins(color: Colors.red[700], fontSize: 11, fontWeight: FontWeight.w500),
+                        style: GoogleFonts.poppins(
+                            color: Colors.red[700],
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500),
                       ),
                     ),
                   ],
@@ -250,7 +265,8 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
               );
             }
 
-            final String city = result['city'] ?? result['district'] ?? 'Your Location';
+            final String city =
+                result['city'] ?? result['district'] ?? 'Your Location';
             final String state = result['state_code'] ?? '';
             final bool codAvailable = result['cod'] == 'Y';
             final bool prepaidAvailable = result['pre_paid'] == 'Y';
@@ -269,7 +285,8 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.check_circle_outline, color: Colors.green, size: 16),
+                      const Icon(Icons.check_circle_outline,
+                          color: Colors.green, size: 16),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -307,51 +324,95 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
         }),
 
         // 5. Estimated delivery container
-        if (hasDeliveryDate) ...[
-          const SizedBox(height: 8),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1E1E1E) : const Color(0xFFFAF9F6),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Theme.of(context).dividerColor,
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.local_shipping_outlined,
-                  color: AppColors.primary,
-                  size: 18,
+        Obx(() {
+          final result = controller.pincodeResult.value;
+          final bool isUnserviceable = result != null && result['unserviceable'] == true;
+
+          if (isUnserviceable) {
+            return const SizedBox.shrink();
+          }
+
+          final liveDate = controller.estimatedDelhiveryDate.value;
+          final bool showLiveDate = liveDate.isNotEmpty;
+          final bool showWooDate = !showLiveDate && hasDeliveryDate;
+
+          if (!showLiveDate && !showWooDate) {
+            return const SizedBox.shrink();
+          }
+
+          final String dateText =
+              showLiveDate ? liveDate : widget.estimatedDeliveryDate!;
+          final String sourceText = showLiveDate ? ' (Delhivery Express)' : '';
+
+          return Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              decoration: BoxDecoration(
+                color: showLiveDate
+                    ? Colors.green.withValues(alpha: 0.03)
+                    : (Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF1E1E1E)
+                        : const Color(0xFFFAF9F6)),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: showLiveDate
+                      ? Colors.green.withValues(alpha: 0.1)
+                      : Theme.of(context).dividerColor,
+                  width: 1,
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: RichText(
-                    text: TextSpan(
-                      style: GoogleFonts.poppins(
-                        fontSize: 11,
-                        color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
-                      ),
-                      children: [
-                        const TextSpan(text: 'Delivery by '),
-                        TextSpan(
-                          text: widget.estimatedDeliveryDate,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).textTheme.bodyMedium?.color,
-                          ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.local_shipping_outlined,
+                    color: showLiveDate ? Colors.green[700] : AppColors.primary,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: RichText(
+                      text: TextSpan(
+                        style: GoogleFonts.poppins(
+                          fontSize: 11,
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.color
+                              ?.withValues(alpha: 0.8),
                         ),
-                      ],
+                        children: [
+                          const TextSpan(text: 'Estimated Delivery:  '),
+                          TextSpan(
+                            text: dateText,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: showLiveDate
+                                  ? Colors.green[700]
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.color,
+                            ),
+                          ),
+                          TextSpan(
+                            text: sourceText,
+                            style: TextStyle(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.green[600],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          );
+        }),
         const SizedBox(height: 5),
       ],
     );

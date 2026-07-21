@@ -24,4 +24,33 @@ class DeliveryRepository {
       rethrow;
     }
   }
+
+  Future<dynamic> getExpectedTAT({
+    required String originPin,
+    required String destinationPin,
+    String mot = 'S',
+  }) async {
+    const String url = 'https://track.delhivery.com/api/dc/expected_tat';
+    final Map<String, dynamic> headers = {
+      'Authorization': 'Token 9acb3b25fe6f9fbdd3781041828fd48cc09ea77c',
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    };
+    final Map<String, dynamic> queryParameters = {
+      'mot': mot,
+      'origin_pin': originPin,
+      'destination_pin': destinationPin,
+    };
+
+    try {
+      final response = await _apiService.getApi(
+        url,
+        queryParameters: queryParameters,
+        headers: headers,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

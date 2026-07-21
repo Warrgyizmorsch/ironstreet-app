@@ -22,6 +22,7 @@
 // }
 
 import 'dart:async';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
@@ -54,6 +55,7 @@ class ProductDetailController extends GetxController {
   var enteredPincode = ''.obs;
   var pincodeResult = Rxn<Map<String, dynamic>>();
   var pincodeError = ''.obs;
+  var estimatedDelhiveryDate = ''.obs;
 
   int productId = 0;
 
@@ -132,7 +134,8 @@ class ProductDetailController extends GetxController {
 
       imageAutoScrollTimer?.cancel();
 
-      dynamic response = await productRepository.fetchProductDetail(productId: id);
+      dynamic response =
+          await productRepository.fetchProductDetail(productId: id);
 
       final detail = ProductDetailModel.fromJson(response);
 
@@ -160,7 +163,8 @@ class ProductDetailController extends GetxController {
   Future<void> fetchProductReviews(int id) async {
     try {
       isReviewsLoading.value = true;
-      dynamic response = await productRepository.fetchProductReviews(productId: id);
+      dynamic response =
+          await productRepository.fetchProductReviews(productId: id);
       List<ProductReviewModel> fetchedReviews = (response as List)
           .map((json) => ProductReviewModel.fromJson(json))
           .toList();
@@ -206,6 +210,7 @@ class ProductDetailController extends GetxController {
     if (cleaned.length != 6 || int.tryParse(cleaned) == null) {
       pincodeError.value = 'Please enter a valid 6-digit pincode';
       pincodeResult.value = null;
+      estimatedDelhiveryDate.value = '';
       return;
     }
 
@@ -213,8 +218,10 @@ class ProductDetailController extends GetxController {
       isCheckingPincode.value = true;
       pincodeError.value = '';
       enteredPincode.value = cleaned;
+      estimatedDelhiveryDate.value = '';
 
-      final response = await _deliveryRepository.checkPincodeServiceability(cleaned);
+      final response =
+          await _deliveryRepository.checkPincodeServiceability(cleaned);
 
       if (response != null && response['delivery_codes'] != null) {
         final List deliveryCodes = response['delivery_codes'];
@@ -222,6 +229,7 @@ class ProductDetailController extends GetxController {
           final postalCodeData = deliveryCodes.first['postal_code'];
           if (postalCodeData != null) {
             pincodeResult.value = Map<String, dynamic>.from(postalCodeData);
+            await fetchExpectedTAT(cleaned);
             return;
           }
         }
@@ -232,6 +240,30 @@ class ProductDetailController extends GetxController {
       pincodeResult.value = null;
     } finally {
       isCheckingPincode.value = false;
+    }
+  }
+
+  Future<void> fetchExpectedTAT(String destinationPin) async {
+    try {
+      final response = await _deliveryRepository.getExpectedTAT(
+        originPin: '313001',
+        destinationPin: destinationPin,
+      );
+
+      if (response != null &&
+          response['success'] == true &&
+          response['data'] != null) {
+        final int tat = response['data']['tat'] ?? 0;
+        if (tat > 0) {
+          final deliveryDate = DateTime.now().add(Duration(days: tat));
+          final formatter = DateFormat('EEEE, d MMMM');
+          estimatedDelhiveryDate.value = formatter.format(deliveryDate);
+          return;
+        }
+      }
+      estimatedDelhiveryDate.value = '';
+    } catch (e) {
+      estimatedDelhiveryDate.value = '';
     }
   }
 
@@ -293,7 +325,8 @@ class ProductDetailController extends GetxController {
       final response = await productRepository.submitProductReview(
         productId: prod.id,
         reviewer: reviewerName.isNotEmpty ? reviewerName : 'Anonymous',
-        email: reviewerEmail.isNotEmpty ? reviewerEmail : 'anonymous@example.com',
+        email:
+            reviewerEmail.isNotEmpty ? reviewerEmail : 'anonymous@example.com',
         review: review,
         rating: rating,
       );
@@ -307,10 +340,14 @@ class ProductDetailController extends GetxController {
       return false;
     } catch (e) {
       final errorMsg = e.toString().toLowerCase();
-      if (errorMsg.contains('comment_duplicate') || errorMsg.contains('duplicate')) {
-        CustomToast.show('You have already submitted a review for this product.', isError: true);
+      if (errorMsg.contains('comment_duplicate') ||
+          errorMsg.contains('duplicate')) {
+        CustomToast.show(
+            'You have already submitted a review for this product.',
+            isError: true);
       } else {
-        CustomToast.show('Failed to submit review. Please try again.', isError: true);
+        CustomToast.show('Failed to submit review. Please try again.',
+            isError: true);
       }
       return false;
     } finally {

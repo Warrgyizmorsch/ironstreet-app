@@ -52,7 +52,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
             elevation: 0,
             leading: IconButton(
               icon: Icon(Icons.arrow_back,
-                  color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
+                  color: Theme.of(context).appBarTheme.iconTheme?.color ??
+                      Theme.of(context).textTheme.titleLarge?.color),
               onPressed: () => Get.back(),
             ),
             title: Text(
@@ -78,7 +79,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
             elevation: 0,
             leading: IconButton(
               icon: Icon(Icons.arrow_back,
-                  color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
+                  color: Theme.of(context).appBarTheme.iconTheme?.color ??
+                      Theme.of(context).textTheme.titleLarge?.color),
               onPressed: () => Get.back(),
             ),
             title: Text(
@@ -124,7 +126,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
           elevation: 0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back,
-                color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
+                color: Theme.of(context).appBarTheme.iconTheme?.color ??
+                    Theme.of(context).textTheme.titleLarge?.color),
             onPressed: () => Get.back(),
           ),
           title: Text(
@@ -898,7 +901,8 @@ class ProductDetailView extends GetView<ProductDetailController> {
     );
   }
 
-  Widget _buildRelatedProductsSection(BuildContext context, ProductDetailController controller) {
+  Widget _buildRelatedProductsSection(
+      BuildContext context, ProductDetailController controller) {
     return Obx(() {
       if (controller.isRelatedProductsLoading.value) {
         return Column(
