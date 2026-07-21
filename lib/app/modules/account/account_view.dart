@@ -9,6 +9,7 @@ import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import 'account_controller.dart';
 import '../../routes/app_pages.dart';
 import 'legal_policies_view.dart';
+import 'package:iron_street_app/app/data/local/session_manager.dart';
 import '../profile/profile_controller.dart';
 
 class AccountView extends GetView<AccountController> {
@@ -238,6 +239,12 @@ class AccountView extends GetView<AccountController> {
                             leadingIcon: Icons.location_on_outlined,
                             targetRoute: Routes.ADDRESS_LIST,
                           ),
+                          Divider(
+                            height: 1,
+                            thickness: 0.17,
+                            color: Theme.of(context).dividerColor,
+                          ),
+                          _buildThemeRow(context),
                         ],
                       ),
                     ),
@@ -547,6 +554,115 @@ class AccountView extends GetView<AccountController> {
         }
       },
     );
+  }
+
+  Widget _buildThemeRow(BuildContext context) {
+    final sessionManager = Get.find<SessionManager>();
+    final currentModeStr = sessionManager.getThemeMode().obs;
+
+    return Obx(() {
+      IconData themeIcon = Icons.brightness_auto_outlined;
+      String displayMode = 'System Default';
+      if (currentModeStr.value == 'light') {
+        themeIcon = Icons.light_mode_outlined;
+        displayMode = 'Light Mode';
+      } else if (currentModeStr.value == 'dark') {
+        themeIcon = Icons.dark_mode_outlined;
+        displayMode = 'Dark Mode';
+      }
+
+      return ListTile(
+        leading: Icon(themeIcon, color: AppColors.primary, size: 20),
+        title: Text(
+          'Theme Mode',
+          style: GoogleFonts.poppins(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          ),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              displayMode,
+              style: GoogleFonts.poppins(
+                fontSize: 11,
+                color: Colors.grey,
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.arrow_forward_ios, size: 12, color: Colors.grey),
+          ],
+        ),
+        dense: true,
+        onTap: () => _showThemeSelectionDialog(context, currentModeStr),
+      );
+    });
+  }
+
+  void _showThemeSelectionDialog(BuildContext context, RxString currentModeRx) {
+    final sessionManager = Get.find<SessionManager>();
+
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Select Theme Mode',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            color: Theme.of(context).textTheme.titleLarge?.color,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildThemeDialogOption(context, 'System Default', 'system', currentModeRx, sessionManager),
+            _buildThemeDialogOption(context, 'Light Mode', 'light', currentModeRx, sessionManager),
+            _buildThemeDialogOption(context, 'Dark Mode', 'dark', currentModeRx, sessionManager),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThemeDialogOption(
+    BuildContext context,
+    String title,
+    String value,
+    RxString currentModeRx,
+    SessionManager sessionManager,
+  ) {
+    return Obx(() {
+      return RadioListTile<String>(
+        title: Text(
+          title,
+          style: GoogleFonts.poppins(
+            fontSize: 13,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
+          ),
+        ),
+        value: value,
+        groupValue: currentModeRx.value,
+        activeColor: AppColors.primary,
+        onChanged: (val) {
+          if (val != null) {
+            currentModeRx.value = val;
+            sessionManager.saveThemeMode(val);
+
+            ThemeMode mode = ThemeMode.system;
+            if (val == 'light') {
+              mode = ThemeMode.light;
+            } else if (val == 'dark') {
+              mode = ThemeMode.dark;
+            }
+            Get.changeThemeMode(mode);
+            Get.back();
+          }
+        },
+      );
+    });
   }
 
   // --- LOG IN SIGN IN CONSOLE FORM STATE ---

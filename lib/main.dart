@@ -8,12 +8,22 @@ import 'app/utills/theme/app_themes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Get.putAsync(() => SessionManager().init());
-  runApp(const IronStreetApp());
+  final sessionManager = await Get.putAsync(() => SessionManager().init());
+
+  final savedMode = sessionManager.getThemeMode();
+  ThemeMode initialMode = ThemeMode.system;
+  if (savedMode == 'light') {
+    initialMode = ThemeMode.light;
+  } else if (savedMode == 'dark') {
+    initialMode = ThemeMode.dark;
+  }
+
+  runApp(IronStreetApp(initialThemeMode: initialMode));
 }
 
 class IronStreetApp extends StatelessWidget {
-  const IronStreetApp({super.key});
+  final ThemeMode initialThemeMode;
+  const IronStreetApp({super.key, this.initialThemeMode = ThemeMode.system});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +33,7 @@ class IronStreetApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppThemes.lightTheme,
       darkTheme: AppThemes.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: initialThemeMode,
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
     );

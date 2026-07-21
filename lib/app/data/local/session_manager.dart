@@ -71,6 +71,16 @@ class SessionManager extends GetxService {
     await _prefs.remove(_keyNonce);
   }
 
+  static const String _keyThemeMode = 'theme_mode';
+
+  Future<void> saveThemeMode(String mode) async {
+    await _prefs.setString(_keyThemeMode, mode);
+  }
+
+  String getThemeMode() {
+    return _prefs.getString(_keyThemeMode) ?? 'system';
+  }
+
   Future<void> clearSession() async {
     await _prefs.remove(_keyToken);
     await _prefs.remove(_keyEmail);
