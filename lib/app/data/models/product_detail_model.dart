@@ -18,6 +18,10 @@ class ProductDetailModel {
   final List<ProductAttributeModel> attributes;
   final List<ProductCategoryModel> categories;
   final List<int> relatedIds;
+  final String weight;
+  final String length;
+  final String width;
+  final String height;
 
   ProductDetailModel({
     required this.id,
@@ -39,9 +43,14 @@ class ProductDetailModel {
     required this.attributes,
     required this.categories,
     required this.relatedIds,
+    required this.weight,
+    required this.length,
+    required this.width,
+    required this.height,
   });
 
   factory ProductDetailModel.fromJson(Map<String, dynamic> json) {
+    final dimensions = json['dimensions'] ?? {};
     return ProductDetailModel(
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
@@ -70,6 +79,10 @@ class ProductDetailModel {
       relatedIds: (json['related_ids'] as List? ?? [])
           .map((e) => int.tryParse(e.toString()) ?? 0)
           .toList(),
+      weight: json['weight']?.toString() ?? '',
+      length: dimensions['length']?.toString() ?? '',
+      width: dimensions['width']?.toString() ?? '',
+      height: dimensions['height']?.toString() ?? '',
     );
   }
 }

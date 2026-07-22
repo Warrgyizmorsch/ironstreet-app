@@ -41,6 +41,8 @@ class ProductRepository {
       'attributes',
       'categories',
       'related_ids',
+      'weight',
+      'dimensions',
     ].join(',');
 
     final String url = '${AppUrls.products}/$productId?_fields=$fields';

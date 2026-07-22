@@ -211,17 +211,29 @@ class CheckoutController extends GetxController {
     final name = productName.toLowerCase();
     final cat = category.toLowerCase();
 
-    if (name.contains('dining') || name.contains('table') || cat.contains('table')) {
+    if (name.contains('dining') ||
+        name.contains('table') ||
+        cat.contains('table')) {
       return 45000; // 45 kg
-    } else if (name.contains('sofa') || name.contains('couch') || cat.contains('sofa')) {
+    } else if (name.contains('sofa') ||
+        name.contains('couch') ||
+        cat.contains('sofa')) {
       return 50000; // 50 kg
-    } else if (name.contains('chair') || name.contains('stool') || name.contains('bench') || cat.contains('chair')) {
+    } else if (name.contains('chair') ||
+        name.contains('stool') ||
+        name.contains('bench') ||
+        cat.contains('chair')) {
       return 12000; // 12 kg
     } else if (name.contains('bed') || cat.contains('bed')) {
       return 75000; // 75 kg
-    } else if (name.contains('wardrobe') || name.contains('cabinet') || name.contains('almirah') || cat.contains('wardrobe')) {
+    } else if (name.contains('wardrobe') ||
+        name.contains('cabinet') ||
+        name.contains('almirah') ||
+        cat.contains('wardrobe')) {
       return 80000; // 80 kg
-    } else if (name.contains('mirror') || name.contains('shelf') || cat.contains('decor')) {
+    } else if (name.contains('mirror') ||
+        name.contains('shelf') ||
+        cat.contains('decor')) {
       return 15000; // 15 kg
     }
     return 25000; // Default 25 kg
@@ -249,10 +261,15 @@ class CheckoutController extends GetxController {
       if (item.weightKg != null && item.weightKg! > 0) {
         final double deadWeight = item.weightKg! * 1000;
         double volumetricWeight = 0;
-        if (item.lengthCm != null && item.widthCm != null && item.heightCm != null) {
-          volumetricWeight = (item.lengthCm! * item.widthCm! * item.heightCm!) * 0.2;
+        if (item.lengthCm != null &&
+            item.widthCm != null &&
+            item.heightCm != null) {
+          volumetricWeight =
+              (item.lengthCm! * item.widthCm! * item.heightCm!) * 0.2;
         }
-        itemWeightGrams = (deadWeight > volumetricWeight ? deadWeight : volumetricWeight).toInt();
+        itemWeightGrams =
+            (deadWeight > volumetricWeight ? deadWeight : volumetricWeight)
+                .toInt();
       } else {
         // Fallback to estimated weight heuristics
         itemWeightGrams = _getEstimatedWeightInGrams(
@@ -278,7 +295,8 @@ class CheckoutController extends GetxController {
       if (response != null && response is List && response.isNotEmpty) {
         final chargeData = response.first;
         if (chargeData != null && chargeData['total_amount'] != null) {
-          final double amt = double.tryParse(chargeData['total_amount'].toString()) ?? 0.0;
+          final double amt =
+              double.tryParse(chargeData['total_amount'].toString()) ?? 0.0;
           deliveryCharge.value = amt;
           return;
         }
