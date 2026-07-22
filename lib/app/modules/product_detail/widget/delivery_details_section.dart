@@ -39,7 +39,8 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
   @override
   void didUpdateWidget(covariant DeliveryDetailsSection oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.selectedAddress?.postalCode != oldWidget.selectedAddress?.postalCode) {
+    if (widget.selectedAddress?.postalCode !=
+        oldWidget.selectedAddress?.postalCode) {
       _updatePincodeFromAddress();
       if (_pinController.text.trim().length == 6) {
         final controller = Get.find<ProductDetailController>();
@@ -49,7 +50,8 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
   }
 
   void _updatePincodeFromAddress() {
-    if (widget.selectedAddress != null && widget.selectedAddress!.postalCode.isNotEmpty) {
+    if (widget.selectedAddress != null &&
+        widget.selectedAddress!.postalCode.isNotEmpty) {
       _pinController.text = widget.selectedAddress!.postalCode;
     }
   }
@@ -88,12 +90,14 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
           final price = controller.deliveryCharge.value;
 
           final bool hasResult = result != null;
-          final bool isUnserviceable = hasResult && result['unserviceable'] == true;
+          final bool isUnserviceable =
+              hasResult && result['unserviceable'] == true;
           final bool isServiceable = hasResult && !isUnserviceable;
 
           // Case A: Serviceable (Pincode & City Container + Price/Date Info Box below)
           if (isServiceable) {
-            final String city = result['city'] ?? result['district'] ?? 'Your Location';
+            final String city =
+                result['city'] ?? result['district'] ?? 'Your Location';
             final String state = result['state_code'] ?? '';
             final String pin = controller.enteredPincode.value;
 
@@ -103,7 +107,8 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                 // Container with Pincode and City
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
                     color: Theme.of(context).brightness == Brightness.dark
                         ? const Color(0xFF1E1E1E)
@@ -113,7 +118,8 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.location_on_outlined, color: AppColors.primary, size: 20),
+                      const Icon(Icons.location_on_outlined,
+                          color: AppColors.primary, size: 20),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
@@ -151,18 +157,21 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                 // Delivery Info box below
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
                     color: Colors.green.withValues(alpha: 0.03),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.green.withValues(alpha: 0.15)),
+                    border:
+                        Border.all(color: Colors.green.withValues(alpha: 0.15)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.check_circle_outline, color: Colors.green, size: 18),
+                          const Icon(Icons.check_circle_outline,
+                              color: Colors.green, size: 18),
                           const SizedBox(width: 8),
                           Text(
                             'Delivery Available',
@@ -191,15 +200,21 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                                   height: 12,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 1.5,
-                                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        AppColors.primary),
                                   ),
                                 )
                               : Text(
-                                  price > 0 ? '₹${NumberFormat('#,##,###').format(price)}' : 'Free',
+                                  price > 0
+                                      ? '₹${NumberFormat('#,##,###').format(price)}'
+                                      : 'Free',
                                   style: GoogleFonts.poppins(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
-                                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color,
                                   ),
                                 ),
                           const Spacer(),
@@ -216,7 +231,10 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                                     text: liveDate,
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color,
                                     ),
                                   ),
                                 ],
@@ -239,7 +257,8 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
               children: [
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
                     color: Theme.of(context).brightness == Brightness.dark
                         ? const Color(0xFF1E1E1E)
@@ -249,7 +268,8 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.location_on_outlined, color: Colors.grey, size: 20),
+                      const Icon(Icons.location_on_outlined,
+                          color: Colors.grey, size: 20),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
@@ -289,11 +309,13 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                   decoration: BoxDecoration(
                     color: Colors.red.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.red.withValues(alpha: 0.15)),
+                    border:
+                        Border.all(color: Colors.red.withValues(alpha: 0.15)),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.error_outline, color: Colors.red, size: 18),
+                      const Icon(Icons.error_outline,
+                          color: Colors.red, size: 18),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
@@ -312,93 +334,95 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
             );
           }
 
-          // Case C: Initial State (Pincode input field + Apply action button)
+          // Case C: Initial State (Pincode input field nested inside the same container)
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? const Color(0xFF1E1E1E)
+                      : const Color(0xFFFAF9F6),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Theme.of(context).dividerColor),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.location_on_outlined,
+                        color: Colors.grey, size: 20),
+                    const SizedBox(width: 10),
+                    Expanded(
                       child: TextField(
                         controller: _pinController,
                         keyboardType: TextInputType.number,
                         maxLength: 6,
                         onChanged: (val) {
-                          if (val.trim().length == 6 && int.tryParse(val.trim()) != null) {
+                          if (val.trim().length == 6 &&
+                              int.tryParse(val.trim()) != null) {
                             FocusScope.of(context).unfocus();
                             controller.checkDelhiveryPincode(val.trim());
                           }
                         },
                         style: GoogleFonts.poppins(
                           fontSize: 13,
+                          fontWeight: FontWeight.bold,
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Enter 6-digit Pincode',
-                          hintStyle: GoogleFonts.poppins(fontSize: 12, color: Colors.grey),
-                          prefixIcon: const Icon(Icons.location_on_outlined, size: 18),
+                          hintText: 'Enter Pincode',
+                          hintStyle: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: Colors.grey,
+                            fontWeight: FontWeight.normal,
+                          ),
+                          border: InputBorder.none,
                           counterText: '',
                           isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: Theme.of(context).dividerColor),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-                          ),
+                          contentPadding: EdgeInsets.zero,
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    height: 44,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                      ),
-                      onPressed: isChecking
-                          ? null
-                          : () {
+                    const SizedBox(width: 8),
+                    // Apply text button
+                    isChecking
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 1.5,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.primary),
+                            ),
+                          )
+                        : GestureDetector(
+                            onTap: () {
                               FocusScope.of(context).unfocus();
-                              controller.checkDelhiveryPincode(_pinController.text.trim());
+                              controller.checkDelhiveryPincode(
+                                  _pinController.text.trim());
                             },
-                      child: isChecking
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                              ),
-                            )
-                          : Text(
+                            child: Text(
                               'Apply',
                               style: GoogleFonts.poppins(
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary),
                             ),
-                    ),
-                  ),
-                ],
+                          ),
+                  ],
+                ),
               ),
               if (error.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 6.0, left: 4.0),
                   child: Text(
                     error,
-                    style: GoogleFonts.poppins(color: Colors.red, fontSize: 10, fontWeight: FontWeight.w500),
+                    style: GoogleFonts.poppins(
+                        color: Colors.red,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
             ],
