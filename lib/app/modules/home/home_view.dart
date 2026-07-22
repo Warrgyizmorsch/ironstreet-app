@@ -1,6 +1,7 @@
 // ignore_for_file: unused_element, deprecated_member_use
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import 'package:get/get.dart';
@@ -34,59 +35,138 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: controller.scaffoldKey,
-      backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? Theme.of(context).scaffoldBackgroundColor
-          : Colors.white,
-      appBar: AppHeader(
-        onMenuClick: () => controller.openDrawer(),
-      ),
-      drawer: _buildDrawer(context),
-      body: Column(
-        children: [
-          // Global Search Bar linked to query filter
-          Obx(() {
-            if (controller.currentIndex.value == 0 ||
-                controller.currentIndex.value == 1) {
-              return CustomSearchBar(
-                value: controller.searchQuery.value,
-                onChanged: controller.onSearchChanged,
-              );
-            } else {
-              return const SizedBox.shrink();
-            }
-          }),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
 
-          // Content view switcher
-          Expanded(
-            child: Obx(() {
-              if (controller.searchQuery.value.trim().isNotEmpty) {
-                // If searching, render catalog automatically
-                return CategoryView(
-                  initialSearchQuery: controller.searchQuery.value,
+        // 1. If searching, clear the search query first
+        if (controller.searchQuery.value.trim().isNotEmpty) {
+          controller.searchQuery.value = '';
+          return;
+        }
+
+        // 2. If not on the main home subview (index 0), go back to index 0
+        if (controller.currentIndex.value != 0) {
+          controller.currentIndex.value = 0;
+          return;
+        }
+
+        // 3. Otherwise show exit confirmation dialog
+        final shouldExit = await _showExitDialog(context);
+        if (shouldExit == true) {
+          await SystemNavigator.pop();
+        }
+      },
+      child: Scaffold(
+        key: controller.scaffoldKey,
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? Theme.of(context).scaffoldBackgroundColor
+            : Colors.white,
+        appBar: AppHeader(
+          onMenuClick: () => controller.openDrawer(),
+        ),
+        drawer: _buildDrawer(context),
+        body: Column(
+          children: [
+            // Global Search Bar linked to query filter
+            Obx(() {
+              if (controller.currentIndex.value == 0 ||
+                  controller.currentIndex.value == 1) {
+                return CustomSearchBar(
+                  value: controller.searchQuery.value,
+                  onChanged: controller.onSearchChanged,
                 );
-              }
-
-              switch (controller.currentIndex.value) {
-                case 1:
-                  return const CategoryView();
-                case 2:
-                  return _buildCallBackView();
-                case 3:
-                  return _buildStoresView();
-                case 4:
-                  return const AccountView();
-                case 0:
-                default:
-                  return _buildHomeSubView();
+              } else {
+                return const SizedBox.shrink();
               }
             }),
+
+            // Content view switcher
+            Expanded(
+              child: Obx(() {
+                if (controller.searchQuery.value.trim().isNotEmpty) {
+                  // If searching, render catalog automatically
+                  return CategoryView(
+                    initialSearchQuery: controller.searchQuery.value,
+                  );
+                }
+
+                switch (controller.currentIndex.value) {
+                  case 1:
+                    return const CategoryView();
+                  case 2:
+                    return _buildCallBackView();
+                  case 3:
+                    return _buildStoresView();
+                  case 4:
+                    return const AccountView();
+                  case 0:
+                  default:
+                    return _buildHomeSubView();
+                }
+              }),
+            ),
+          ],
+        ),
+        floatingActionButton: _buildWhatsAppFAB(),
+        bottomNavigationBar: _buildBottomNavBar(context),
+      ),
+    );
+  }
+
+  Future<bool?> _showExitDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).cardColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Text(
+          'Exit Application',
+          style: GoogleFonts.poppins(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Theme.of(context).textTheme.titleLarge?.color,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to exit Iron Street?',
+          style: GoogleFonts.poppins(
+            fontSize: 13,
+            color: Theme.of(context).textTheme.bodyMedium?.color,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(
+              'No',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              'Yes',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
           ),
         ],
       ),
-      floatingActionButton: _buildWhatsAppFAB(),
-      bottomNavigationBar: _buildBottomNavBar(context),
     );
   }
 
