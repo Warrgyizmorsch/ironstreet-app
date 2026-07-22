@@ -154,44 +154,54 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                 ),
                 const SizedBox(height: 8),
 
-                // Delivery Info box below
+                // Delivery Info specifications card below
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.03),
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(12),
-                    border:
-                        Border.all(color: Colors.green.withValues(alpha: 0.15)),
+                    border: Border.all(color: Theme.of(context).dividerColor),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Item 1: Serviceable Status
                       Row(
                         children: [
                           const Icon(Icons.check_circle_outline,
-                              color: Colors.green, size: 18),
+                              color: Colors.green, size: 16),
                           const SizedBox(width: 8),
                           Text(
                             'Delivery Available',
                             style: GoogleFonts.poppins(
-                              color: Colors.green[700],
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
+                              color: Colors.green[700],
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      // Delivery Price and Estimated Date
+                      const SizedBox(height: 10),
+
+                      // Item 2: Shipping Charges
                       Row(
                         children: [
+                          Icon(Icons.currency_rupee,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
+                              size: 15),
+                          const SizedBox(width: 9),
                           Text(
-                            'Shipping: ',
+                            'Shipping Charges: ',
                             style: GoogleFonts.poppins(
                               fontSize: 11,
-                              color: Colors.grey[600],
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.grey[400]
+                                  : Colors.grey[600],
                             ),
                           ),
                           isCalculating
@@ -209,7 +219,7 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                                       ? '₹${NumberFormat('#,##,###').format(price)}'
                                       : 'Free',
                                   style: GoogleFonts.poppins(
-                                    fontSize: 12,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.bold,
                                     color: Theme.of(context)
                                         .textTheme
@@ -217,16 +227,32 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                                         ?.color,
                                   ),
                                 ),
-                          const Spacer(),
-                          if (liveDate.isNotEmpty)
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Item 3: Expected Delivery Date
+                      if (liveDate.isNotEmpty)
+                        Row(
+                          children: [
+                            Icon(Icons.calendar_today_outlined,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.grey[400]
+                                    : Colors.grey[600],
+                                size: 14),
+                            const SizedBox(width: 10),
                             RichText(
                               text: TextSpan(
                                 style: GoogleFonts.poppins(
                                   fontSize: 11,
-                                  color: Colors.grey[600],
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.dark
+                                      ? Colors.grey[400]
+                                      : Colors.grey[600],
                                 ),
                                 children: [
-                                  const TextSpan(text: 'Est. Delivery: '),
+                                  const TextSpan(text: 'Estimated Delivery: '),
                                   TextSpan(
                                     text: liveDate,
                                     style: TextStyle(
@@ -240,8 +266,8 @@ class _DeliveryDetailsSectionState extends State<DeliveryDetailsSection> {
                                 ],
                               ),
                             ),
-                        ],
-                      ),
+                          ],
+                        ),
                     ],
                   ),
                 ),
