@@ -116,7 +116,7 @@ class PaymentController extends GetxController {
 
     final subtotal = cartCtrl.subtotal;
     final discount = cartCtrl.discountAmount + checkCtrl.couponDiscount.value;
-    final delivery = cartCtrl.deliveryPrice;
+    final delivery = checkCtrl.deliveryCharge.value;
     final grandTotal = checkCtrl.checkoutTotal;
 
     final newOrder = OrderModel(

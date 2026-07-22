@@ -501,10 +501,8 @@ class CheckoutView extends GetView<CheckoutController> {
   Widget _buildBillSummarySection(BuildContext context, CheckoutController checkCtrl) {
     final subtotal = checkCtrl.cartCtrl.subtotal;
     final discount = checkCtrl.cartCtrl.discountAmount;
-    final delivery = checkCtrl.cartCtrl.deliveryPrice;
     final couponDisc = checkCtrl.couponDiscount.value;
     final tax = checkCtrl.cartCtrl.totalTax;
-    final total = checkCtrl.checkoutTotal;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -529,7 +527,18 @@ class CheckoutView extends GetView<CheckoutController> {
           _buildBillRow(context, 'Item Subtotal', subtotal),
           if (discount > 0) _buildBillRow(context, 'Product Discounts', -discount, isDiscount: true),
           if (couponDisc > 0) _buildBillRow(context, 'Coupon Discount', -couponDisc, isDiscount: true),
-          _buildBillRow(context, 'Delivery Charges', delivery),
+          
+          Obx(() {
+            final isCalculating = checkCtrl.isCalculatingDelivery.value;
+            final delivery = checkCtrl.deliveryCharge.value;
+            return _buildBillRow(
+              context, 
+              'Delivery Charges', 
+              delivery,
+              customValueText: isCalculating ? 'Calculating...' : null,
+            );
+          }),
+          
           if (tax > 0) _buildBillRow(context, 'Estimated Tax (GST)', tax),
           const Divider(height: 24, thickness: 1),
           Row(
@@ -539,10 +548,13 @@ class CheckoutView extends GetView<CheckoutController> {
                 'To Pay',
                 style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14, color: Theme.of(context).textTheme.titleSmall?.color),
               ),
-              Text(
-                '₹${NumberFormat('#,##,###').format(total)}',
-                style: GoogleFonts.poppins(fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.primary),
-              ),
+              Obx(() {
+                final total = checkCtrl.checkoutTotal;
+                return Text(
+                  '₹${NumberFormat('#,##,###').format(total)}',
+                  style: GoogleFonts.poppins(fontWeight: FontWeight.w800, fontSize: 16, color: AppColors.primary),
+                );
+              }),
             ],
           ),
         ],
@@ -550,7 +562,7 @@ class CheckoutView extends GetView<CheckoutController> {
     );
   }
 
-  Widget _buildBillRow(BuildContext context, String label, double val, {bool isDiscount = false}) {
+  Widget _buildBillRow(BuildContext context, String label, double val, {bool isDiscount = false, String? customValueText}) {
     final formattedVal = NumberFormat('#,##,###').format(val.abs());
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -559,13 +571,15 @@ class CheckoutView extends GetView<CheckoutController> {
         children: [
           Text(label, style: GoogleFonts.poppins(fontSize: 12, color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8))),
           Text(
-            isDiscount ? '-₹$formattedVal' : '₹$formattedVal',
+            customValueText ?? (isDiscount ? '-₹$formattedVal' : '₹$formattedVal'),
             style: GoogleFonts.poppins(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: isDiscount
-                  ? Colors.green[700]
-                  : (val == 0.0 ? Colors.green[700] : Theme.of(context).textTheme.bodyLarge?.color),
+              color: customValueText != null
+                  ? AppColors.primary
+                  : (isDiscount
+                      ? Colors.green[700]
+                      : (val == 0.0 ? Colors.green[700] : Theme.of(context).textTheme.bodyLarge?.color)),
             ),
           ),
         ],

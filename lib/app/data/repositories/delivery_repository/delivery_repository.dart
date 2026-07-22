@@ -53,4 +53,37 @@ class DeliveryRepository {
       rethrow;
     }
   }
+
+  Future<dynamic> getShippingCharges({
+    required String destinationPin,
+    required int weightInGrams,
+    String paymentType = 'Pre-paid',
+    String originPin = '313001',
+    String mot = 'S',
+  }) async {
+    const String url = 'https://track.delhivery.com/api/kinko/v1/invoice/charges/.json';
+    final Map<String, dynamic> headers = {
+      'Authorization': 'Token 9acb3b25fe6f9fbdd3781041828fd48cc09ea77c',
+      'Content-Type': 'application/json',
+    };
+    final Map<String, dynamic> queryParameters = {
+      'md': mot,
+      'ss': 'Delivered',
+      'd_pin': destinationPin,
+      'o_pin': originPin,
+      'cgm': weightInGrams,
+      'pt': paymentType,
+    };
+
+    try {
+      final response = await _apiService.getApi(
+        url,
+        queryParameters: queryParameters,
+        headers: headers,
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

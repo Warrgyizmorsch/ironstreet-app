@@ -6,15 +6,20 @@ import '../../data/repositories/order_repository/order_repository.dart';
 import '../cart/cart_controller.dart';
 import '../payment/payment_success_view.dart';
 import '../payment/payment_failed_view.dart';
+import '../../data/repositories/delivery_repository/delivery_repository.dart';
 
 class CheckoutController extends GetxController {
   final cartCtrl = Get.find<CartController>();
   final CheckoutRepository checkoutRepository = Get.find<CheckoutRepository>();
   final OrderRepository orderRepository = Get.find<OrderRepository>();
+  final DeliveryRepository _deliveryRepository = DeliveryRepository();
 
   var appliedCoupon = ''.obs;
   var couponDiscount = 0.0.obs;
   var isProcessing = false.obs;
+
+  var deliveryCharge = 0.0.obs;
+  var isCalculatingDelivery = false.obs;
 
   late Razorpay _razorpay;
   int? _activeOrderId;
@@ -27,6 +32,14 @@ class CheckoutController extends GetxController {
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+
+    // Re-calculate shipping dynamically when address postcode changes
+    ever(cartCtrl.shippingAddress, (_) {
+      calculateDelhiveryShippingCharge();
+    });
+
+    // Run initial calculation
+    calculateDelhiveryShippingCharge();
   }
 
   @override
@@ -117,7 +130,10 @@ class CheckoutController extends GetxController {
   }
 
   double get checkoutTotal {
-    double total = cartCtrl.totalAmount - couponDiscount.value;
+    // Override WooCommerce's static shipping cost (cartCtrl.deliveryPrice)
+    // and inject Delhivery's dynamic live shipping cost (deliveryCharge.value)
+    double base = cartCtrl.totalAmount - cartCtrl.deliveryPrice;
+    double total = base + deliveryCharge.value - couponDiscount.value;
     return total < 0 ? 0.0 : total;
   }
 
@@ -188,6 +204,72 @@ class CheckoutController extends GetxController {
         e.toString().replaceAll('Exception:', '').trim(),
         isError: true,
       );
+    }
+  }
+
+  int _getEstimatedWeightInGrams(String productName, String category) {
+    final name = productName.toLowerCase();
+    final cat = category.toLowerCase();
+
+    if (name.contains('dining') || name.contains('table') || cat.contains('table')) {
+      return 45000; // 45 kg
+    } else if (name.contains('sofa') || name.contains('couch') || cat.contains('sofa')) {
+      return 50000; // 50 kg
+    } else if (name.contains('chair') || name.contains('stool') || name.contains('bench') || cat.contains('chair')) {
+      return 12000; // 12 kg
+    } else if (name.contains('bed') || cat.contains('bed')) {
+      return 75000; // 75 kg
+    } else if (name.contains('wardrobe') || name.contains('cabinet') || name.contains('almirah') || cat.contains('wardrobe')) {
+      return 80000; // 80 kg
+    } else if (name.contains('mirror') || name.contains('shelf') || cat.contains('decor')) {
+      return 15000; // 15 kg
+    }
+    return 25000; // Default 25 kg
+  }
+
+  Future<void> calculateDelhiveryShippingCharge() async {
+    final addr = cartCtrl.shippingAddress.value;
+    if (addr == null || addr.postcode.isEmpty) {
+      deliveryCharge.value = 0.0;
+      return;
+    }
+
+    final String pincode = addr.postcode.trim();
+    if (pincode.length != 6 || int.tryParse(pincode) == null) {
+      deliveryCharge.value = 0.0;
+      return;
+    }
+
+    // Calculate total weight of cart items
+    int totalWeightGrams = 0;
+    for (final item in cartCtrl.cartItems) {
+      final itemWeight = _getEstimatedWeightInGrams(
+        item.product.name,
+        item.product.category,
+      );
+      totalWeightGrams += itemWeight * item.quantity.value;
+    }
+
+    try {
+      isCalculatingDelivery.value = true;
+      final response = await _deliveryRepository.getShippingCharges(
+        destinationPin: pincode,
+        weightInGrams: totalWeightGrams,
+      );
+
+      if (response != null && response is List && response.isNotEmpty) {
+        final chargeData = response.first;
+        if (chargeData != null && chargeData['total_amount'] != null) {
+          final double amt = double.tryParse(chargeData['total_amount'].toString()) ?? 0.0;
+          deliveryCharge.value = amt;
+          return;
+        }
+      }
+      deliveryCharge.value = 0.0;
+    } catch (e) {
+      deliveryCharge.value = 0.0;
+    } finally {
+      isCalculatingDelivery.value = false;
     }
   }
 }
