@@ -41,6 +41,10 @@ class CartItemModel {
   final String image;
   final double price;
   final double regularPrice;
+  final double? weightKg;
+  final double? lengthCm;
+  final double? widthCm;
+  final double? heightCm;
 
   CartItemModel({
     required this.key,
@@ -50,6 +54,10 @@ class CartItemModel {
     required this.image,
     required this.price,
     required this.regularPrice,
+    this.weightKg,
+    this.lengthCm,
+    this.widthCm,
+    this.heightCm,
   });
 
   factory CartItemModel.fromJson(Map<String, dynamic> json) {
@@ -67,6 +75,17 @@ class CartItemModel {
     final double priceVal = (double.tryParse(pricesObj['price']?.toString() ?? '0') ?? 0.0) / factor;
     final double regPriceVal = (double.tryParse(pricesObj['regular_price']?.toString() ?? '0') ?? 0.0) / factor;
 
+    final extensionsObj = json['extensions'] ?? {};
+    final ironstreetShipping = extensionsObj['ironstreet_shipping'] ?? {};
+    
+    final weightObj = ironstreetShipping['weight'] ?? {};
+    final double? weightVal = double.tryParse(weightObj['value']?.toString() ?? '');
+    
+    final dimObj = ironstreetShipping['dimensions'] ?? {};
+    final double? lengthVal = double.tryParse(dimObj['length']?.toString() ?? '');
+    final double? widthVal = double.tryParse(dimObj['width']?.toString() ?? '');
+    final double? heightVal = double.tryParse(dimObj['height']?.toString() ?? '');
+
     return CartItemModel(
       key: json['key'] ?? '',
       id: json['id'] ?? 0,
@@ -75,6 +94,10 @@ class CartItemModel {
       image: imageUrl,
       price: priceVal,
       regularPrice: regPriceVal,
+      weightKg: weightVal,
+      lengthCm: lengthVal,
+      widthCm: widthVal,
+      heightCm: heightVal,
     );
   }
 

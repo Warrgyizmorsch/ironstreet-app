@@ -243,11 +243,29 @@ class CheckoutController extends GetxController {
     // Calculate total weight of cart items
     int totalWeightGrams = 0;
     for (final item in cartCtrl.cartItems) {
-      final itemWeight = _getEstimatedWeightInGrams(
-        item.product.name,
-        item.product.category,
-      );
-      totalWeightGrams += itemWeight * item.quantity.value;
+      int itemWeightGrams = 0;
+
+      // Use dynamic weight and dimensions if available from WooCommerce extension
+      if (item.weightKg != null && item.weightKg! > 0) {
+        final double deadWeight = item.weightKg! * 1000;
+        double volumetricWeight = 0;
+        if (item.lengthCm != null && item.widthCm != null && item.heightCm != null) {
+          volumetricWeight = (item.lengthCm! * item.widthCm! * item.heightCm!) * 0.2;
+        }
+        itemWeightGrams = (deadWeight > volumetricWeight ? deadWeight : volumetricWeight).toInt();
+      } else {
+        // Fallback to estimated weight heuristics
+        itemWeightGrams = _getEstimatedWeightInGrams(
+          item.product.name,
+          item.product.category,
+        );
+      }
+
+      totalWeightGrams += itemWeightGrams * item.quantity.value;
+    }
+
+    if (totalWeightGrams <= 0) {
+      totalWeightGrams = 10000; // Default to 10kg minimum
     }
 
     try {

@@ -9,11 +9,19 @@ class CartItem {
   final Product product;
   RxInt quantity;
   final String key; // Unique key identifying the cart item in WooCommerce
+  final double? weightKg;
+  final double? lengthCm;
+  final double? widthCm;
+  final double? heightCm;
 
   CartItem({
     required this.product,
     required int qty,
     required this.key,
+    this.weightKg,
+    this.lengthCm,
+    this.widthCm,
+    this.heightCm,
   }) : quantity = qty.obs;
 }
 
@@ -85,6 +93,10 @@ class CartController extends GetxController {
             product: itemModel.toProduct(),
             qty: itemModel.quantity,
             key: itemModel.key,
+            weightKg: itemModel.weightKg,
+            lengthCm: itemModel.lengthCm,
+            widthCm: itemModel.widthCm,
+            heightCm: itemModel.heightCm,
           );
         }).toList();
         cartItems.assignAll(items);
@@ -112,6 +124,10 @@ class CartController extends GetxController {
             product: itemModel.toProduct(),
             qty: itemModel.quantity,
             key: itemModel.key,
+            weightKg: itemModel.weightKg,
+            lengthCm: itemModel.lengthCm,
+            widthCm: itemModel.widthCm,
+            heightCm: itemModel.heightCm,
           );
         }).toList();
         cartItems.assignAll(items);
@@ -144,6 +160,10 @@ class CartController extends GetxController {
                 product: itemModel.toProduct(),
                 qty: itemModel.quantity,
                 key: itemModel.key,
+                weightKg: itemModel.weightKg,
+                lengthCm: itemModel.lengthCm,
+                widthCm: itemModel.widthCm,
+                heightCm: itemModel.heightCm,
               );
             }).toList();
             cartItems.assignAll(items);
@@ -170,6 +190,10 @@ class CartController extends GetxController {
               product: itemModel.toProduct(),
               qty: itemModel.quantity,
               key: itemModel.key,
+              weightKg: itemModel.weightKg,
+              lengthCm: itemModel.lengthCm,
+              widthCm: itemModel.widthCm,
+              heightCm: itemModel.heightCm,
             );
           }).toList();
           cartItems.assignAll(items);
