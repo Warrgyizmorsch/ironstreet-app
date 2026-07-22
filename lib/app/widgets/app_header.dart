@@ -24,14 +24,20 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
         icon: Icon(Icons.menu, color: Theme.of(context).appBarTheme.iconTheme?.color),
         onPressed: onMenuClick,
       ),
-      title: Text(
-        'Iron Street',
-        style: GoogleFonts.poppins(
-          textStyle: const TextStyle(
-            color: AppColors.primary,
-            fontWeight: FontWeight.w900,
-            fontSize: 20,
-            letterSpacing: -0.5,
+      title: GestureDetector(
+        onTap: () => Get.offAllNamed(Routes.HOME),
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: Text(
+            'Iron Street',
+            style: GoogleFonts.poppins(
+              textStyle: const TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w900,
+                fontSize: 20,
+                letterSpacing: -0.5,
+              ),
+            ),
           ),
         ),
       ),
