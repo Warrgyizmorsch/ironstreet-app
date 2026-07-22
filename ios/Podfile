@@ -1,0 +1,29 @@
+# Set minimum deployment target to iOS 13.0 for all pods (required by modern plugins like webview and razorpay)
+platform :ios, '13.0'
+
+# CocoaPods analytics sends usage stats. If you want to disable it, uncomment the following line:
+# COCOAPODS_DISABLE_STATS=1
+
+flutter_install_all_ios_pods File.expand_path('../.flutter-plugins-dependencies', __dir__)
+
+target 'Runner' do
+  use_frameworks!
+  use_modular_headers!
+
+  flutter_install_all_ios_pods File.expand_path('../.flutter-plugins-dependencies', __dir__)
+
+  target 'RunnerTests' do
+    inherit! :search_paths
+  end
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+    
+    # Configure deployment settings for each Cocoapod dependency
+    target.build_configurations.each do |config|
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+    end
+  end
+end

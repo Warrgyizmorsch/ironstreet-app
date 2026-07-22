@@ -73,6 +73,11 @@
 		<string>paytmmp</string>
 		<string>bhim</string>
 		<string>upi</string>
+		<string>https</string>
+		<string>http</string>
+		<string>tel</string>
+		<string>mailto</string>
+		<string>sms</string>
 	</array>
 </dict>
 </plist>
