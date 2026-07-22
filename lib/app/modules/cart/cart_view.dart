@@ -654,12 +654,16 @@ class CartBottomBar extends StatelessWidget {
               _buildInvoiceLine(context, 'Special Store Coupon Discount',
                   '- ${formatCurrency.format(controller.discountAmount)}',
                   isGreen: true),
-            _buildInvoiceLine(
-                context,
-                'Delivery Charges',
-                controller.deliveryPrice > 0
-                    ? formatCurrency.format(controller.deliveryPrice)
-                    : 'FREE'),
+            Obx(() {
+              final isCalculating = controller.isCalculatingDelivery.value;
+              final priceVal = controller.deliveryPrice;
+              return _buildInvoiceLine(
+                  context,
+                  'Delivery Charges',
+                  isCalculating
+                      ? 'Calculating...'
+                      : (priceVal > 0 ? formatCurrency.format(priceVal) : 'FREE'));
+            }),
             if (controller.totalTax > 0)
               _buildInvoiceLine(context, 'Estimated GST (18% included)',
                   formatCurrency.format(controller.totalTax)),
@@ -672,13 +676,17 @@ class CartBottomBar extends StatelessWidget {
                   style: GoogleFonts.poppins(
                       fontSize: 13, fontWeight: FontWeight.bold),
                 ),
-                Text(
-                  formatCurrency.format(controller.totalAmount),
-                  style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w900,
-                      color: AppColors.primary),
-                ),
+                Obx(() {
+                  final isCalculating = controller.isCalculatingDelivery.value;
+                  final totalVal = controller.totalAmount;
+                  return Text(
+                    isCalculating ? 'Calculating...' : formatCurrency.format(totalVal),
+                    style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.primary),
+                  );
+                }),
               ],
             ),
             const SizedBox(height: 12),
