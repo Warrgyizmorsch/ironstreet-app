@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:iron_street_app/app/data/local/session_manager.dart';
+import 'package:iron_street_app/app/data/models/product_detail_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,6 +16,7 @@ import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 import '../../widgets/shimmer.dart';
 import '../../widgets/product_card.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:iron_street_app/app/modules/home/home_controller.dart';
 import '../../widgets/custom_toast.dart';
@@ -652,6 +654,9 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                   }
                                 },
                               )),
+                          const SizedBox(height: 8),
+                          _buildCustomizationCard(context, prod, price),
+                          const SizedBox(height: 16),
                           // const SizedBox(height: 24),
                           if (material.isNotEmpty ||
                               tableTopMaterial.isNotEmpty ||
@@ -2155,6 +2160,112 @@ class ProductDetailView extends GetView<ProductDetailController> {
       ),
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+    );
+  }
+
+  Widget _buildCustomizationCard(
+      BuildContext context, ProductDetailModel prod, double price) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF1E1E1E)
+            : const Color(0xFFFAF9F6),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Theme.of(context).dividerColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Icon(Icons.dashboard_customize_outlined,
+                  color: AppColors.primary, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Customization Available',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleMedium?.color,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Need custom sizes, wood polish, iron frame colors, or fully personalized furniture? We customize this product to your exact needs!',
+                      style: GoogleFonts.poppins(
+                        fontSize: 11,
+                        color: Colors.grey[600],
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity,
+            height: 40,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF25D366), // WhatsApp Green
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                elevation: 0,
+              ),
+              onPressed: () async {
+                const cleanPhone = '918690154568';
+                final String rawMessage =
+                    'Hello Iron Street! I am interested in customizing this product:\n\n'
+                    '• Product: ${prod.name}\n'
+                    '• SKU: ${prod.sku.isNotEmpty ? prod.sku : "N/A"}\n'
+                    '• Current Price: ₹${NumberFormat('#,##,###').format(price)}\n\n'
+                    'Please share wood polish, dimensions, and custom frame options.';
+
+                final String encodedMessage = Uri.encodeComponent(rawMessage);
+                final Uri whatsappUrl =
+                    Uri.parse('https://wa.me/$cleanPhone?text=$encodedMessage');
+
+                try {
+                  if (await canLaunchUrl(whatsappUrl)) {
+                    await launchUrl(whatsappUrl,
+                        mode: LaunchMode.externalApplication);
+                  } else {
+                    CustomToast.show(
+                      'Could not launch WhatsApp. Please make sure it is installed.',
+                      isError: true,
+                    );
+                  }
+                } catch (e) {
+                  CustomToast.show(
+                    'An error occurred: $e',
+                    isError: true,
+                  );
+                }
+              },
+              icon: const Icon(Icons.chat_bubble_outline,
+                  color: Colors.white, size: 16),
+              label: Text(
+                'Customize on WhatsApp',
+                style: GoogleFonts.poppins(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
