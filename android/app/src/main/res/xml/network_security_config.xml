@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Allow carrier endpoints used by mobile operators for SIM authentication -->
+        <domain includeSubdomains="true">ip-api.com</domain>
+        <domain includeSubdomains="true">otpless.com</domain>
+    </domain-config>
+</network-security-config>

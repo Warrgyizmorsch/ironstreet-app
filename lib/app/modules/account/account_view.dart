@@ -60,7 +60,8 @@ class AccountView extends GetView<AccountController> {
   }
 
   // --- PROFILE DASHBOARD STATE ---
-  Widget _buildProfileDashboard(BuildContext context, AccountController accCtrl) {
+  Widget _buildProfileDashboard(
+      BuildContext context, AccountController accCtrl) {
     final profCtrl = Get.isRegistered<ProfileController>()
         ? Get.find<ProfileController>()
         : Get.put(ProfileController(), permanent: true);
@@ -114,13 +115,13 @@ class AccountView extends GetView<AccountController> {
                       // Avatar image URL from WP user URL field
                       final avatarUrl = user?.profileImage ?? '';
 
-
                       return Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Theme.of(context).dividerColor),
+                          border:
+                              Border.all(color: Theme.of(context).dividerColor),
                         ),
                         child: Row(
                           children: [
@@ -130,7 +131,8 @@ class AccountView extends GetView<AccountController> {
                                     width: 58,
                                     height: 58,
                                     decoration: BoxDecoration(
-                                      color: Theme.of(context).brightness == Brightness.dark
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
                                           ? const Color(0xFF3D2619)
                                           : const Color(0xFFFFF0E6),
                                       shape: BoxShape.circle,
@@ -154,7 +156,8 @@ class AccountView extends GetView<AccountController> {
                                           height: 58,
                                           fit: BoxFit.cover,
                                           errorBuilder: (_, __, ___) =>
-                                              _initialsCircle(context, initials),
+                                              _initialsCircle(
+                                                  context, initials),
                                         ),
                                       )
                                     : _initialsCircle(context, initials),
@@ -168,7 +171,10 @@ class AccountView extends GetView<AccountController> {
                                     style: GoogleFonts.poppins(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).textTheme.titleMedium?.color),
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.color),
                                   ),
                                   Text(
                                     displayEmail,
@@ -189,12 +195,14 @@ class AccountView extends GetView<AccountController> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: Theme.of(context).brightness == Brightness.dark
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
                                           ? const Color(0xFF3D2619)
                                           : const Color(0xFFFFF0E6),
                                       borderRadius: BorderRadius.circular(20),
                                       border: Border.all(
-                                          color: Theme.of(context).brightness == Brightness.dark
+                                          color: Theme.of(context).brightness ==
+                                                  Brightness.dark
                                               ? const Color(0xFF5A3926)
                                               : const Color(0xFFFFD4C0)),
                                     ),
@@ -220,7 +228,8 @@ class AccountView extends GetView<AccountController> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Theme.of(context).dividerColor),
+                        border:
+                            Border.all(color: Theme.of(context).dividerColor),
                       ),
                       child: Column(
                         children: [
@@ -257,7 +266,8 @@ class AccountView extends GetView<AccountController> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Theme.of(context).dividerColor),
+                        border:
+                            Border.all(color: Theme.of(context).dividerColor),
                       ),
                       child: Column(
                         children: [
@@ -277,7 +287,8 @@ class AccountView extends GetView<AccountController> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Theme.of(context).dividerColor),
+                        border:
+                            Border.all(color: Theme.of(context).dividerColor),
                       ),
                       child: Column(
                         children: [
@@ -301,12 +312,14 @@ class AccountView extends GetView<AccountController> {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.red[600],
                           side: BorderSide(
-                              color: Theme.of(context).brightness == Brightness.dark
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
                                   ? Colors.red[900]!
                                   : Colors.red[100]!),
-                          backgroundColor: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.red[900]?.withValues(alpha: 0.2)
-                              : Colors.red[50],
+                          backgroundColor:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.red[900]?.withValues(alpha: 0.2)
+                                  : Colors.red[50],
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),
@@ -523,7 +536,11 @@ class AccountView extends GetView<AccountController> {
         style: GoogleFonts.poppins(
           fontSize: 10,
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+          color: Theme.of(context)
+              .textTheme
+              .bodySmall
+              ?.color
+              ?.withValues(alpha: 0.8),
           letterSpacing: 0.8,
         ),
       ),
@@ -620,9 +637,12 @@ class AccountView extends GetView<AccountController> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildThemeDialogOption(context, 'System Default', 'system', currentModeRx, sessionManager),
-            _buildThemeDialogOption(context, 'Light Mode', 'light', currentModeRx, sessionManager),
-            _buildThemeDialogOption(context, 'Dark Mode', 'dark', currentModeRx, sessionManager),
+            _buildThemeDialogOption(context, 'System Default', 'system',
+                currentModeRx, sessionManager),
+            _buildThemeDialogOption(
+                context, 'Light Mode', 'light', currentModeRx, sessionManager),
+            _buildThemeDialogOption(
+                context, 'Dark Mode', 'dark', currentModeRx, sessionManager),
           ],
         ),
       ),
@@ -726,7 +746,11 @@ class AccountView extends GetView<AccountController> {
                               fontWeight: FontWeight.bold,
                               color: isLoginTab.value
                                   ? AppColors.primary
-                                  : Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color
+                                      ?.withValues(alpha: 0.6),
                             ),
                           ),
                         ),
@@ -756,7 +780,11 @@ class AccountView extends GetView<AccountController> {
                               fontWeight: FontWeight.bold,
                               color: !isLoginTab.value
                                   ? AppColors.primary
-                                  : Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color
+                                      ?.withValues(alpha: 0.6),
                             ),
                           ),
                         ),
@@ -806,110 +834,233 @@ class AccountView extends GetView<AccountController> {
           ),
         ),
         const SizedBox(height: 4),
-        Text(
-          'Sign in to access your orders, account profile, and benefits.',
+        Obx(() => Text(
+          accCtrl.showPhoneLoginForm.value
+              ? 'Sign in to access your account using your mobile number.'
+              : 'Sign in to access your orders, account profile, and benefits.',
           style: GoogleFonts.poppins(
             fontSize: 10,
             color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
           ),
-        ),
+        )),
         const SizedBox(height: 20),
-
-        // Username or Email
-        Text(
-          'Username or Email',
-          style: GoogleFonts.poppins(
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextField(
-          controller: usernameCtrl,
-          decoration: InputDecoration(
-            hintText: 'Enter username or email',
-            isDense: true,
-            filled: true,
-            hintStyle:
-                GoogleFonts.poppins(fontSize: 11, color: Colors.grey[400]),
-            prefixIcon: const Icon(Icons.person_outline, size: 16),
-            fillColor: Theme.of(context).brightness == Brightness.dark
-                ? const Color(0xFF2D2D2D)
-                : const Color(0xFFF6F6F6),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        // Password
-        Text(
-          'Password',
-          style: GoogleFonts.poppins(
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextField(
-          controller: passCtrl,
-          obscureText: true,
-          decoration: InputDecoration(
-            hintText: 'Enter password',
-            isDense: true,
-            filled: true,
-            hintStyle:
-                GoogleFonts.poppins(fontSize: 11, color: Colors.grey[400]),
-            prefixIcon: const Icon(Icons.lock_outline, size: 16),
-            fillColor: Theme.of(context).brightness == Brightness.dark
-                ? const Color(0xFF2D2D2D)
-                : const Color(0xFFF6F6F6),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide.none,
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-
-        // Login Button
-        SizedBox(
-          width: double.infinity,
-          height: 46,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              elevation: 0,
-            ),
-            onPressed: accCtrl.isLoading.value
-                ? null
-                : () => accCtrl.login(usernameCtrl.text, passCtrl.text),
-            child: accCtrl.isLoading.value
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
-                : Text(
-                    'Log In Securely',
-                    style: GoogleFonts.poppins(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
+        Obx(() {
+          if (!accCtrl.showPhoneLoginForm.value) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Username or Email
+                Text(
+                  'Username or Email',
+                  style: GoogleFonts.poppins(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.color
+                        ?.withValues(alpha: 0.8),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: usernameCtrl,
+                  decoration: InputDecoration(
+                    hintText: 'Enter username or email',
+                    isDense: true,
+                    filled: true,
+                    hintStyle:
+                        GoogleFonts.poppins(fontSize: 11, color: Colors.grey[400]),
+                    prefixIcon: const Icon(Icons.person_outline, size: 16),
+                    fillColor: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF2D2D2D)
+                        : const Color(0xFFF6F6F6),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
                     ),
                   ),
-          ),
-        ),
+                ),
+                const SizedBox(height: 16),
+
+                // Password
+                Text(
+                  'Password',
+                  style: GoogleFonts.poppins(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.color
+                        ?.withValues(alpha: 0.8),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: passCtrl,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    hintText: 'Enter password',
+                    isDense: true,
+                    filled: true,
+                    hintStyle:
+                        GoogleFonts.poppins(fontSize: 11, color: Colors.grey[400]),
+                    prefixIcon: const Icon(Icons.lock_outline, size: 16),
+                    fillColor: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF2D2D2D)
+                        : const Color(0xFFF6F6F6),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Login Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 46,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      elevation: 0,
+                    ),
+                    onPressed: accCtrl.isLoading.value
+                        ? null
+                        : () => accCtrl.login(usernameCtrl.text, passCtrl.text),
+                    child: accCtrl.isLoading.value
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : Text(
+                            'Log In Securely',
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      accCtrl.showPhoneLoginForm.value = true;
+                    },
+                    child: Text(
+                      'Log In using Mobile Number',
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Mobile Number',
+                  style: GoogleFonts.poppins(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                TextField(
+                  controller: accCtrl.phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(
+                    hintText: 'Enter 10-digit mobile number',
+                    isDense: true,
+                    filled: true,
+                    prefixText: '+91 ',
+                    prefixStyle: GoogleFonts.poppins(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ),
+                    hintStyle: GoogleFonts.poppins(fontSize: 11, color: Colors.grey[400]),
+                    prefixIcon: const Icon(Icons.phone_android_outlined, size: 16),
+                    fillColor: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF2D2D2D)
+                        : const Color(0xFFF6F6F6),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  height: 46,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      elevation: 0,
+                    ),
+                    onPressed: accCtrl.isSendingOtp.value
+                        ? null
+                        : () => accCtrl.loginWithPhone(accCtrl.phoneController.text),
+                    child: accCtrl.isSendingOtp.value
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : Text(
+                            'Verify Mobile Number',
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Center(
+                  child: TextButton(
+                    onPressed: () {
+                      accCtrl.showPhoneLoginForm.value = false;
+                    },
+                    child: Text(
+                      'Log In using Username/Email',
+                      style: GoogleFonts.poppins(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+        }),
       ],
     );
   }
@@ -940,7 +1091,11 @@ class AccountView extends GetView<AccountController> {
           'Join Iron Street to unlock exclusive catalogs, coupons, and secure orders.',
           style: GoogleFonts.poppins(
             fontSize: 10,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: 20),
@@ -957,7 +1112,11 @@ class AccountView extends GetView<AccountController> {
                     style: GoogleFonts.poppins(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.color
+                          ?.withValues(alpha: 0.8),
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -991,7 +1150,11 @@ class AccountView extends GetView<AccountController> {
                     style: GoogleFonts.poppins(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.color
+                          ?.withValues(alpha: 0.8),
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -1025,7 +1188,11 @@ class AccountView extends GetView<AccountController> {
           style: GoogleFonts.poppins(
             fontSize: 10,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: 6),
@@ -1055,7 +1222,11 @@ class AccountView extends GetView<AccountController> {
           style: GoogleFonts.poppins(
             fontSize: 10,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: 6),
@@ -1086,7 +1257,11 @@ class AccountView extends GetView<AccountController> {
           style: GoogleFonts.poppins(
             fontSize: 10,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: 6),

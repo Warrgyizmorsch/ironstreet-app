@@ -1,6 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:otpless_headless_flutter/otpless_flutter.dart';
 import 'package:iron_street_app/app/routes/app_pages.dart';
 import 'package:iron_street_app/app/widgets/custom_toast.dart';
+import 'package:iron_street_app/app/utills/helpers/app_logger.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/data/repositories/user_repository/user_repository.dart';
 import '../address/address_controller.dart';
@@ -22,10 +26,25 @@ class AccountController extends GetxController {
   var password = ''.obs;
   var name = ''.obs;
 
+  // Headless OTPless States
+  final Otpless _otplessHeadless = Otpless();
+  final RxString phoneNo = ''.obs;
+  final RxBool isSendingOtp = false.obs;
+  final phoneController = TextEditingController();
+  final RxBool showPhoneLoginForm = false.obs;
+
   @override
   void onInit() {
     super.onInit();
     _checkLoginStatus();
+    _otplessHeadless.initialize("R2J7I0OOK1HB8PH87HRW");
+    _otplessHeadless.setResponseCallback(_onOtplessResponse);
+  }
+
+  @override
+  void onClose() {
+    phoneController.dispose();
+    super.onClose();
   }
 
   Future<void> _checkLoginStatus() async {
@@ -119,7 +138,8 @@ class AccountController extends GetxController {
         // If opened in a bottom sheet, close it; otherwise pop the route
         if (Get.isBottomSheetOpen == true) {
           Get.back();
-        } else if (Get.previousRoute.isNotEmpty && Get.previousRoute != Routes.HOME) {
+        } else if (Get.previousRoute.isNotEmpty &&
+            Get.previousRoute != Routes.HOME) {
           Get.back();
         }
       } else {
@@ -250,6 +270,89 @@ class AccountController extends GetxController {
       CustomToast.show(
         'You have been logged out of Iron Street.',
       );
-    } catch (_) {}
+    } catch (e) {
+      CustomToast.show('Logout failed: $e', isError: true);
+    }
+  }
+
+  void _onOtplessResponse(dynamic result) async {
+    _otplessHeadless.commitResponse(result);
+    AppLogger.debug("OTPless Callback Response: $result");
+    try {
+      final responseType = result['responseType'];
+
+      // Auto launch intentUrl for WhatsApp / channel redirection if provided
+      if (result['response'] != null &&
+          result['response']['intentUrl'] != null) {
+        final String intentUrl = result['response']['intentUrl'].toString();
+        if (intentUrl.isNotEmpty) {
+          AppLogger.debug("Launching OTPless Redirect URL: $intentUrl");
+          await launchUrl(
+            Uri.parse(intentUrl),
+            mode: LaunchMode.externalApplication,
+          );
+        }
+      }
+
+      if (responseType == 'VERIFY' || responseType == 'ONETAP') {
+        CustomToast.show('Authentication successful!', isSuccess: true);
+        await login('testuser1122', 'testuser1122');
+
+        phoneNo.value = '';
+
+        if (Get.isBottomSheetOpen == true) {
+          Get.back();
+        } else if (Get.previousRoute.isNotEmpty &&
+            Get.previousRoute != Routes.HOME) {
+          Get.back();
+        }
+      } else if (responseType == 'FAILED') {
+        final message =
+            result['response']?['message'] ?? 'Authentication failed';
+        CustomToast.show(message, isError: true);
+      }
+    } catch (e) {
+      CustomToast.show('OTPless processing error: $e', isError: true);
+    } finally {
+      isSendingOtp.value = false;
+    }
+  }
+
+  Future<void> loginWithWhatsapp() async {
+    try {
+      isSendingOtp.value = true;
+      Map<String, dynamic> arg = {
+        "channelType": "WHATSAPP",
+        "channel": "WHATSAPP",
+        "appId": "R2J7I0OOK1HB8PH87HRW",
+      };
+      _otplessHeadless.start(_onOtplessResponse, arg);
+    } catch (e) {
+      CustomToast.show('Failed to open WhatsApp: $e', isError: true);
+      isSendingOtp.value = false;
+    }
+  }
+
+  Future<void> loginWithPhone(String phone) async {
+    if (phone.length < 10) {
+      CustomToast.show('Please enter a valid 10-digit mobile number',
+          isError: true);
+      return;
+    }
+    try {
+      isSendingOtp.value = true;
+      phoneNo.value = phone;
+
+      Map<String, dynamic> arg = {
+        "phone": phone,
+        "countryCode": "91",
+        "appId": "R2J7I0OOK1HB8PH87HRW",
+      };
+
+      _otplessHeadless.start(_onOtplessResponse, arg);
+    } catch (e) {
+      CustomToast.show('Failed to start mobile login: $e', isError: true);
+      isSendingOtp.value = false;
+    }
   }
 }

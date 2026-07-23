@@ -408,6 +408,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
+  otpless_headless_flutter:
+    dependency: "direct main"
+    description:
+      name: otpless_headless_flutter
+      sha256: "59e4077c30c69069609a5925639782449ac423d25b32ce2bda744eea5f9c3a77"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.1"
   package_config:
     dependency: transitive
     description:
