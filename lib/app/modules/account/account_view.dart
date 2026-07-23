@@ -13,7 +13,8 @@ import 'package:iron_street_app/app/data/local/session_manager.dart';
 import '../profile/profile_controller.dart';
 
 class AccountView extends GetView<AccountController> {
-  const AccountView({super.key});
+  final bool isBottomSheet;
+  const AccountView({super.key, this.isBottomSheet = false});
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +34,7 @@ class AccountView extends GetView<AccountController> {
     final RxBool isLoginTab = true.obs;
 
     return Scaffold(
+      resizeToAvoidBottomInset: !isBottomSheet,
       backgroundColor: Theme.of(context).brightness == Brightness.dark
           ? Theme.of(context).scaffoldBackgroundColor
           : const Color(0xFFF6F6F6),

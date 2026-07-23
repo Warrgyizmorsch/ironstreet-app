@@ -18,13 +18,13 @@ import '../../widgets/product_card.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:iron_street_app/app/modules/home/home_controller.dart';
 import '../../widgets/custom_toast.dart';
 import 'product_detail_controller.dart';
 import '../cart/cart_controller.dart';
 import '../wishlist/wishlist_controller.dart';
 import 'package:iron_street_app/app/modules/address/address_controller.dart';
 import 'package:iron_street_app/app/modules/address/add_edit_address_view.dart';
+import 'package:iron_street_app/app/modules/account/account_view.dart';
 import 'widget/delivery_details_section.dart';
 
 class ProductDetailView extends GetView<ProductDetailController> {
@@ -1872,68 +1872,43 @@ class ProductDetailView extends GetView<ProductDetailController> {
   }
 
   void _showLoginRequiredDialog() {
-    Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Text(
-          'Login Required',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Theme.of(Get.context!).textTheme.titleLarge?.color,
-          ),
-        ),
-        content: Text(
-          'Please login or register to add items to your cart and continue shopping.',
-          style: GoogleFonts.poppins(
-            fontSize: 13,
-            color: Theme.of(Get.context!)
-                .textTheme
-                .bodyMedium
-                ?.color
-                ?.withOpacity(0.8),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'Cancel',
-              style: GoogleFonts.poppins(
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w600,
-              ),
+    Get.bottomSheet(
+      AnimatedPadding(
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(Get.context!).viewInsets.bottom),
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeOut,
+        child: Container(
+          height: Get.height * 0.55,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: Theme.of(Get.context!).scaffoldBackgroundColor,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
             ),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+          child: Column(
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[400]?.withOpacity(0.8),
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-              elevation: 0,
-            ),
-            onPressed: () {
-              Get.back(); // Close dialog
-              if (Get.isRegistered<HomeController>()) {
-                Get.find<HomeController>().currentIndex.value = 4;
-                Get.until((route) => Get.currentRoute == Routes.HOME);
-              } else {
-                Get.offAllNamed(Routes.HOME, arguments: {'tabIndex': 4});
-              }
-            },
-            child: Text(
-              'Login',
-              style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+              const SizedBox(height: 8),
+              const Expanded(
+                child: AccountView(isBottomSheet: true),
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
+      isScrollControlled: true,
+      ignoreSafeArea: false,
     );
   }
 

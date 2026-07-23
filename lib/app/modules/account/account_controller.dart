@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:iron_street_app/app/routes/app_pages.dart';
 import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/data/repositories/user_repository/user_repository.dart';
@@ -114,6 +115,13 @@ class AccountController extends GetxController {
           'Logged in successfully as $displayName!',
           isSuccess: true,
         );
+
+        // If opened in a bottom sheet, close it; otherwise pop the route
+        if (Get.isBottomSheetOpen == true) {
+          Get.back();
+        } else if (Get.previousRoute.isNotEmpty && Get.previousRoute != Routes.HOME) {
+          Get.back();
+        }
       } else {
         CustomToast.show(
           'Invalid response from authorization server.',
