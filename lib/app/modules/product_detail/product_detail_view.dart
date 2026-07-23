@@ -24,7 +24,7 @@ import '../cart/cart_controller.dart';
 import '../wishlist/wishlist_controller.dart';
 import 'package:iron_street_app/app/modules/address/address_controller.dart';
 import 'package:iron_street_app/app/modules/address/add_edit_address_view.dart';
-import 'package:iron_street_app/app/modules/account/account_view.dart';
+import 'package:iron_street_app/app/utills/helpers/auth_helper.dart';
 import 'widget/delivery_details_section.dart';
 
 class ProductDetailView extends GetView<ProductDetailController> {
@@ -1872,44 +1872,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
   }
 
   void _showLoginRequiredDialog() {
-    Get.bottomSheet(
-      AnimatedPadding(
-        padding: EdgeInsets.only(
-            bottom: MediaQuery.of(Get.context!).viewInsets.bottom),
-        duration: const Duration(milliseconds: 100),
-        curve: Curves.easeOut,
-        child: Container(
-          height: Get.height * 0.55,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            color: Theme.of(Get.context!).scaffoldBackgroundColor,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(24),
-              topRight: Radius.circular(24),
-            ),
-          ),
-          child: Column(
-            children: [
-              const SizedBox(height: 12),
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[400]?.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Expanded(
-                child: AccountView(isBottomSheet: true),
-              ),
-            ],
-          ),
-        ),
-      ),
-      isScrollControlled: true,
-      ignoreSafeArea: false,
-    );
+    AuthHelper.showLoginBottomSheet();
   }
 
   void _showAddReviewBottomSheet(

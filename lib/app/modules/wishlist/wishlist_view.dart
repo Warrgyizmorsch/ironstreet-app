@@ -8,13 +8,13 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import 'package:iron_street_app/app/modules/home/home_controller.dart';
 import 'wishlist_controller.dart';
 import '../cart/cart_controller.dart';
 import '../../widgets/custom_toast.dart';
 import '../../data/models/product_list_model.dart';
 import '../../data/models/product_model.dart';
 import '../../utills/theme/app_colors.dart';
+import 'package:iron_street_app/app/utills/helpers/auth_helper.dart';
 
 class WishlistView extends GetView<WishlistController> {
   const WishlistView({super.key});
@@ -289,65 +289,7 @@ class WishlistItemCard extends StatelessWidget {
   }
 
   void _showLoginRequiredDialog(BuildContext context) {
-    Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Text(
-          'Login Required',
-          style: GoogleFonts.poppins(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-            color: Theme.of(context).textTheme.titleLarge?.color,
-          ),
-        ),
-        content: Text(
-          'Please login or register to add items to your cart and continue shopping.',
-          style: GoogleFonts.poppins(
-            fontSize: 13,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'Cancel',
-              style: GoogleFonts.poppins(
-                color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              elevation: 0,
-            ),
-            onPressed: () {
-              Get.back(); // Close dialog
-              if (Get.isRegistered<HomeController>()) {
-                Get.find<HomeController>().currentIndex.value = 4;
-                Get.until((route) => Get.currentRoute == Routes.HOME);
-              } else {
-                Get.offAllNamed(Routes.HOME, arguments: {'tabIndex': 4});
-              }
-            },
-            child: Text(
-              'Login',
-              style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+    AuthHelper.showLoginBottomSheet();
   }
 }
 
