@@ -603,37 +603,46 @@ class ProductDetailView extends GetView<ProductDetailController> {
                           ),
                           const SizedBox(height: 16),
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
                             children: [
-                              Text(
-                                formatCurrency.format(displayPrice),
-                                style: GoogleFonts.poppins(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.blackC,
+                              Expanded(
+                                child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline.alphabetic,
+                                  children: [
+                                    Text(
+                                      formatCurrency.format(displayPrice),
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.blackC,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    if (oldPrice > 0) ...[
+                                      Text(
+                                        formatCurrency.format(oldPrice),
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 13,
+                                          color: Colors.grey,
+                                          decoration:
+                                              TextDecoration.lineThrough,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        '${discount.toStringAsFixed(0)}% OFF',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w800,
+                                          color: Colors.green[600],
+                                        ),
+                                      ),
+                                    ],
+                                  ],
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              if (oldPrice > 0) ...[
-                                Text(
-                                  formatCurrency.format(oldPrice),
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 13,
-                                    color: Colors.grey,
-                                    decoration: TextDecoration.lineThrough,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  '${discount.toStringAsFixed(0)}% OFF',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.green[600],
-                                  ),
-                                ),
-                              ],
+                              _buildMiniQuantitySelector(context),
                             ],
                           ),
                           const SizedBox(height: 16),
@@ -741,7 +750,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                             ),
                             onPressed: prod.purchasable &&
                                     prod.stockStatus == 'instock'
-                                ? () {
+                                ? () async {
                                     if (!Get.find<SessionManager>()
                                         .isLoggedIn()) {
                                       _showLoginRequiredDialog();
@@ -750,7 +759,18 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                     if (productInCart) {
                                       Get.toNamed(Routes.CART);
                                     } else {
-                                      cartController.addToCart(Product(
+                                      // Show progress loader dialog
+                                      Get.dialog(
+                                        const Center(
+                                          child: CircularProgressIndicator(
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                        barrierDismissible: false,
+                                      );
+
+                                      await cartController.addToCart(
+                                        Product(
                                           id: prod.id.toString(),
                                           name: prod.name,
                                           brand: brandName.isNotEmpty
@@ -771,7 +791,12 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                           material: material,
                                           category: prod.categories.isNotEmpty
                                               ? prod.categories.first.name
-                                              : 'Furniture'));
+                                              : 'Furniture',
+                                        ),
+                                        qty: controller.quantity.value,
+                                      );
+
+                                      Get.back();
                                       CustomToast.show('Added to Cart',
                                           isSuccess: true);
                                     }
@@ -813,56 +838,60 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             elevation: 0,
-                          ),                           onPressed:
-                              prod.purchasable && prod.stockStatus == 'instock'
-                                  ? () async {
-                                      if (!Get.find<SessionManager>()
-                                          .isLoggedIn()) {
-                                        _showLoginRequiredDialog();
-                                        return;
-                                      }
+                          ),
+                          onPressed: prod.purchasable &&
+                                  prod.stockStatus == 'instock'
+                              ? () async {
+                                  if (!Get.find<SessionManager>()
+                                      .isLoggedIn()) {
+                                    _showLoginRequiredDialog();
+                                    return;
+                                  }
 
-                                      // Show progress loader dialog
-                                      Get.dialog(
-                                        const Center(
-                                          child: CircularProgressIndicator(
-                                            color: AppColors.primary,
-                                          ),
-                                        ),
-                                        barrierDismissible: false,
-                                      );
-
-                                      final success = await cartController.buyNow(Product(
-                                          id: prod.id.toString(),
-                                          name: prod.name,
-                                          brand: brandName.isNotEmpty
-                                              ? brandName
-                                              : "LuxeLiving by Iron Street",
-                                          price: price,
-                                          oldPrice: oldPrice,
-                                          discount: discount,
-                                          rating: double.tryParse(
-                                                  prod.averageRating) ??
+                                  // Show progress loader dialog
+                                  Get.dialog(
+                                    const Center(
+                                      child: CircularProgressIndicator(
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                    barrierDismissible: false,
+                                  );
+                                  final success = await cartController.buyNow(
+                                    Product(
+                                      id: prod.id.toString(),
+                                      name: prod.name,
+                                      brand: brandName.isNotEmpty
+                                          ? brandName
+                                          : "LuxeLiving by Iron Street",
+                                      price: price,
+                                      oldPrice: oldPrice,
+                                      discount: discount,
+                                      rating:
+                                          double.tryParse(prod.averageRating) ??
                                               0.0,
-                                          reviewsCount: prod.ratingCount,
-                                          image: prod.images.first.src,
-                                          images: [prod.images.first.src],
-                                          description: prod.description,
-                                          deliveryText: 'Available',
-                                          dimensions: dimensions,
-                                          material: material,
-                                          category: prod.categories.isNotEmpty
-                                              ? prod.categories.first.name
-                                              : 'Furniture'));
+                                      reviewsCount: prod.ratingCount,
+                                      image: prod.images.first.src,
+                                      images: [prod.images.first.src],
+                                      description: prod.description,
+                                      deliveryText: 'Available',
+                                      dimensions: dimensions,
+                                      material: material,
+                                      category: prod.categories.isNotEmpty
+                                          ? prod.categories.first.name
+                                          : 'Furniture',
+                                    ),
+                                    qty: controller.quantity.value,
+                                  );
 
-                                      // Dismiss progress loader
-                                      Get.back();
+                                  // Dismiss progress loader
+                                  Get.back();
 
-                                      if (success) {
-                                        Get.toNamed(Routes.CHECKOUT);
-                                      }
-                                    }
-                                  : null,
+                                  if (success) {
+                                    Get.toNamed(Routes.CHECKOUT);
+                                  }
+                                }
+                              : null,
                           child: Text(
                             'Buy Now',
                             style: GoogleFonts.poppins(
@@ -2265,5 +2294,59 @@ class ProductDetailView extends GetView<ProductDetailController> {
         ],
       ),
     );
+  }
+
+  Widget _buildMiniQuantitySelector(BuildContext context) {
+    return Obx(() {
+      final int qty = controller.quantity.value;
+      return Container(
+        height: 36,
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Theme.of(context).dividerColor),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 32,
+              height: 32,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                icon: const Icon(Icons.remove, size: 14),
+                onPressed: qty > 1
+                    ? () {
+                        controller.quantity.value = qty - 1;
+                      }
+                    : null,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                '$qty',
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 32,
+              height: 32,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                icon: const Icon(Icons.add, size: 14),
+                onPressed: () {
+                  controller.quantity.value = qty + 1;
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
