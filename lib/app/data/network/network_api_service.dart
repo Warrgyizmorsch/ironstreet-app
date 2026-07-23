@@ -1,12 +1,13 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:get/get.dart' hide Response, FormData, MultipartFile;
+import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:iron_street_app/app/data/network/base_api_service.dart';
 import 'package:iron_street_app/app/utills/constant/app_urls.dart';
 import 'package:iron_street_app/app/data/exceptions/app_exceptions.dart';
 import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/modules/home/network_controller.dart';
+import 'package:iron_street_app/app/utills/helpers/app_logger.dart';
 
 class NetworkApiServices extends BaseApiServices {
   late final Dio _dio;
@@ -23,12 +24,10 @@ class NetworkApiServices extends BaseApiServices {
       ),
     );
 
-    // Optional: Add logging for debugging
-    _dio.interceptors.add(LogInterceptor(
-      requestBody: true,
-      responseBody: true,
-      error: true,
-    ));
+    // Add custom Pretty-Printer Logger Interceptor for API Requests & Responses only in Debug Mode
+    if (kDebugMode) {
+      _dio.interceptors.add(LoggingInterceptor());
+    }
     _dio.interceptors.add(CartInterceptor());
   }
 
@@ -271,5 +270,42 @@ class CartInterceptor extends Interceptor {
       await _sessionManager.saveNonce(nonceHeader);
     }
     super.onResponse(response, handler);
+  }
+}
+
+class LoggingInterceptor extends Interceptor {
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    AppLogger.info('--> ${options.method.toUpperCase()} ${options.uri}');
+    if (options.headers.isNotEmpty) {
+      AppLogger.verbose('Headers: ${options.headers}');
+    }
+    if (options.queryParameters.isNotEmpty) {
+      AppLogger.verbose('QueryParameters: ${options.queryParameters}');
+    }
+    if (options.data != null) {
+      AppLogger.verbose('Request Body: ${options.data}');
+    }
+    handler.next(options);
+  }
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) {
+    AppLogger.info('<-- ${response.statusCode} ${response.requestOptions.uri}');
+    if (response.data != null) {
+      AppLogger.verbose('Response Body: ${response.data}');
+    }
+    handler.next(response);
+  }
+
+  @override
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    AppLogger.error(
+      '<-- ERROR ${err.response?.statusCode} ${err.requestOptions.uri}\n'
+      'Message: ${err.message}',
+      err.error,
+      err.stackTrace,
+    );
+    handler.next(err);
   }
 }
