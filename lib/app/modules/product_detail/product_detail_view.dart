@@ -813,8 +813,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             elevation: 0,
-                          ),
-                          onPressed:
+                          ),                           onPressed:
                               prod.purchasable && prod.stockStatus == 'instock'
                                   ? () async {
                                       if (!Get.find<SessionManager>()
@@ -822,47 +821,46 @@ class ProductDetailView extends GetView<ProductDetailController> {
                                         _showLoginRequiredDialog();
                                         return;
                                       }
-                                      final bool productInCart = cartController
-                                          .isInCart(prod.id.toString());
-                                      if (!productInCart) {
-                                        // Show progress loader dialog
-                                        Get.dialog(
-                                          const Center(
-                                            child: CircularProgressIndicator(
-                                              color: AppColors.primary,
-                                            ),
+
+                                      // Show progress loader dialog
+                                      Get.dialog(
+                                        const Center(
+                                          child: CircularProgressIndicator(
+                                            color: AppColors.primary,
                                           ),
-                                          barrierDismissible: false,
-                                        );
+                                        ),
+                                        barrierDismissible: false,
+                                      );
 
-                                        // Wait for product to be added to remote WooCommerce cart
-                                        await cartController.addToCart(Product(
-                                            id: prod.id.toString(),
-                                            name: prod.name,
-                                            brand: brandName.isNotEmpty
-                                                ? brandName
-                                                : "LuxeLiving by Iron Street",
-                                            price: price,
-                                            oldPrice: oldPrice,
-                                            discount: discount,
-                                            rating: double.tryParse(
-                                                    prod.averageRating) ??
-                                                0.0,
-                                            reviewsCount: prod.ratingCount,
-                                            image: prod.images.first.src,
-                                            images: [prod.images.first.src],
-                                            description: prod.description,
-                                            deliveryText: 'Available',
-                                            dimensions: dimensions,
-                                            material: material,
-                                            category: prod.categories.isNotEmpty
-                                                ? prod.categories.first.name
-                                                : 'Furniture'));
+                                      final success = await cartController.buyNow(Product(
+                                          id: prod.id.toString(),
+                                          name: prod.name,
+                                          brand: brandName.isNotEmpty
+                                              ? brandName
+                                              : "LuxeLiving by Iron Street",
+                                          price: price,
+                                          oldPrice: oldPrice,
+                                          discount: discount,
+                                          rating: double.tryParse(
+                                                  prod.averageRating) ??
+                                              0.0,
+                                          reviewsCount: prod.ratingCount,
+                                          image: prod.images.first.src,
+                                          images: [prod.images.first.src],
+                                          description: prod.description,
+                                          deliveryText: 'Available',
+                                          dimensions: dimensions,
+                                          material: material,
+                                          category: prod.categories.isNotEmpty
+                                              ? prod.categories.first.name
+                                              : 'Furniture'));
 
-                                        // Dismiss progress loader
-                                        Get.back();
+                                      // Dismiss progress loader
+                                      Get.back();
+
+                                      if (success) {
+                                        Get.toNamed(Routes.CHECKOUT);
                                       }
-                                      Get.toNamed(Routes.CHECKOUT);
                                     }
                                   : null,
                           child: Text(

@@ -31,6 +31,7 @@ class AppUrls {
   static const String cartAddItem = '$cartUrl/add-item';
   static const String cartUpdateItem = '$cartUrl/update-item';
   static const String cartRemoveItem = '$cartUrl/remove-item';
+  static const String cartClearItems = '$cartUrl/items';
   static const String updateCustomer = '$cartUrl/update-customer';
 
   // 5. YITH / Custom Wishlist Endpoints

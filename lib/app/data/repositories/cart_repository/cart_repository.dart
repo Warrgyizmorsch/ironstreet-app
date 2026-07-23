@@ -57,4 +57,13 @@ class CartRepository {
       rethrow;
     }
   }
+
+  Future<dynamic> clearCart() async {
+    try {
+      final response = await _apiService.deleteApi(AppUrls.cartClearItems, null);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

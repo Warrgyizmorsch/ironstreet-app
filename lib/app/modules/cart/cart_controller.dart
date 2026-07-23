@@ -308,4 +308,46 @@ class CartController extends GetxController {
       isCalculatingDelivery.value = false;
     }
   }
+
+  Future<bool> buyNow(Product product, {int qty = 1}) async {
+    try {
+      isLoading.value = true;
+      
+      // 1. Clear cart remotely
+      await cartRepository.clearCart();
+      
+      // 2. Add the selected item to cart remotely
+      final response = await cartRepository.addToCart(
+        productId: int.tryParse(product.id) ?? 0,
+        quantity: qty,
+      );
+
+      if (response != null) {
+        final cartResp = CartResponseModel.fromJson(response);
+        final List<CartItem> items = cartResp.items.map((itemModel) {
+          return CartItem(
+            product: itemModel.toProduct(),
+            qty: itemModel.quantity,
+            key: itemModel.key,
+            weightKg: itemModel.weightKg,
+            lengthCm: itemModel.lengthCm,
+            widthCm: itemModel.widthCm,
+            heightCm: itemModel.heightCm,
+          );
+        }).toList();
+
+        cartItems.assignAll(items);
+        _updateTotals(cartResp.totals);
+        _updateAddresses(cartResp);
+        await calculateDelhiveryShippingCharge();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      CustomToast.show('Buy Now checkout failed. Please try again.', isError: true);
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }
