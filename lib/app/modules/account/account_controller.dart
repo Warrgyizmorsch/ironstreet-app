@@ -4,6 +4,7 @@ import 'package:otpless_headless_flutter/otpless_flutter.dart';
 import 'package:iron_street_app/app/routes/app_pages.dart';
 import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import 'package:iron_street_app/app/utills/helpers/app_logger.dart';
+import 'package:dio/dio.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:iron_street_app/app/data/local/session_manager.dart';
 import 'package:iron_street_app/app/data/repositories/user_repository/user_repository.dart';
@@ -33,11 +34,16 @@ class AccountController extends GetxController {
   final phoneController = TextEditingController();
   final RxBool showPhoneLoginForm = false.obs;
 
+  // OTPless Credentials
+  static const String otplessAppId = "";
+  static const String otplessClientId = "";
+  static const String otplessClientSecret = "";
+
   @override
   void onInit() {
     super.onInit();
     _checkLoginStatus();
-    _otplessHeadless.initialize("R2J7I0OOK1HB8PH87HRW");
+    _otplessHeadless.initialize(otplessAppId);
     _otplessHeadless.setResponseCallback(_onOtplessResponse);
   }
 
@@ -294,22 +300,47 @@ class AccountController extends GetxController {
         }
       }
 
-      if (responseType == 'VERIFY' || responseType == 'ONETAP') {
-        CustomToast.show('Authentication successful!', isSuccess: true);
-        await login('testuser1122', 'testuser1122');
-
-        phoneNo.value = '';
-
-        if (Get.isBottomSheetOpen == true) {
-          Get.back();
-        } else if (Get.previousRoute.isNotEmpty &&
-            Get.previousRoute != Routes.HOME) {
-          Get.back();
-        }
-      } else if (responseType == 'FAILED') {
-        final message =
-            result['response']?['message'] ?? 'Authentication failed';
-        CustomToast.show(message, isError: true);
+      switch (responseType) {
+        case "SDK_READY":
+          AppLogger.debug("OTPless SDK initialized successfully.");
+          break;
+        case "FAILED":
+          final int? statusCode = result['statusCode'];
+          if (statusCode == 5003) {
+            _otplessHeadless.initialize(otplessAppId);
+          } else {
+            CustomToast.show('Initialization failed.', isError: true);
+          }
+          break;
+        case "INITIATE":
+          final int? statusCodeInit = result['statusCode'];
+          if (statusCodeInit != 200) {
+            CustomToast.show('Failed to initiate verification.', isError: true);
+          } else if (result['response']?['authType'] == 'SILENT_AUTH') {
+            AppLogger.debug("SNA is being attempted — show loading.");
+          }
+          break;
+        case "VERIFY":
+          final String? authType = result['response']?['authType'];
+          final int? statusCodeVerify = result['statusCode'];
+          if (authType == "SILENT_AUTH" && statusCodeVerify == 9106) {
+            CustomToast.show('SNA verification failed.', isError: true);
+          }
+          break;
+        case "ONETAP":
+          CustomToast.show('Authentication successful!', isSuccess: true);
+          await login('testuser1122', 'testuser1122');
+          phoneNo.value = '';
+          if (Get.isBottomSheetOpen == true) {
+            Get.back();
+          } else if (Get.previousRoute.isNotEmpty &&
+              Get.previousRoute != Routes.HOME) {
+            Get.back();
+          }
+          break;
+        case "AUTH_TERMINATED":
+          CustomToast.show('Authentication terminated.', isError: true);
+          break;
       }
     } catch (e) {
       CustomToast.show('OTPless processing error: $e', isError: true);
@@ -324,7 +355,7 @@ class AccountController extends GetxController {
       Map<String, dynamic> arg = {
         "channelType": "WHATSAPP",
         "channel": "WHATSAPP",
-        "appId": "R2J7I0OOK1HB8PH87HRW",
+        "appId": otplessAppId,
       };
       _otplessHeadless.start(_onOtplessResponse, arg);
     } catch (e) {
@@ -343,16 +374,118 @@ class AccountController extends GetxController {
       isSendingOtp.value = true;
       phoneNo.value = phone;
 
-      Map<String, dynamic> arg = {
-        "phone": phone,
-        "countryCode": "91",
-        "appId": "R2J7I0OOK1HB8PH87HRW",
-      };
+      // 1. Call Create API to generate requestId
+      final dio = Dio();
+      final response = await dio.post(
+        'https://auth.otpless.app/auth/v1/create',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'clientId': otplessClientId,
+            'clientSecret': otplessClientSecret,
+          },
+        ),
+        data: {
+          'phoneNumber': phone,
+          'countryCode': '91',
+          'expiry': 300,
+        },
+      );
 
-      _otplessHeadless.start(_onOtplessResponse, arg);
+      if (response.statusCode == 200 && response.data != null) {
+        final requestId = response.data['requestId'];
+        if (requestId != null) {
+          AppLogger.debug("Successfully generated requestId: $requestId");
+
+          Map<String, dynamic> arg = {
+            "requestId": requestId,
+            "phone": phone,
+            "countryCode": "91",
+          };
+          _otplessHeadless.start(_onOtplessResponse, arg);
+
+          // 3. Start authoritative status polling in parallel
+          _pollStatus(requestId, 1);
+        } else {
+          CustomToast.show('Failed to retrieve requestId from OTPless',
+              isError: true);
+          isSendingOtp.value = false;
+        }
+      } else {
+        CustomToast.show('Create API response failed: ${response.statusCode}',
+            isError: true);
+        isSendingOtp.value = false;
+      }
     } catch (e) {
       CustomToast.show('Failed to start mobile login: $e', isError: true);
       isSendingOtp.value = false;
     }
+  }
+
+  Future<void> _pollStatus(String requestId, int attempt) async {
+    if (!isSendingOtp.value) return;
+
+    if (attempt > 30) {
+      isSendingOtp.value = false;
+      CustomToast.show('SIM verification timed out. Please try again.',
+          isError: true);
+      return;
+    }
+
+    try {
+      final dio = Dio();
+      final response = await dio.get(
+        'https://auth.otpless.app/auth/v2/status',
+        queryParameters: {
+          'requestId': requestId,
+        },
+        options: Options(
+          headers: {
+            'clientId': otplessClientId,
+            'clientSecret': otplessClientSecret,
+          },
+          validateStatus: (status) => status != null && status < 500,
+        ),
+      );
+
+      if (response.statusCode == 400) {
+        AppLogger.debug(
+            "SNA Status Check: Auth not started yet (400). Continuing polling...");
+      } else if (response.statusCode == 200 && response.data != null) {
+        final auths = response.data['auths'] as List?;
+        if (auths != null && auths.isNotEmpty) {
+          final primaryAuth = auths.firstWhere(
+            (element) => element['type'] == 'PRIMARY',
+            orElse: () => null,
+          );
+
+          if (primaryAuth != null) {
+            final status = primaryAuth['status'];
+            if (status == 'SUCCESS') {
+              CustomToast.show('SIM verification successful!', isSuccess: true);
+              await login('testuser1122', 'testuser1122');
+              phoneNo.value = '';
+              isSendingOtp.value = false;
+              if (Get.isBottomSheetOpen == true) {
+                Get.back();
+              }
+              return;
+            } else if (status == 'FAILED') {
+              isSendingOtp.value = false;
+              final errorMsg = primaryAuth['error']?['message'] ??
+                  'SIM verification failed.';
+              CustomToast.show(errorMsg, isError: true);
+              return;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      AppLogger.debug("SNA status check polling error: $e");
+    }
+
+    // Poll again after 2 seconds
+    await Future.delayed(const Duration(seconds: 2));
+    await _pollStatus(requestId, attempt + 1);
   }
 }
