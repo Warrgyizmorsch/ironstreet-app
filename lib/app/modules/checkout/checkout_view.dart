@@ -151,7 +151,7 @@ class CheckoutView extends GetView<CheckoutController> {
                         );
                       }
                       return Text(
-                        '₹${NumberFormat('#,##,###').format(total)}',
+                        '₹${NumberFormat('#,##,##0.00').format(total)}',
                         style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
@@ -467,7 +467,7 @@ class CheckoutView extends GetView<CheckoutController> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '₹${NumberFormat('#,##,###').format(item.product.price * item.quantity.value)}',
+                      '₹${NumberFormat('#,##,##0.00').format(item.product.price * item.quantity.value)}',
                       style: GoogleFonts.poppins(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -717,7 +717,7 @@ class CheckoutView extends GetView<CheckoutController> {
                   );
                 }
                 return Text(
-                  '₹${NumberFormat('#,##,###').format(total)}',
+                  '₹${NumberFormat('#,##,##0.00').format(total)}',
                   style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
@@ -733,7 +733,7 @@ class CheckoutView extends GetView<CheckoutController> {
 
   Widget _buildBillRow(BuildContext context, String label, double val,
       {bool isDiscount = false, String? customValueText}) {
-    final formattedVal = NumberFormat('#,##,###').format(val.abs());
+    final formattedVal = NumberFormat('#,##,##0.00').format(val.abs());
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(

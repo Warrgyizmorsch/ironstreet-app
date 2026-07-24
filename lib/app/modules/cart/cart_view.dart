@@ -32,7 +32,7 @@ class CartView extends GetView<CartController> {
     final formatCurrency = NumberFormat.currency(
       locale: 'en_IN',
       symbol: '₹',
-      decimalDigits: 0,
+      decimalDigits: 2,
     );
 
     return Scaffold(
