@@ -51,7 +51,7 @@ class ProductRepository {
       dynamic response = await _apiService.getApi(url);
       return response;
     } catch (e) {
-      rethrow;
+    rethrow;
     }
   }
 

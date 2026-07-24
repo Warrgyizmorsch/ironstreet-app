@@ -67,8 +67,9 @@ class CartController extends GetxController {
   void _updateTotals(CartTotalsModel totals) {
     subtotalValue.value = totals.totalItems;
     deliveryPriceValue.value = totals.totalShipping;
-    totalTaxValue.value = totals.totalTax;
-    totalAmountValue.value = totals.totalPrice;
+    // Deduct the shipping tax from the displayed GST/Tax
+    totalTaxValue.value = totals.totalTax - totals.totalShippingTax;
+    totalAmountValue.value = totals.totalPrice - totals.totalShippingTax;
     totalDiscountValue.value = totals.totalDiscount;
   }
 
@@ -172,8 +173,8 @@ class CartController extends GetxController {
               );
             }).toList();
             cartItems.assignAll(items);
-             _updateTotals(cartResp.totals);
-             calculateDelhiveryShippingCharge();
+            _updateTotals(cartResp.totals);
+            calculateDelhiveryShippingCharge();
           }
         } catch (e) {
           CustomToast.show('Failed to update quantity', isError: true);
@@ -203,8 +204,8 @@ class CartController extends GetxController {
             );
           }).toList();
           cartItems.assignAll(items);
-           _updateTotals(cartResp.totals);
-           calculateDelhiveryShippingCharge();
+          _updateTotals(cartResp.totals);
+          calculateDelhiveryShippingCharge();
         }
       } catch (e) {
         CustomToast.show('Failed to remove item', isError: true);
@@ -229,17 +230,29 @@ class CartController extends GetxController {
     final name = productName.toLowerCase();
     final cat = category.toLowerCase();
 
-    if (name.contains('dining') || name.contains('table') || cat.contains('table')) {
+    if (name.contains('dining') ||
+        name.contains('table') ||
+        cat.contains('table')) {
       return 45000; // 45 kg
-    } else if (name.contains('sofa') || name.contains('couch') || cat.contains('sofa')) {
+    } else if (name.contains('sofa') ||
+        name.contains('couch') ||
+        cat.contains('sofa')) {
       return 50000; // 50 kg
-    } else if (name.contains('chair') || name.contains('stool') || name.contains('bench') || cat.contains('chair')) {
+    } else if (name.contains('chair') ||
+        name.contains('stool') ||
+        name.contains('bench') ||
+        cat.contains('chair')) {
       return 12000; // 12 kg
     } else if (name.contains('bed') || cat.contains('bed')) {
       return 75000; // 75 kg
-    } else if (name.contains('wardrobe') || name.contains('cabinet') || name.contains('almirah') || cat.contains('wardrobe')) {
+    } else if (name.contains('wardrobe') ||
+        name.contains('cabinet') ||
+        name.contains('almirah') ||
+        cat.contains('wardrobe')) {
       return 80000; // 80 kg
-    } else if (name.contains('mirror') || name.contains('shelf') || cat.contains('decor')) {
+    } else if (name.contains('mirror') ||
+        name.contains('shelf') ||
+        cat.contains('decor')) {
       return 15000; // 15 kg
     }
     return 25000; // Default 25 kg
@@ -260,15 +273,20 @@ class CartController extends GetxController {
     int totalWeightGrams = 0;
     for (final item in cartItems) {
       int itemWeightGrams = 0;
-      
+
       // Use dynamic weight and dimensions if available from WooCommerce extension
       if (item.weightKg != null && item.weightKg! > 0) {
         final double deadWeight = item.weightKg! * 1000;
         double volumetricWeight = 0;
-        if (item.lengthCm != null && item.widthCm != null && item.heightCm != null) {
-          volumetricWeight = (item.lengthCm! * item.widthCm! * item.heightCm!) * 0.2;
+        if (item.lengthCm != null &&
+            item.widthCm != null &&
+            item.heightCm != null) {
+          volumetricWeight =
+              (item.lengthCm! * item.widthCm! * item.heightCm!) * 0.2;
         }
-        itemWeightGrams = (deadWeight > volumetricWeight ? deadWeight : volumetricWeight).toInt();
+        itemWeightGrams =
+            (deadWeight > volumetricWeight ? deadWeight : volumetricWeight)
+                .toInt();
       } else {
         // Fallback to estimated weight heuristics
         itemWeightGrams = _getEstimatedWeightInGrams(
@@ -294,8 +312,9 @@ class CartController extends GetxController {
       if (response != null && response is List && response.isNotEmpty) {
         final chargeData = response.first;
         if (chargeData != null && chargeData['total_amount'] != null) {
-          final double amt = double.tryParse(chargeData['total_amount'].toString()) ?? 0.0;
-          
+          final double amt =
+              double.tryParse(chargeData['total_amount'].toString()) ?? 0.0;
+
           double oldShipping = deliveryPriceValue.value;
           deliveryPriceValue.value = amt;
           totalAmountValue.value = totalAmountValue.value - oldShipping + amt;
@@ -312,10 +331,10 @@ class CartController extends GetxController {
   Future<bool> buyNow(Product product, {int qty = 1}) async {
     try {
       isLoading.value = true;
-      
+
       // 1. Clear cart remotely
       await cartRepository.clearCart();
-      
+
       // 2. Add the selected item to cart remotely
       final response = await cartRepository.addToCart(
         productId: int.tryParse(product.id) ?? 0,
@@ -344,7 +363,8 @@ class CartController extends GetxController {
       }
       return false;
     } catch (e) {
-      CustomToast.show('Buy Now checkout failed. Please try again.', isError: true);
+      CustomToast.show('Buy Now checkout failed. Please try again.',
+          isError: true);
       return false;
     } finally {
       isLoading.value = false;

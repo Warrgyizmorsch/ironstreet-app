@@ -128,6 +128,7 @@ class CartTotalsModel {
   final double totalTax;
   final double totalShipping;
   final double totalDiscount;
+  final double totalShippingTax;
 
   CartTotalsModel({
     required this.totalPrice,
@@ -135,6 +136,7 @@ class CartTotalsModel {
     required this.totalTax,
     required this.totalShipping,
     required this.totalDiscount,
+    required this.totalShippingTax,
   });
 
   factory CartTotalsModel.fromJson(Map<String, dynamic> json) {
@@ -150,6 +152,7 @@ class CartTotalsModel {
     final double taxVal = (double.tryParse(json['total_tax']?.toString() ?? '0') ?? 0.0) / factor;
     final double shippingVal = (double.tryParse(json['total_shipping']?.toString() ?? '0') ?? 0.0) / factor;
     final double discountVal = (double.tryParse(json['total_discount']?.toString() ?? '0') ?? 0.0) / factor;
+    final double shippingTaxVal = (double.tryParse(json['total_shipping_tax']?.toString() ?? '0') ?? 0.0) / factor;
 
     return CartTotalsModel(
       totalPrice: totalVal,
@@ -157,6 +160,7 @@ class CartTotalsModel {
       totalTax: taxVal,
       totalShipping: shippingVal,
       totalDiscount: discountVal,
+      totalShippingTax: shippingTaxVal,
     );
   }
 }

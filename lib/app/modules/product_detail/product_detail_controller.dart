@@ -278,17 +278,29 @@ class ProductDetailController extends GetxController {
     final name = productName.toLowerCase();
     final cat = category.toLowerCase();
 
-    if (name.contains('dining') || name.contains('table') || cat.contains('table')) {
+    if (name.contains('dining') ||
+        name.contains('table') ||
+        cat.contains('table')) {
       return 45000; // 45 kg
-    } else if (name.contains('sofa') || name.contains('couch') || cat.contains('sofa')) {
+    } else if (name.contains('sofa') ||
+        name.contains('couch') ||
+        cat.contains('sofa')) {
       return 50000; // 50 kg
-    } else if (name.contains('chair') || name.contains('stool') || name.contains('bench') || cat.contains('chair')) {
+    } else if (name.contains('chair') ||
+        name.contains('stool') ||
+        name.contains('bench') ||
+        cat.contains('chair')) {
       return 12000; // 12 kg
     } else if (name.contains('bed') || cat.contains('bed')) {
       return 75000; // 75 kg
-    } else if (name.contains('wardrobe') || name.contains('cabinet') || name.contains('almirah') || cat.contains('wardrobe')) {
+    } else if (name.contains('wardrobe') ||
+        name.contains('cabinet') ||
+        name.contains('almirah') ||
+        cat.contains('wardrobe')) {
       return 80000; // 80 kg
-    } else if (name.contains('mirror') || name.contains('shelf') || cat.contains('decor')) {
+    } else if (name.contains('mirror') ||
+        name.contains('shelf') ||
+        cat.contains('decor')) {
       return 15000; // 15 kg
     }
     return 25000; // Default 25 kg
@@ -313,7 +325,9 @@ class ProductDetailController extends GetxController {
       if (lengthVal != null && widthVal != null && heightVal != null) {
         volumetricWeight = (lengthVal * widthVal * heightVal) * 0.2;
       }
-      totalWeightGrams = (deadWeight > volumetricWeight ? deadWeight : volumetricWeight).toInt();
+      totalWeightGrams =
+          (deadWeight > volumetricWeight ? deadWeight : volumetricWeight)
+              .toInt();
     } else {
       totalWeightGrams = _getEstimatedWeightInGrams(
         detail.name,
@@ -335,7 +349,8 @@ class ProductDetailController extends GetxController {
       if (response != null && response is List && response.isNotEmpty) {
         final chargeData = response.first;
         if (chargeData != null && chargeData['total_amount'] != null) {
-          final double amt = double.tryParse(chargeData['total_amount'].toString()) ?? 0.0;
+          final double amt =
+              double.tryParse(chargeData['total_amount'].toString()) ?? 0.0;
           deliveryCharge.value = amt;
           return;
         }
