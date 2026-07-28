@@ -29,11 +29,14 @@ class CartView extends GetView<CartController> {
     //   controller.fetchCart();
     // });
 
-    final formatCurrency = NumberFormat.currency(
-      locale: 'en_IN',
-      symbol: '₹',
-      decimalDigits: 2,
-    );
+    String formatCurrency(double amount) {
+      final formatter = NumberFormat.currency(
+        locale: 'en_IN',
+        symbol: '₹',
+        decimalDigits: amount % 1 == 0 ? 0 : 2,
+      );
+      return formatter.format(amount);
+    }
 
     return Scaffold(
       backgroundColor: Theme.of(context).brightness == Brightness.dark
@@ -218,7 +221,7 @@ class CartItemCard extends StatelessWidget {
   final CartItem item;
   final CartController controller;
   final WishlistController wishlistController;
-  final NumberFormat formatCurrency;
+  final String Function(double) formatCurrency;
 
   const CartItemCard({
     super.key,
@@ -295,7 +298,7 @@ class CartItemCard extends StatelessWidget {
                               textBaseline: TextBaseline.alphabetic,
                               children: [
                                 Text(
-                                  formatCurrency.format(prod.price),
+                                  formatCurrency(prod.price),
                                   style: GoogleFonts.poppins(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
@@ -305,7 +308,7 @@ class CartItemCard extends StatelessWidget {
                                 if (prod.oldPrice > prod.price) ...[
                                   const SizedBox(width: 8),
                                   Text(
-                                    formatCurrency.format(prod.oldPrice),
+                                    formatCurrency(prod.oldPrice),
                                     style: GoogleFonts.poppins(
                                       fontSize: 9.5,
                                       color: Colors.grey,
@@ -529,7 +532,7 @@ class QuantitySelector extends StatelessWidget {
 
 class CartBottomBar extends StatelessWidget {
   final CartController controller;
-  final NumberFormat formatCurrency;
+  final String Function(double) formatCurrency;
 
   const CartBottomBar({
     super.key,
@@ -566,7 +569,7 @@ class CartBottomBar extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Obx(() => Text(
-                        formatCurrency.format(controller.totalAmount),
+                        formatCurrency(controller.totalAmount),
                         style: GoogleFonts.poppins(
                           fontSize: 15,
                           fontWeight: FontWeight.w900,
@@ -649,10 +652,10 @@ class CartBottomBar extends StatelessWidget {
             const Divider(),
             const SizedBox(height: 8),
             _buildInvoiceLine(context, 'Subtotal Items Price',
-                formatCurrency.format(controller.oldSubtotal)),
+                formatCurrency(controller.oldSubtotal)),
             if (controller.discountAmount > 0)
               _buildInvoiceLine(context, 'Special Store Coupon Discount',
-                  '- ${formatCurrency.format(controller.discountAmount)}',
+                  '- ${formatCurrency(controller.discountAmount)}',
                   isGreen: true),
             Obx(() {
               final isCalculating = controller.isCalculatingDelivery.value;
@@ -662,11 +665,11 @@ class CartBottomBar extends StatelessWidget {
                   'Delivery Charges',
                   isCalculating
                       ? 'Calculating...'
-                      : (priceVal > 0 ? formatCurrency.format(priceVal) : 'FREE'));
+                      : (priceVal > 0 ? formatCurrency(priceVal) : 'FREE'));
             }),
             if (controller.totalTax > 0)
               _buildInvoiceLine(context, 'Estimated GST (18% included)',
-                  formatCurrency.format(controller.totalTax)),
+                  formatCurrency(controller.totalTax)),
             const Divider(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -680,7 +683,7 @@ class CartBottomBar extends StatelessWidget {
                   final isCalculating = controller.isCalculatingDelivery.value;
                   final totalVal = controller.totalAmount;
                   return Text(
-                    isCalculating ? 'Calculating...' : formatCurrency.format(totalVal),
+                    isCalculating ? 'Calculating...' : formatCurrency(totalVal),
                     style: GoogleFonts.poppins(
                         fontSize: 15,
                         fontWeight: FontWeight.w900,
