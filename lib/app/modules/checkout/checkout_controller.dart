@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:iron_street_app/app/utills/constant/app_urls.dart';
 import 'package:iron_street_app/app/widgets/custom_toast.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../data/repositories/checkout_repository/checkout_repository.dart';
@@ -184,8 +185,8 @@ class CheckoutController extends GetxController {
       final double totalAmountInPaise = checkoutTotal * 100;
 
       final options = {
-        'key': 'rzp_live_S9b3ahb0GRXV0w',
-        // 'key': 'rzp_test_TCubW9gX0V2fux',
+        // 'key': 'rzp_live_S9b3ahb0GRXV0w',
+        'key': AppUrls.razorPayKey,
         'amount': totalAmountInPaise.toInt(),
         'name': 'Iron Street',
         'description': 'Order #$orderNumber',

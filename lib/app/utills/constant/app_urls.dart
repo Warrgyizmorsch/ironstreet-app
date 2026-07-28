@@ -10,6 +10,8 @@ class AppUrls {
       'ck_33f319670ab8218b0145c499f741ed1d075d6041';
   static const String _consumerSecret =
       'cs_e9bbf1764d5097b1e535b2c900800ae69f160016';
+    
+    static const String razorPayKey='rzp_live_S9b3ahb0GRXV0w';
 
   // Caches base64 encoded auth header once on load instead of recomputing per request
   static final String basicAuthHeader =
