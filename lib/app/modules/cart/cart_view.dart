@@ -691,10 +691,10 @@ class CartBottomBar extends StatelessWidget {
               return Column(
                 children: [
                   _buildInvoiceLine(context, 'Item Subtotal',
-                      formatCurrency(controller.oldSubtotal)),
-                  if (controller.discountAmount > 0)
+                      formatCurrency(controller.originalSubtotal)),
+                  if (controller.productDiscountAmount > 0)
                     _buildInvoiceLine(context, 'Product Discount',
-                        '- ${formatCurrency(controller.discountAmount)}',
+                        '- ${formatCurrency(controller.productDiscountAmount)}',
                         isGreen: true),
                   ...controller.appliedCoupons.map((coupon) {
                     return _buildInvoiceLine(

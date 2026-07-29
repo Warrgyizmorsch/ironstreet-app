@@ -61,6 +61,20 @@ class CartController extends GetxController {
   double get subtotal => subtotalValue.value;
   double get oldSubtotal => subtotalValue.value + totalDiscountValue.value;
   double get discountAmount => totalDiscountValue.value;
+  double get originalSubtotal {
+    return cartItems.fold(0.0, (sum, item) {
+      final regPrice = item.product.oldPrice > 0 ? item.product.oldPrice : item.product.price;
+      return sum + (regPrice * item.quantity.value);
+    });
+  }
+  double get productDiscountAmount {
+    return cartItems.fold(0.0, (sum, item) {
+      if (item.product.oldPrice > item.product.price) {
+        return sum + ((item.product.oldPrice - item.product.price) * item.quantity.value);
+      }
+      return sum;
+    });
+  }
   double get deliveryPrice => deliveryPriceValue.value;
   double get totalTax => totalTaxValue.value;
   double get totalAmount => totalAmountValue.value;

@@ -614,8 +614,8 @@ class CheckoutView extends GetView<CheckoutController> {
 
   Widget _buildBillSummarySection(
       BuildContext context, CheckoutController checkCtrl) {
-    final subtotal = checkCtrl.cartCtrl.oldSubtotal;
-    final discount = checkCtrl.cartCtrl.discountAmount;
+    final subtotal = checkCtrl.cartCtrl.originalSubtotal;
+    final discount = checkCtrl.cartCtrl.productDiscountAmount;
     final couponDisc = checkCtrl.couponDiscount.value;
     final tax = checkCtrl.cartCtrl.totalTax;
 

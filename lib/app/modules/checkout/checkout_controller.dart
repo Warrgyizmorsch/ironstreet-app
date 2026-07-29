@@ -166,7 +166,7 @@ class CheckoutController extends GetxController {
     // Override WooCommerce's static shipping cost (cartCtrl.deliveryPrice)
     // and inject Delhivery's dynamic live shipping cost (deliveryCharge.value)
     double base = cartCtrl.totalAmount - cartCtrl.deliveryPrice;
-    double total = base + deliveryCharge.value - couponDiscount.value;
+    double total = base + deliveryCharge.value;
     return total < 0 ? 0.0 : total;
   }
 
