@@ -98,7 +98,7 @@ class _BannerSliderState extends State<BannerSlider> {
                           imageUrl: item.image,
                           width: double.infinity,
                           height: double.infinity,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.fill,
                           placeholder: (context, url) => Shimmer(
                             child: Container(
                               color: Colors.black,
@@ -112,91 +112,96 @@ class _BannerSliderState extends State<BannerSlider> {
                           ),
                         ),
 
-                        // Vignette background shader
-                        Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                                Colors.black.withOpacity(0.65),
-                                Colors.transparent,
-                              ],
+                        // Only render vignette and text overlays if heading/description are provided
+                        if (item.title.trim().isNotEmpty ||
+                            item.subtitle.trim().isNotEmpty) ...[
+                          // Vignette background shader
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [
+                                  Colors.black.withOpacity(0.65),
+                                  Colors.transparent,
+                                ],
+                              ),
                             ),
                           ),
-                        ),
 
-                        // Promotional Text contents Overlay
-                        Positioned(
-                          left: 16,
-                          top: 16,
-                          bottom: 16,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  item.promoText,
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.w900,
-                                    color: Colors.white,
-                                    letterSpacing: 0.5,
+                          // Promotional Text contents Overlay
+                          Positioned(
+                            left: 16,
+                            top: 16,
+                            bottom: 16,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (item.promoText.trim().isNotEmpty) ...[
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary,
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                    child: Text(
+                                      item.promoText,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.w900,
+                                        color: Colors.white,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                item.title,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                item.subtitle,
-                                maxLines: 1,
-                                
-                                style: GoogleFonts.poppins(
-                                  
-                                  
-
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white70,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                children: [
+                                  const SizedBox(height: 8),
+                                ],
+                                if (item.title.trim().isNotEmpty)
                                   Text(
-                                    'Discover Now',
+                                    item.title,
                                     style: GoogleFonts.poppins(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w900,
                                       color: Colors.white,
                                     ),
                                   ),
-                                  const SizedBox(width: 4),
-                                  const Icon(
-                                    Icons.arrow_forward,
-                                    size: 10,
-                                    color: Colors.white,
+                                if (item.subtitle.trim().isNotEmpty) ...[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    item.subtitle,
+                                    maxLines: 1,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.white70,
+                                    ),
                                   ),
                                 ],
-                              ),
-                            ],
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Discover Now',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    const Icon(
+                                      Icons.arrow_forward,
+                                      size: 10,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ),

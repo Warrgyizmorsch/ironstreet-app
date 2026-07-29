@@ -140,7 +140,10 @@ class HomeController extends GetxController {
       final response = await productRepository.fetchSlider();
       if (response != null && response['success'] == true) {
         final List data = response['data'] ?? [];
-        final List<BannerItem> banners = data.map((json) => BannerItem.fromSliderApi(json)).toList();
+        final List<BannerItem> banners = data
+            .map((json) => BannerItem.fromSliderApi(json))
+            .where((item) => item.image.isNotEmpty)
+            .toList();
         sliderBanners.assignAll(banners);
       }
     } catch (e) {
