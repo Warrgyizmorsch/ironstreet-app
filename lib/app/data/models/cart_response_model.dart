@@ -1,12 +1,40 @@
 import 'package:iron_street_app/app/data/models/product_model.dart';
 import 'package:iron_street_app/app/data/models/address_model.dart';
 
+class CartCouponModel {
+  final String code;
+  final double discountAmount;
+
+  CartCouponModel({
+    required this.code,
+    required this.discountAmount,
+  });
+
+  factory CartCouponModel.fromJson(Map<String, dynamic> json) {
+    final totalsObj = json['totals'] ?? {};
+    final int minorUnit = totalsObj['currency_minor_unit'] ?? 2;
+    
+    double factor = 1.0;
+    for (int i = 0; i < minorUnit; i++) {
+      factor *= 10.0;
+    }
+    
+    final double discountVal = (double.tryParse(totalsObj['total_discount']?.toString() ?? '0') ?? 0.0) / factor;
+
+    return CartCouponModel(
+      code: json['code'] ?? '',
+      discountAmount: discountVal,
+    );
+  }
+}
+
 class CartResponseModel {
   final List<CartItemModel> items;
   final CartTotalsModel totals;
   final int itemsCount;
   final CartAddressModel? shippingAddress;
   final CartAddressModel? billingAddress;
+  final List<CartCouponModel> coupons;
 
   CartResponseModel({
     required this.items,
@@ -14,6 +42,7 @@ class CartResponseModel {
     required this.itemsCount,
     this.shippingAddress,
     this.billingAddress,
+    required this.coupons,
   });
 
   factory CartResponseModel.fromJson(Map<String, dynamic> json) {
@@ -29,6 +58,9 @@ class CartResponseModel {
       billingAddress: json['billing_address'] != null 
           ? CartAddressModel.fromJson(json['billing_address']) 
           : null,
+      coupons: (json['coupons'] as List? ?? [])
+          .map((c) => CartCouponModel.fromJson(c))
+          .toList(),
     );
   }
 }

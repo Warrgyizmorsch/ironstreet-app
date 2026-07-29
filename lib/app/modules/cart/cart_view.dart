@@ -47,7 +47,8 @@ class CartView extends GetView<CartController> {
         elevation: 0.5,
         leading: IconButton(
           icon: Icon(Icons.arrow_back,
-              color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
+              color: Theme.of(context).appBarTheme.iconTheme?.color ??
+                  Theme.of(context).textTheme.titleLarge?.color),
           onPressed: () => Get.back(),
         ),
         title: Text(
@@ -160,7 +161,13 @@ class DeliveryLocationSection extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.location_on_outlined, color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7), size: 18),
+          Icon(Icons.location_on_outlined,
+              color: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.color
+                  ?.withValues(alpha: 0.7),
+              size: 18),
           const SizedBox(width: 8),
           Expanded(
             child: Obx(() {
@@ -176,7 +183,11 @@ class DeliveryLocationSection extends StatelessWidget {
                 displayStr,
                 style: GoogleFonts.poppins(
                   fontSize: 11,
-                  color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+                  color: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.color
+                      ?.withValues(alpha: 0.8),
                   fontWeight: FontWeight.w500,
                 ),
               );
@@ -288,7 +299,10 @@ class CartItemCard extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
-                                color: Theme.of(context).textTheme.bodyLarge?.color,
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color,
                               ),
                             ),
                             const SizedBox(height: 3),
@@ -347,14 +361,22 @@ class CartItemCard extends StatelessWidget {
                           Icon(
                             Icons.local_shipping_outlined,
                             size: 12,
-                            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
+                            color: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.color
+                                ?.withValues(alpha: 0.7),
                           ),
                           const SizedBox(width: 4),
                           Text(
                             'Estimated Delivery: 3-5 Business Days',
                             style: GoogleFonts.poppins(
                               fontSize: 8.5,
-                              color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
+                              color: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.color
+                                  ?.withValues(alpha: 0.7),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -377,7 +399,11 @@ class CartItemCard extends StatelessWidget {
               Expanded(
                 child: TextButton.icon(
                   style: TextButton.styleFrom(
-                    foregroundColor: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.8),
+                    foregroundColor: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.color
+                        ?.withValues(alpha: 0.8),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   onPressed: () {
@@ -462,7 +488,11 @@ class QuantitySelector extends StatelessWidget {
           style: GoogleFonts.poppins(
             fontSize: 11,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withValues(alpha: 0.7),
           ),
         ),
         const SizedBox(width: 8),
@@ -483,7 +513,9 @@ class QuantitySelector extends StatelessWidget {
                   child: Icon(
                     Icons.remove,
                     size: 12,
-                    color: quantity > 1 ? Theme.of(context).textTheme.bodyLarge?.color : Theme.of(context).dividerColor,
+                    color: quantity > 1
+                        ? Theme.of(context).textTheme.bodyLarge?.color
+                        : Theme.of(context).dividerColor,
                   ),
                 ),
               ),
@@ -651,25 +683,39 @@ class CartBottomBar extends StatelessWidget {
             ),
             const Divider(),
             const SizedBox(height: 8),
-            _buildInvoiceLine(context, 'Subtotal Items Price',
-                formatCurrency(controller.oldSubtotal)),
-            if (controller.discountAmount > 0)
-              _buildInvoiceLine(context, 'Special Store Coupon Discount',
-                  '- ${formatCurrency(controller.discountAmount)}',
-                  isGreen: true),
             Obx(() {
-              final isCalculating = controller.isCalculatingDelivery.value;
+              final isCalculatingDelivery =
+                  controller.isCalculatingDelivery.value;
               final priceVal = controller.deliveryPrice;
-              return _buildInvoiceLine(
-                  context,
-                  'Delivery Charges',
-                  isCalculating
-                      ? 'Calculating...'
-                      : (priceVal > 0 ? formatCurrency(priceVal) : 'FREE'));
+
+              return Column(
+                children: [
+                  _buildInvoiceLine(context, 'Item Subtotal',
+                      formatCurrency(controller.oldSubtotal)),
+                  if (controller.discountAmount > 0)
+                    _buildInvoiceLine(context, 'Product Discount',
+                        '- ${formatCurrency(controller.discountAmount)}',
+                        isGreen: true),
+                  ...controller.appliedCoupons.map((coupon) {
+                    return _buildInvoiceLine(
+                      context,
+                      'Coupon Discount (${coupon.code})',
+                      '- ${formatCurrency(coupon.discountAmount)}',
+                      isGreen: true,
+                    );
+                  }),
+                  _buildInvoiceLine(
+                      context,
+                      'Delivery Charges',
+                      isCalculatingDelivery
+                          ? 'Calculating...'
+                          : (priceVal > 0 ? formatCurrency(priceVal) : 'FREE')),
+                  if (controller.totalTax > 0)
+                    _buildInvoiceLine(context, 'Estimated GST (18% included)',
+                        formatCurrency(controller.totalTax)),
+                ],
+              );
             }),
-            if (controller.totalTax > 0)
-              _buildInvoiceLine(context, 'Estimated GST (18% included)',
-                  formatCurrency(controller.totalTax)),
             const Divider(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -700,7 +746,8 @@ class CartBottomBar extends StatelessWidget {
     );
   }
 
-  Widget _buildInvoiceLine(BuildContext context, String label, String value, {bool isGreen = false}) {
+  Widget _buildInvoiceLine(BuildContext context, String label, String value,
+      {bool isGreen = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -708,14 +755,22 @@ class CartBottomBar extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.poppins(fontSize: 11, color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8)),
+            style: GoogleFonts.poppins(
+                fontSize: 11,
+                color: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.color
+                    ?.withValues(alpha: 0.8)),
           ),
           Text(
             value,
             style: GoogleFonts.poppins(
               fontSize: 11,
               fontWeight: FontWeight.bold,
-              color: isGreen ? Colors.green[600] : Theme.of(context).textTheme.bodyLarge?.color,
+              color: isGreen
+                  ? Colors.green[600]
+                  : Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
         ],
@@ -755,7 +810,11 @@ class EmptyCartState extends StatelessWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 10,
-                color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+                color: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.color
+                    ?.withValues(alpha: 0.8),
               ),
             ),
             const SizedBox(height: 24),

@@ -31,6 +31,7 @@ class CartController extends GetxController {
   final DeliveryRepository _deliveryRepository = DeliveryRepository();
 
   var cartItems = <CartItem>[].obs;
+  var appliedCoupons = <CartCouponModel>[].obs;
   var isLoading = false.obs;
   var isCalculatingDelivery = false.obs;
 
@@ -85,6 +86,25 @@ class CartController extends GetxController {
     }
   }
 
+  void _updateCartState(CartResponseModel cartResp) {
+    final List<CartItem> items = cartResp.items.map((itemModel) {
+      return CartItem(
+        product: itemModel.toProduct(),
+        qty: itemModel.quantity,
+        key: itemModel.key,
+        weightKg: itemModel.weightKg,
+        lengthCm: itemModel.lengthCm,
+        widthCm: itemModel.widthCm,
+        heightCm: itemModel.heightCm,
+      );
+    }).toList();
+    cartItems.assignAll(items);
+    appliedCoupons.value = cartResp.coupons;
+    _updateTotals(cartResp.totals);
+    _updateAddresses(cartResp);
+    calculateDelhiveryShippingCharge();
+  }
+
   // Fetch the live WooCommerce cart
   Future<void> fetchCart() async {
     try {
@@ -92,21 +112,7 @@ class CartController extends GetxController {
       final response = await cartRepository.getCart();
       if (response != null) {
         final cartResp = CartResponseModel.fromJson(response);
-        final List<CartItem> items = cartResp.items.map((itemModel) {
-          return CartItem(
-            product: itemModel.toProduct(),
-            qty: itemModel.quantity,
-            key: itemModel.key,
-            weightKg: itemModel.weightKg,
-            lengthCm: itemModel.lengthCm,
-            widthCm: itemModel.widthCm,
-            heightCm: itemModel.heightCm,
-          );
-        }).toList();
-        cartItems.assignAll(items);
-        _updateTotals(cartResp.totals);
-        _updateAddresses(cartResp);
-        calculateDelhiveryShippingCharge();
+        _updateCartState(cartResp);
       }
     } catch (e) {
       // Fail silently to keep UX smooth
@@ -115,7 +121,6 @@ class CartController extends GetxController {
     }
   }
 
-  // Add a product to the WooCommerce cart
   Future<void> addToCart(Product product, {int qty = 1}) async {
     try {
       final response = await cartRepository.addToCart(
@@ -124,21 +129,7 @@ class CartController extends GetxController {
       );
       if (response != null) {
         final cartResp = CartResponseModel.fromJson(response);
-        final List<CartItem> items = cartResp.items.map((itemModel) {
-          return CartItem(
-            product: itemModel.toProduct(),
-            qty: itemModel.quantity,
-            key: itemModel.key,
-            weightKg: itemModel.weightKg,
-            lengthCm: itemModel.lengthCm,
-            widthCm: itemModel.widthCm,
-            heightCm: itemModel.heightCm,
-          );
-        }).toList();
-        cartItems.assignAll(items);
-        _updateTotals(cartResp.totals);
-        _updateAddresses(cartResp);
-        calculateDelhiveryShippingCharge();
+        _updateCartState(cartResp);
       }
     } catch (e) {
       CustomToast.show('Failed to add item to cart', isError: true);
@@ -161,20 +152,7 @@ class CartController extends GetxController {
           );
           if (response != null) {
             final cartResp = CartResponseModel.fromJson(response);
-            final List<CartItem> items = cartResp.items.map((itemModel) {
-              return CartItem(
-                product: itemModel.toProduct(),
-                qty: itemModel.quantity,
-                key: itemModel.key,
-                weightKg: itemModel.weightKg,
-                lengthCm: itemModel.lengthCm,
-                widthCm: itemModel.widthCm,
-                heightCm: itemModel.heightCm,
-              );
-            }).toList();
-            cartItems.assignAll(items);
-            _updateTotals(cartResp.totals);
-            calculateDelhiveryShippingCharge();
+            _updateCartState(cartResp);
           }
         } catch (e) {
           CustomToast.show('Failed to update quantity', isError: true);
@@ -192,20 +170,7 @@ class CartController extends GetxController {
         final response = await cartRepository.removeCartItem(key: item.key);
         if (response != null) {
           final cartResp = CartResponseModel.fromJson(response);
-          final List<CartItem> items = cartResp.items.map((itemModel) {
-            return CartItem(
-              product: itemModel.toProduct(),
-              qty: itemModel.quantity,
-              key: itemModel.key,
-              weightKg: itemModel.weightKg,
-              lengthCm: itemModel.lengthCm,
-              widthCm: itemModel.widthCm,
-              heightCm: itemModel.heightCm,
-            );
-          }).toList();
-          cartItems.assignAll(items);
-          _updateTotals(cartResp.totals);
-          calculateDelhiveryShippingCharge();
+          _updateCartState(cartResp);
         }
       } catch (e) {
         CustomToast.show('Failed to remove item', isError: true);
@@ -343,22 +308,7 @@ class CartController extends GetxController {
 
       if (response != null) {
         final cartResp = CartResponseModel.fromJson(response);
-        final List<CartItem> items = cartResp.items.map((itemModel) {
-          return CartItem(
-            product: itemModel.toProduct(),
-            qty: itemModel.quantity,
-            key: itemModel.key,
-            weightKg: itemModel.weightKg,
-            lengthCm: itemModel.lengthCm,
-            widthCm: itemModel.widthCm,
-            heightCm: itemModel.heightCm,
-          );
-        }).toList();
-
-        cartItems.assignAll(items);
-        _updateTotals(cartResp.totals);
-        _updateAddresses(cartResp);
-        await calculateDelhiveryShippingCharge();
+        _updateCartState(cartResp);
         return true;
       }
       return false;
@@ -366,6 +316,39 @@ class CartController extends GetxController {
       CustomToast.show('Buy Now checkout failed. Please try again.',
           isError: true);
       return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+  Future<bool> applyCouponCode(String code) async {
+    try {
+      isLoading.value = true;
+      final response = await cartRepository.applyCoupon(code: code);
+      if (response != null) {
+        final cartResp = CartResponseModel.fromJson(response);
+        _updateCartState(cartResp);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      rethrow;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<bool> removeCouponCode(String code) async {
+    try {
+      isLoading.value = true;
+      final response = await cartRepository.removeCoupon(code: code);
+      if (response != null) {
+        final cartResp = CartResponseModel.fromJson(response);
+        _updateCartState(cartResp);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      rethrow;
     } finally {
       isLoading.value = false;
     }

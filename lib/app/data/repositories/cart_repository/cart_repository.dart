@@ -66,4 +66,28 @@ class CartRepository {
       rethrow;
     }
   }
+
+  Future<dynamic> applyCoupon({required String code}) async {
+    try {
+      final response = await _apiService.postApi(
+        '${AppUrls.cartUrl}/apply-coupon',
+        queryParameters: {'code': code},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<dynamic> removeCoupon({required String code}) async {
+    try {
+      final response = await _apiService.postApi(
+        '${AppUrls.cartUrl}/remove-coupon',
+        queryParameters: {'code': code},
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -540,9 +540,10 @@ class CheckoutView extends GetView<CheckoutController> {
               SizedBox(
                 height: 42,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (couponTextCtrl.text.isNotEmpty) {
-                      if (checkCtrl.applyCoupon(couponTextCtrl.text)) {
+                      final success = await checkCtrl.applyCoupon(couponTextCtrl.text);
+                      if (success) {
                         couponTextCtrl.clear();
                       }
                     }
@@ -613,7 +614,7 @@ class CheckoutView extends GetView<CheckoutController> {
 
   Widget _buildBillSummarySection(
       BuildContext context, CheckoutController checkCtrl) {
-    final subtotal = checkCtrl.cartCtrl.subtotal;
+    final subtotal = checkCtrl.cartCtrl.oldSubtotal;
     final discount = checkCtrl.cartCtrl.discountAmount;
     final couponDisc = checkCtrl.couponDiscount.value;
     final tax = checkCtrl.cartCtrl.totalTax;
@@ -640,7 +641,7 @@ class CheckoutView extends GetView<CheckoutController> {
           const SizedBox(height: 12),
           _buildBillRow(context, 'Item Subtotal', subtotal),
           if (discount > 0)
-            _buildBillRow(context, 'Product Discounts', -discount,
+            _buildBillRow(context, 'Product Discount', -discount,
                 isDiscount: true),
           if (couponDisc > 0)
             _buildBillRow(context, 'Coupon Discount', -couponDisc,

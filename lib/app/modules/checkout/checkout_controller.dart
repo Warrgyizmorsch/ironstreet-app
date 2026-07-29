@@ -5,6 +5,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../data/repositories/checkout_repository/checkout_repository.dart';
 import '../../data/repositories/order_repository/order_repository.dart';
 import '../cart/cart_controller.dart';
+import '../../data/models/cart_response_model.dart';
 import '../payment/payment_success_view.dart';
 import '../payment/payment_failed_view.dart';
 import '../../data/repositories/delivery_repository/delivery_repository.dart';
@@ -38,6 +39,23 @@ class CheckoutController extends GetxController {
     ever(cartCtrl.shippingAddress, (_) {
       calculateDelhiveryShippingCharge();
     });
+
+    // Reactively sync coupon status from CartController to keep UI in perfect sync
+    ever(cartCtrl.appliedCoupons, (List<CartCouponModel> coupons) {
+      if (coupons.isNotEmpty) {
+        appliedCoupon.value = coupons.first.code;
+        couponDiscount.value = coupons.first.discountAmount;
+      } else {
+        appliedCoupon.value = '';
+        couponDiscount.value = 0.0;
+      }
+    });
+
+    // Run initial check for already applied coupons
+    if (cartCtrl.appliedCoupons.isNotEmpty) {
+      appliedCoupon.value = cartCtrl.appliedCoupons.first.code;
+      couponDiscount.value = cartCtrl.appliedCoupons.first.discountAmount;
+    }
 
     // Run initial calculation
     calculateDelhiveryShippingCharge();
@@ -104,30 +122,44 @@ class CheckoutController extends GetxController {
     isProcessing.value = false;
   }
 
-  bool applyCoupon(String code) {
+  Future<bool> applyCoupon(String code) async {
     final cleanCode = code.trim().toUpperCase();
-    if (cleanCode == 'GOLD9842STREET' || cleanCode == 'IRON2153STREET') {
+    if (cleanCode.isEmpty) return false;
+
+    final success = await cartCtrl.applyCouponCode(cleanCode);
+    if (success) {
       appliedCoupon.value = cleanCode;
-      // 10% additional discount on the cart subtotal
-      // couponDiscount.value = cartCtrl.subtotal * 0.10;
+      final couponObj = cartCtrl.appliedCoupons.firstWhereOrNull(
+        (c) => c.code.toUpperCase() == cleanCode,
+      );
+      if (couponObj != null) {
+        couponDiscount.value = couponObj.discountAmount;
+      } else {
+        // If not explicitly found in coupons list, fallback to cart total discount
+        couponDiscount.value = cartCtrl.discountAmount;
+      }
       CustomToast.show(
-        'Successfully applied coupon: $cleanCode (10% Off)',
+        'Successfully applied coupon: $cleanCode',
+        isSuccess: true,
       );
       return true;
-    } else {
-      CustomToast.show(
-        'The entered code is not valid or expired.',
-      );
-      return false;
     }
+    return false;
   }
 
-  void removeCoupon() {
-    appliedCoupon.value = '';
-    couponDiscount.value = 0.0;
-    CustomToast.show(
-      'Coupon discount was removed.',
-    );
+  Future<void> removeCoupon() async {
+    final code = appliedCoupon.value;
+    if (code.isEmpty) return;
+
+    final success = await cartCtrl.removeCouponCode(code);
+    if (success) {
+      appliedCoupon.value = '';
+      couponDiscount.value = 0.0;
+      CustomToast.show(
+        'Coupon discount was removed.',
+        isSuccess: true,
+      );
+    }
   }
 
   double get checkoutTotal {
