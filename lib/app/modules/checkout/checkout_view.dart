@@ -155,7 +155,7 @@ class CheckoutView extends GetView<CheckoutController> {
                         style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.primary,
+                          color: AppColors.blackC,
                         ),
                       );
                     }),
@@ -542,7 +542,8 @@ class CheckoutView extends GetView<CheckoutController> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (couponTextCtrl.text.isNotEmpty) {
-                      final success = await checkCtrl.applyCoupon(couponTextCtrl.text);
+                      final success =
+                          await checkCtrl.applyCoupon(couponTextCtrl.text);
                       if (success) {
                         couponTextCtrl.clear();
                       }
@@ -722,7 +723,7 @@ class CheckoutView extends GetView<CheckoutController> {
                   style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
-                      color: AppColors.primary),
+                      color: AppColors.blackC),
                 );
               }),
             ],
@@ -734,7 +735,9 @@ class CheckoutView extends GetView<CheckoutController> {
 
   Widget _buildBillRow(BuildContext context, String label, double val,
       {bool isDiscount = false, String? customValueText}) {
-    final formattedVal = (val % 1 == 0 ? NumberFormat('#,##,###') : NumberFormat('#,##,##0.00')).format(val.abs());
+    final formattedVal =
+        (val % 1 == 0 ? NumberFormat('#,##,###') : NumberFormat('#,##,##0.00'))
+            .format(val.abs());
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(

@@ -711,8 +711,8 @@ class CartBottomBar extends StatelessWidget {
                           ? 'Calculating...'
                           : (priceVal > 0 ? formatCurrency(priceVal) : 'FREE')),
                   if (controller.totalTax > 0)
-                    _buildInvoiceLine(context, 'Estimated GST (18% included)',
-                        formatCurrency(controller.totalTax)),
+                    _buildInvoiceLine(
+                        context, 'Tax', formatCurrency(controller.totalTax)),
                 ],
               );
             }),
