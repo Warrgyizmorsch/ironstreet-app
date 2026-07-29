@@ -110,10 +110,35 @@ class ProductDetailView extends GetView<ProductDetailController> {
 
       final String brandName = _getAttributeValue(prod, 'Brand Name');
       final String material = _getAttributeValue(prod, 'Frame Material');
-      final String tableTopMaterial =
-          _getAttributeValue(prod, 'Table Top Material');
-      final String dimensions =
-          _getAttributeValue(prod, 'Dimensions(L x W x H)');
+
+      // Parse dimensions directly if available from WooCommerce, otherwise fallback to attributes
+      String dimensions = '';
+      if (prod.length.isNotEmpty ||
+          prod.width.isNotEmpty ||
+          prod.height.isNotEmpty) {
+        final List<String> parts = [];
+        if (prod.length.isNotEmpty) parts.add('${prod.length} L');
+        if (prod.width.isNotEmpty) parts.add('${prod.width} W');
+        if (prod.height.isNotEmpty) parts.add('${prod.height} H');
+        dimensions = parts.join(' x ');
+        // Append unit if not already present
+        if (double.tryParse(prod.length) != null) {
+          dimensions += ' cm';
+        }
+      } else {
+        dimensions = _getAttributeValue(prod, 'Dimensions(L x W x H)');
+      }
+
+      // Parse weight directly if available from WooCommerce, otherwise fallback to attributes
+      String weight = '';
+      if (prod.weight.isNotEmpty) {
+        weight = prod.weight;
+      } else {
+        weight = _getAttributeValue(prod, 'Weight');
+      }
+      if (weight.isNotEmpty && !weight.toLowerCase().contains('kg')) {
+        weight = '$weight kg';
+      }
       final String careInstructions =
           _getAttributeValue(prod, 'Care Instructions');
 
@@ -667,15 +692,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
                           _buildCustomizationCard(context, prod, price),
                           const SizedBox(height: 16),
                           // const SizedBox(height: 24),
-                          if (material.isNotEmpty ||
-                              tableTopMaterial.isNotEmpty ||
-                              dimensions.isNotEmpty)
-                            _buildQuickSpecs(
-                              context,
-                              material: material,
-                              tableTopMaterial: tableTopMaterial,
-                              dimensions: dimensions,
-                            ),
 
                           // const SizedBox(height: 20),
                           // _buildSectionExpandable(
@@ -689,8 +705,15 @@ class ProductDetailView extends GetView<ProductDetailController> {
                               'Short Description',
                               _cleanHtml(prod.shortDescription),
                             ),
-                          if (prod.attributes.isNotEmpty)
-                            _buildAttributesSection(context, prod.attributes),
+                          if (prod.attributes.isNotEmpty ||
+                              dimensions.isNotEmpty ||
+                              weight.isNotEmpty)
+                            _buildAttributesSection(
+                              context,
+                              prod.attributes,
+                              dimensions: dimensions,
+                              weight: weight,
+                            ),
                           if (careInstructions.isNotEmpty)
                             _buildSectionExpandable(
                               context,
@@ -1066,42 +1089,17 @@ class ProductDetailView extends GetView<ProductDetailController> {
     );
   }
 
-  Widget _buildQuickSpecs(
-    BuildContext context, {
-    required String material,
-    required String tableTopMaterial,
-    required String dimensions,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Theme.of(context).dividerColor),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSectionTitle(context, 'Quick Specifications'),
-          const SizedBox(height: 10),
-          if (material.isNotEmpty)
-            _buildInfoRow(context, 'Frame Material', material),
-          if (tableTopMaterial.isNotEmpty)
-            _buildInfoRow(context, 'Table Top Material', tableTopMaterial),
-          if (dimensions.isNotEmpty)
-            _buildInfoRow(context, 'Dimensions', dimensions),
-        ],
-      ),
-    );
-  }
-
   Widget _buildAttributesSection(
-      BuildContext context, List<dynamic> attributes) {
+    BuildContext context,
+    List<dynamic> attributes, {
+    required String dimensions,
+    required String weight,
+  }) {
     final visibleAttributes = attributes.where((attr) {
       return attr.visible == true && attr.options.isNotEmpty;
     }).toList();
 
-    if (visibleAttributes.isEmpty) {
+    if (visibleAttributes.isEmpty && dimensions.isEmpty && weight.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -1131,13 +1129,18 @@ class ProductDetailView extends GetView<ProductDetailController> {
               border: Border.all(color: Theme.of(context).dividerColor),
             ),
             child: Column(
-              children: visibleAttributes.map((attr) {
-                return _buildInfoRow(
-                  context,
-                  attr.name,
-                  attr.options.join(', '),
-                );
-              }).toList(),
+              children: [
+                ...visibleAttributes.map((attr) {
+                  return _buildInfoRow(
+                    context,
+                    attr.name,
+                    attr.options.join(', '),
+                  );
+                }),
+                if (dimensions.isNotEmpty)
+                  _buildInfoRow(context, 'Dimensions', dimensions),
+                if (weight.isNotEmpty) _buildInfoRow(context, 'Weight', weight),
+              ],
             ),
           ),
         ],
@@ -1290,17 +1293,6 @@ class ProductDetailView extends GetView<ProductDetailController> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(BuildContext context, String title) {
-    return Text(
-      title,
-      style: GoogleFonts.poppins(
-        fontSize: 12,
-        color: Theme.of(context).textTheme.titleMedium?.color,
-        fontWeight: FontWeight.bold,
       ),
     );
   }
