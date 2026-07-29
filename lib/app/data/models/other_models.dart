@@ -43,6 +43,16 @@ class BannerItem {
       promoText: json['promoText'] ?? '',
     );
   }
+
+  factory BannerItem.fromSliderApi(Map<String, dynamic> json) {
+    return BannerItem(
+      id: json['category_id']?.toString() ?? '',
+      title: json['heading'] ?? '',
+      subtitle: json['description'] ?? '',
+      image: json['image'] ?? '',
+      promoText: json['button_text'] ?? 'Buy now',
+    );
+  }
 }
 
 class GridCategory {

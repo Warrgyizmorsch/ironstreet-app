@@ -103,7 +103,7 @@ class HomeView extends GetView<HomeController> {
                     return const AccountView();
                   case 0:
                   default:
-                    return _buildHomeSubView();
+                    return _buildHomeSubView(context);
                 }
               }),
             ),
@@ -402,7 +402,7 @@ class HomeView extends GetView<HomeController> {
   }
 
   // --- INDEX 0: SUB VIEW HOME PANEL ---
-  Widget _buildHomeSubView() {
+  Widget _buildHomeSubView(BuildContext context) {
     return ListView(
       physics: const BouncingScrollPhysics(),
       children: [
@@ -411,18 +411,38 @@ class HomeView extends GetView<HomeController> {
         // Double row Grid Categories
         _buildCategoryHorizontalScroll(),
 
-        // Banners slider carousel
-        BannerSlider(
-          banners: bannerCarouselCount,
-          onTap: (banner) {
-            final int? categoryId = int.tryParse(banner.id);
-            if (categoryId != null) {
-              Get.toNamed(Routes.CATEGORY, arguments: categoryId);
-            } else {
-              CustomToast.show('Opening selection: "${banner.title}"');
-            }
-          },
-        ),
+        Obx(() {
+          if (controller.isSliderLoading.value && controller.sliderBanners.isEmpty) {
+            return Container(
+              height: 165,
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? const Color(0xFF1E1E1E)
+                    : const Color(0xFFF9F9F9),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Theme.of(context).dividerColor),
+              ),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+          if (controller.sliderBanners.isEmpty) {
+            return const SizedBox.shrink();
+          }
+          return BannerSlider(
+            banners: controller.sliderBanners,
+            onTap: (banner) {
+              final int? categoryId = int.tryParse(banner.id);
+              if (categoryId != null) {
+                Get.toNamed(Routes.CATEGORY, arguments: categoryId);
+              } else {
+                CustomToast.show('Opening selection: "${banner.title}"');
+              }
+            },
+          );
+        }),
 
         // Deal Timer Lightning Deals Card
         // _buildDealTimerCard(),

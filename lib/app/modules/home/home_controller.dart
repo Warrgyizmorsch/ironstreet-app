@@ -10,6 +10,8 @@ import 'package:iron_street_app/app/data/models/product_list_model.dart';
 import 'package:iron_street_app/app/data/models/product_tag_model.dart';
 import 'package:iron_street_app/app/data/repositories/category_repository/category_repository.dart';
 import 'package:iron_street_app/app/data/repositories/product_repository/product_repository.dart';
+import '../../data/models/other_models.dart';
+import '../../data/dummy_data.dart';
 
 class HomeController extends GetxController {
 
@@ -57,6 +59,8 @@ class HomeController extends GetxController {
   var seconds = 59.obs;
 
   var isCategoriesLoading = true.obs;
+  var sliderBanners = <BannerItem>[].obs;
+  var isSliderLoading = false.obs;
   var isCustomerFavoritesLoading = false.obs;
   var isBestSellingChairsLoading = false.obs;
   var isOutdoorFurnitureLoading = false.obs;
@@ -121,11 +125,31 @@ class HomeController extends GetxController {
         fetchBestSellingChairs(),
         fetchOutdoorFurnitureProducts(),
         fetchAllTagProductSections(),
+        fetchSliderBanners(),
       ]);
 
       await fetchProductsByCategory(0);
     } catch (e) {
       print('Home init error: $e');
+    }
+  }
+
+  Future<void> fetchSliderBanners() async {
+    try {
+      isSliderLoading.value = true;
+      final response = await productRepository.fetchSlider();
+      if (response != null && response['success'] == true) {
+        final List data = response['data'] ?? [];
+        final List<BannerItem> banners = data.map((json) => BannerItem.fromSliderApi(json)).toList();
+        sliderBanners.assignAll(banners);
+      }
+    } catch (e) {
+      log('Error fetching dynamic slider: $e');
+    } finally {
+      if (sliderBanners.isEmpty) {
+        sliderBanners.assignAll(bannerCarouselCount);
+      }
+      isSliderLoading.value = false;
     }
   }
 

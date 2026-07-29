@@ -190,4 +190,13 @@ class ProductRepository {
       throw Exception('Failed to search products: $e');
     }
   }
+
+  Future<dynamic> fetchSlider() async {
+    try {
+      final response = await _apiService.getApi('${AppUrls.domain}/wp-json/ironstree/v1/slider');
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
