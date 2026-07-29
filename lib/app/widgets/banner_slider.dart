@@ -134,6 +134,8 @@ class _BannerSliderState extends State<BannerSlider> {
                             left: 16,
                             top: 16,
                             bottom: 16,
+                            width:
+                                (MediaQuery.of(context).size.width - 32) * 0.5,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -161,8 +163,10 @@ class _BannerSliderState extends State<BannerSlider> {
                                 if (item.title.trim().isNotEmpty)
                                   Text(
                                     item.title,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.clip,
                                     style: GoogleFonts.poppins(
-                                      fontSize: 15,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w900,
                                       color: Colors.white,
                                     ),
@@ -171,9 +175,10 @@ class _BannerSliderState extends State<BannerSlider> {
                                   const SizedBox(height: 2),
                                   Text(
                                     item.subtitle,
-                                    maxLines: 1,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.poppins(
-                                      fontSize: 10,
+                                      fontSize: 9,
                                       fontWeight: FontWeight.w500,
                                       color: Colors.white70,
                                     ),
