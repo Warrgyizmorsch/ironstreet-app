@@ -618,3 +618,21 @@ class OrderDetailShimmer extends StatelessWidget {
   }
 }
 
+class BannerSliderShimmer extends StatelessWidget {
+  const BannerSliderShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer(
+      child: Container(
+        height: 165,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+    );
+  }
+}
+

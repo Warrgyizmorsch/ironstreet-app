@@ -413,20 +413,7 @@ class HomeView extends GetView<HomeController> {
 
         Obx(() {
           if (controller.isSliderLoading.value && controller.sliderBanners.isEmpty) {
-            return Container(
-              height: 165,
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? const Color(0xFF1E1E1E)
-                    : const Color(0xFFF9F9F9),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Theme.of(context).dividerColor),
-              ),
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
+            return const BannerSliderShimmer();
           }
           if (controller.sliderBanners.isEmpty) {
             return const SizedBox.shrink();
