@@ -508,63 +508,92 @@ class CheckoutView extends GetView<CheckoutController> {
           Row(
             children: [
               Expanded(
-                child: TextField(
-                  controller: couponTextCtrl,
-                  style: GoogleFonts.poppins(
-                      fontSize: 12, fontWeight: FontWeight.bold),
-                  decoration: InputDecoration(
-                    hintText: 'Enter coupon code (e.g. GOLDSTREET)',
-                    hintStyle: GoogleFonts.poppins(
-                        fontSize: 11, color: Colors.grey[400]),
-                    isDense: true,
-                    filled: true,
-                    fillColor: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF1E1E1E)
-                        : const Color(0xFFF9F9F9),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 12),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide:
-                          BorderSide(color: Theme.of(context).dividerColor),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide:
-                          BorderSide(color: Theme.of(context).dividerColor),
-                    ),
-                  ),
+                child: ValueBuilder<String?>(
+                  initialValue: couponTextCtrl.text,
+                  builder: (textVal, updateText) {
+                    return TextField(
+                      controller: couponTextCtrl,
+                      onChanged: (text) => updateText(text),
+                      style: GoogleFonts.poppins(
+                          fontSize: 12, fontWeight: FontWeight.bold),
+                      decoration: InputDecoration(
+                        hintText: 'Enter coupon code (e.g. GOLDSTREET)',
+                        hintStyle: GoogleFonts.poppins(
+                            fontSize: 11, color: Colors.grey[400]),
+                        isDense: true,
+                        filled: true,
+                        fillColor: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFF1E1E1E)
+                            : const Color(0xFFF9F9F9),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 12),
+                        suffixIcon: (textVal != null && textVal.isNotEmpty)
+                            ? IconButton(
+                                icon: const Icon(Icons.clear, size: 16),
+                                onPressed: () {
+                                  couponTextCtrl.clear();
+                                  updateText('');
+                                },
+                              )
+                            : null,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide:
+                              BorderSide(color: Theme.of(context).dividerColor),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide:
+                              BorderSide(color: Theme.of(context).dividerColor),
+                        ),
+                      ),
+                    );
+                  }
                 ),
               ),
               const SizedBox(width: 12),
               SizedBox(
                 height: 42,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (couponTextCtrl.text.isNotEmpty) {
-                      final success =
-                          await checkCtrl.applyCoupon(couponTextCtrl.text);
-                      if (success) {
-                        couponTextCtrl.clear();
-                      }
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).brightness == Brightness.dark
-                            ? Colors.grey[800]!
-                            : Colors.black87,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: Text(
-                    'APPLY',
-                    style: GoogleFonts.poppins(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
-                  ),
-                ),
+                child: Obx(() {
+                  final loading = checkCtrl.cartCtrl.isLoading.value;
+                  return ElevatedButton(
+                    onPressed: loading
+                        ? null
+                        : () async {
+                            if (couponTextCtrl.text.isNotEmpty) {
+                              final success =
+                                  await checkCtrl.applyCoupon(couponTextCtrl.text);
+                              if (success) {
+                                couponTextCtrl.clear();
+                              }
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Theme.of(context).brightness == Brightness.dark
+                              ? Colors.grey[800]!
+                              : Colors.black87,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: loading
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            'APPLY',
+                            style: GoogleFonts.poppins(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                  );
+                }),
               ),
             ],
           ),
@@ -599,11 +628,23 @@ class CheckoutView extends GetView<CheckoutController> {
                       ),
                     ],
                   ),
-                  GestureDetector(
-                    onTap: () => checkCtrl.removeCoupon(),
-                    child:
-                        const Icon(Icons.cancel, size: 18, color: Colors.grey),
-                  ),
+                  Obx(() {
+                    final loading = checkCtrl.cartCtrl.isLoading.value;
+                    return loading
+                        ? const SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.grey,
+                            ),
+                          )
+                        : GestureDetector(
+                            onTap: () => checkCtrl.removeCoupon(),
+                            child: const Icon(Icons.cancel,
+                                size: 18, color: Colors.grey),
+                          );
+                  }),
                 ],
               ),
             ),
