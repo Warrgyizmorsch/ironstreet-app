@@ -154,7 +154,7 @@ class CheckoutView extends GetView<CheckoutController> {
                         '₹${(total % 1 == 0 ? NumberFormat('#,##,###') : NumberFormat('#,##,##0.00')).format(total)}',
                         style: GoogleFonts.poppins(
                           fontSize: 18,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                           color: AppColors.blackC,
                         ),
                       );
@@ -466,12 +466,30 @@ class CheckoutView extends GetView<CheckoutController> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      '₹${((item.product.price * item.quantity.value) % 1 == 0 ? NumberFormat('#,##,###') : NumberFormat('#,##,##0.00')).format(item.product.price * item.quantity.value)}',
-                      style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).textTheme.bodyLarge?.color),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (item.product.oldPrice > item.product.price) ...[
+                          Text(
+                            '₹${((item.product.oldPrice * item.quantity.value) % 1 == 0 ? NumberFormat('#,##,###') : NumberFormat('#,##,##0.00')).format(item.product.oldPrice * item.quantity.value)}',
+                            style: GoogleFonts.poppins(
+                              fontSize: 10,
+                              color: Colors.grey,
+                              decoration: TextDecoration.lineThrough,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                        ],
+                        Text(
+                          '₹${((item.product.price * item.quantity.value) % 1 == 0 ? NumberFormat('#,##,###') : NumberFormat('#,##,##0.00')).format(item.product.price * item.quantity.value)}',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -509,47 +527,47 @@ class CheckoutView extends GetView<CheckoutController> {
             children: [
               Expanded(
                 child: ValueBuilder<String?>(
-                  initialValue: couponTextCtrl.text,
-                  builder: (textVal, updateText) {
-                    return TextField(
-                      controller: couponTextCtrl,
-                      onChanged: (text) => updateText(text),
-                      style: GoogleFonts.poppins(
-                          fontSize: 12, fontWeight: FontWeight.bold),
-                      decoration: InputDecoration(
-                        hintText: 'Enter coupon code (e.g. GOLDSTREET)',
-                        hintStyle: GoogleFonts.poppins(
-                            fontSize: 11, color: Colors.grey[400]),
-                        isDense: true,
-                        filled: true,
-                        fillColor: Theme.of(context).brightness == Brightness.dark
-                            ? const Color(0xFF1E1E1E)
-                            : const Color(0xFFF9F9F9),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 12),
-                        suffixIcon: (textVal != null && textVal.isNotEmpty)
-                            ? IconButton(
-                                icon: const Icon(Icons.clear, size: 16),
-                                onPressed: () {
-                                  couponTextCtrl.clear();
-                                  updateText('');
-                                },
-                              )
-                            : null,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                              BorderSide(color: Theme.of(context).dividerColor),
+                    initialValue: couponTextCtrl.text,
+                    builder: (textVal, updateText) {
+                      return TextField(
+                        controller: couponTextCtrl,
+                        onChanged: (text) => updateText(text),
+                        style: GoogleFonts.poppins(
+                            fontSize: 12, fontWeight: FontWeight.bold),
+                        decoration: InputDecoration(
+                          hintText: 'Enter coupon code (e.g. GOLDSTREET)',
+                          hintStyle: GoogleFonts.poppins(
+                              fontSize: 11, color: Colors.grey[400]),
+                          isDense: true,
+                          filled: true,
+                          fillColor:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? const Color(0xFF1E1E1E)
+                                  : const Color(0xFFF9F9F9),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 12),
+                          suffixIcon: (textVal != null && textVal.isNotEmpty)
+                              ? IconButton(
+                                  icon: const Icon(Icons.clear, size: 16),
+                                  onPressed: () {
+                                    couponTextCtrl.clear();
+                                    updateText('');
+                                  },
+                                )
+                              : null,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                                color: Theme.of(context).dividerColor),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                                color: Theme.of(context).dividerColor),
+                          ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide:
-                              BorderSide(color: Theme.of(context).dividerColor),
-                        ),
-                      ),
-                    );
-                  }
-                ),
+                      );
+                    }),
               ),
               const SizedBox(width: 12),
               SizedBox(
@@ -561,8 +579,8 @@ class CheckoutView extends GetView<CheckoutController> {
                         ? null
                         : () async {
                             if (couponTextCtrl.text.isNotEmpty) {
-                              final success =
-                                  await checkCtrl.applyCoupon(couponTextCtrl.text);
+                              final success = await checkCtrl
+                                  .applyCoupon(couponTextCtrl.text);
                               if (success) {
                                 couponTextCtrl.clear();
                               }
@@ -762,7 +780,7 @@ class CheckoutView extends GetView<CheckoutController> {
                 return Text(
                   '₹${(total % 1 == 0 ? NumberFormat('#,##,###') : NumberFormat('#,##,##0.00')).format(total)}',
                   style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w700,
                       fontSize: 16,
                       color: AppColors.blackC),
                 );
