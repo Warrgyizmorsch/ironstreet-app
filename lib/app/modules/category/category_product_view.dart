@@ -27,7 +27,8 @@ class CategoryProductView extends GetView<CategoryController> {
 
     // Load category arguments if available
     final categoryId = Get.arguments as int?;
-    if (categoryId != null && controller.activeProductCategoryId.value != categoryId) {
+    if (categoryId != null &&
+        controller.activeProductCategoryId.value != categoryId) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         controller.fetchProductsByCategory(categoryId);
       });
@@ -43,7 +44,8 @@ class CategoryProductView extends GetView<CategoryController> {
         leading: isPushed
             ? IconButton(
                 icon: Icon(Icons.arrow_back_ios_new,
-                    color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color,
+                    color: Theme.of(context).appBarTheme.iconTheme?.color ??
+                        Theme.of(context).textTheme.titleLarge?.color,
                     size: 20),
                 onPressed: () => Get.back(),
               )
@@ -73,7 +75,8 @@ class CategoryProductView extends GetView<CategoryController> {
               children: [
                 IconButton(
                   icon: Icon(Icons.favorite_border,
-                      color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
+                      color: Theme.of(context).appBarTheme.iconTheme?.color ??
+                          Theme.of(context).textTheme.titleLarge?.color),
                   onPressed: () => Get.toNamed(Routes.WISHLIST),
                 ),
                 if (count > 0)
@@ -111,7 +114,8 @@ class CategoryProductView extends GetView<CategoryController> {
               children: [
                 IconButton(
                   icon: Icon(Icons.shopping_bag_outlined,
-                      color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
+                      color: Theme.of(context).appBarTheme.iconTheme?.color ??
+                          Theme.of(context).textTheme.titleLarge?.color),
                   onPressed: () => Get.toNamed(Routes.CART),
                 ),
                 if (count > 0)
@@ -145,21 +149,23 @@ class CategoryProductView extends GetView<CategoryController> {
           const SizedBox(width: 8),
         ],
       ),
-      bottomNavigationBar: Container(
-        height: 56,
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          border: Border(
-            top: BorderSide(color: Theme.of(context).dividerColor),
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Container(
+          height: 56,
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            border: Border(
+              top: BorderSide(color: Theme.of(context).dividerColor),
+            ),
           ),
-        ),
-        child: SafeArea(
           child: Row(
             children: [
               Expanded(
                 child: TextButton.icon(
                   onPressed: () => _showSortBottomSheet(context),
-                  icon: const Icon(Icons.sort, color: AppColors.primary, size: 20),
+                  icon: const Icon(Icons.sort,
+                      color: AppColors.primary, size: 20),
                   label: Text(
                     'SORT',
                     style: GoogleFonts.poppins(
@@ -178,7 +184,8 @@ class CategoryProductView extends GetView<CategoryController> {
               Expanded(
                 child: TextButton.icon(
                   onPressed: () => _showFilterBottomSheet(context),
-                  icon: const Icon(Icons.filter_list, color: AppColors.primary, size: 20),
+                  icon: const Icon(Icons.filter_list,
+                      color: AppColors.primary, size: 20),
                   label: Text(
                     'FILTER',
                     style: GoogleFonts.poppins(
@@ -215,7 +222,8 @@ class CategoryProductView extends GetView<CategoryController> {
                   children: [
                     Obx(() {
                       final activeId = controller.activeProductCategoryId.value;
-                      final cat = controller.allCategories.firstWhereOrNull((c) => c.id == activeId);
+                      final cat = controller.allCategories
+                          .firstWhereOrNull((c) => c.id == activeId);
                       return Text(
                         cat?.name ?? 'Category Products',
                         style: GoogleFonts.poppins(
@@ -240,7 +248,8 @@ class CategoryProductView extends GetView<CategoryController> {
                     final isAllActive = activeId == rootId;
 
                     // Find parent category name
-                    final parentCat = controller.allCategories.firstWhereOrNull((c) => c.id == rootId);
+                    final parentCat = controller.allCategories
+                        .firstWhereOrNull((c) => c.id == rootId);
                     final parentName = parentCat?.name ?? 'Category';
 
                     return ListView.builder(
@@ -249,20 +258,31 @@ class CategoryProductView extends GetView<CategoryController> {
                       itemCount: subcategories.length + 1, // +1 for "View All"
                       itemBuilder: (context, index) {
                         final isFirst = index == 0;
-                        final bool isActive = isFirst ? isAllActive : (subcategories[index - 1].id == activeId);
-                        final String label = isFirst ? 'View All $parentName' : subcategories[index - 1].name;
-                        final int targetId = isFirst ? rootId : subcategories[index - 1].id;
+                        final bool isActive = isFirst
+                            ? isAllActive
+                            : (subcategories[index - 1].id == activeId);
+                        final String label = isFirst
+                            ? 'View All $parentName'
+                            : subcategories[index - 1].name;
+                        final int targetId =
+                            isFirst ? rootId : subcategories[index - 1].id;
 
                         return GestureDetector(
-                          onTap: () => controller.fetchProductsByCategory(targetId),
+                          onTap: () =>
+                              controller.fetchProductsByCategory(targetId),
                           child: Container(
                             margin: const EdgeInsets.only(right: 8),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 6),
                             decoration: BoxDecoration(
-                              color: isActive ? AppColors.primary : Theme.of(context).cardColor,
+                              color: isActive
+                                  ? AppColors.primary
+                                  : Theme.of(context).cardColor,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: isActive ? AppColors.primary : Theme.of(context).dividerColor,
+                                color: isActive
+                                    ? AppColors.primary
+                                    : Theme.of(context).dividerColor,
                               ),
                             ),
                             child: Center(
@@ -271,7 +291,13 @@ class CategoryProductView extends GetView<CategoryController> {
                                 style: GoogleFonts.poppins(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
-                                  color: isActive ? Colors.white : Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                                  color: isActive
+                                      ? Colors.white
+                                      : Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.color
+                                          ?.withValues(alpha: 0.7),
                                 ),
                               ),
                             ),
@@ -286,7 +312,8 @@ class CategoryProductView extends GetView<CategoryController> {
             // 3. Products Grid or Loading Shimmers
             if (isLoading)
               SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 sliver: SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -295,7 +322,8 @@ class CategoryProductView extends GetView<CategoryController> {
                     childAspectRatio: childAspectRatio,
                   ),
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) => const ProductCardShimmer(width: double.infinity),
+                    (context, index) =>
+                        const ProductCardShimmer(width: double.infinity),
                     childCount: 6,
                   ),
                 ),
@@ -307,7 +335,8 @@ class CategoryProductView extends GetView<CategoryController> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.category_outlined, size: 48, color: Colors.grey[400]),
+                      Icon(Icons.category_outlined,
+                          size: 48, color: Colors.grey[400]),
                       const SizedBox(height: 12),
                       Text(
                         'No products found.',
@@ -323,7 +352,8 @@ class CategoryProductView extends GetView<CategoryController> {
               )
             else
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 70), // Bottom padding clearance for bottom bar
+                padding: const EdgeInsets.fromLTRB(
+                    16, 8, 16, 70), // Bottom padding clearance for bottom bar
                 sliver: SliverGrid(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -394,45 +424,45 @@ class CategoryProductView extends GetView<CategoryController> {
             ),
             const Divider(),
             Obx(() => Column(
-              children: [
-                _buildSortOption(
-                  title: 'Default / Popularity',
-                  value: 'default',
-                  selectedValue: controller.activeSortType.value,
-                  onTap: () {
-                    controller.activeSortType.value = 'default';
-                    Get.back();
-                  },
-                ),
-                _buildSortOption(
-                  title: 'Top Rated',
-                  value: 'rating',
-                  selectedValue: controller.activeSortType.value,
-                  onTap: () {
-                    controller.activeSortType.value = 'rating';
-                    Get.back();
-                  },
-                ),
-                _buildSortOption(
-                  title: 'Price: Low to High',
-                  value: 'price_low_high',
-                  selectedValue: controller.activeSortType.value,
-                  onTap: () {
-                    controller.activeSortType.value = 'price_low_high';
-                    Get.back();
-                  },
-                ),
-                _buildSortOption(
-                  title: 'Price: High to Low',
-                  value: 'price_high_low',
-                  selectedValue: controller.activeSortType.value,
-                  onTap: () {
-                    controller.activeSortType.value = 'price_high_low';
-                    Get.back();
-                  },
-                ),
-              ],
-            )),
+                  children: [
+                    _buildSortOption(
+                      title: 'Default / Popularity',
+                      value: 'default',
+                      selectedValue: controller.activeSortType.value,
+                      onTap: () {
+                        controller.activeSortType.value = 'default';
+                        Get.back();
+                      },
+                    ),
+                    _buildSortOption(
+                      title: 'Top Rated',
+                      value: 'rating',
+                      selectedValue: controller.activeSortType.value,
+                      onTap: () {
+                        controller.activeSortType.value = 'rating';
+                        Get.back();
+                      },
+                    ),
+                    _buildSortOption(
+                      title: 'Price: Low to High',
+                      value: 'price_low_high',
+                      selectedValue: controller.activeSortType.value,
+                      onTap: () {
+                        controller.activeSortType.value = 'price_low_high';
+                        Get.back();
+                      },
+                    ),
+                    _buildSortOption(
+                      title: 'Price: High to Low',
+                      value: 'price_high_low',
+                      selectedValue: controller.activeSortType.value,
+                      onTap: () {
+                        controller.activeSortType.value = 'price_high_low';
+                        Get.back();
+                      },
+                    ),
+                  ],
+                )),
           ],
         ),
       ),
@@ -454,7 +484,9 @@ class CategoryProductView extends GetView<CategoryController> {
         style: GoogleFonts.poppins(
           fontSize: 12,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? AppColors.primary : Theme.of(Get.context!).textTheme.bodyMedium?.color,
+          color: isSelected
+              ? AppColors.primary
+              : Theme.of(Get.context!).textTheme.bodyMedium?.color,
         ),
       ),
       trailing: isSelected
@@ -494,45 +526,45 @@ class CategoryProductView extends GetView<CategoryController> {
             ),
             const Divider(),
             Obx(() => Column(
-              children: [
-                _buildFilterOption(
-                  title: 'All Products',
-                  value: 'All',
-                  selectedValue: controller.selectedPriceFilter.value,
-                  onTap: () {
-                    controller.selectedPriceFilter.value = 'All';
-                    Get.back();
-                  },
-                ),
-                _buildFilterOption(
-                  title: 'Under ₹10,000',
-                  value: 'under_10k',
-                  selectedValue: controller.selectedPriceFilter.value,
-                  onTap: () {
-                    controller.selectedPriceFilter.value = 'under_10k';
-                    Get.back();
-                  },
-                ),
-                _buildFilterOption(
-                  title: '₹10,000 - ₹20,000',
-                  value: '10k_20k',
-                  selectedValue: controller.selectedPriceFilter.value,
-                  onTap: () {
-                    controller.selectedPriceFilter.value = '10k_20k';
-                    Get.back();
-                  },
-                ),
-                _buildFilterOption(
-                  title: 'Over ₹20,000',
-                  value: 'over_20k',
-                  selectedValue: controller.selectedPriceFilter.value,
-                  onTap: () {
-                    controller.selectedPriceFilter.value = 'over_20k';
-                    Get.back();
-                  },
-                ),
-              ],
-            )),
+                  children: [
+                    _buildFilterOption(
+                      title: 'All Products',
+                      value: 'All',
+                      selectedValue: controller.selectedPriceFilter.value,
+                      onTap: () {
+                        controller.selectedPriceFilter.value = 'All';
+                        Get.back();
+                      },
+                    ),
+                    _buildFilterOption(
+                      title: 'Under ₹10,000',
+                      value: 'under_10k',
+                      selectedValue: controller.selectedPriceFilter.value,
+                      onTap: () {
+                        controller.selectedPriceFilter.value = 'under_10k';
+                        Get.back();
+                      },
+                    ),
+                    _buildFilterOption(
+                      title: '₹10,000 - ₹20,000',
+                      value: '10k_20k',
+                      selectedValue: controller.selectedPriceFilter.value,
+                      onTap: () {
+                        controller.selectedPriceFilter.value = '10k_20k';
+                        Get.back();
+                      },
+                    ),
+                    _buildFilterOption(
+                      title: 'Over ₹20,000',
+                      value: 'over_20k',
+                      selectedValue: controller.selectedPriceFilter.value,
+                      onTap: () {
+                        controller.selectedPriceFilter.value = 'over_20k';
+                        Get.back();
+                      },
+                    ),
+                  ],
+                )),
           ],
         ),
       ),
@@ -554,7 +586,9 @@ class CategoryProductView extends GetView<CategoryController> {
         style: GoogleFonts.poppins(
           fontSize: 12,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          color: isSelected ? AppColors.primary : Theme.of(Get.context!).textTheme.bodyMedium?.color,
+          color: isSelected
+              ? AppColors.primary
+              : Theme.of(Get.context!).textTheme.bodyMedium?.color,
         ),
       ),
       trailing: isSelected
@@ -574,7 +608,8 @@ class _StickyChipsDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => 50.0;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       color: Theme.of(context).brightness == Brightness.dark
           ? Theme.of(context).scaffoldBackgroundColor

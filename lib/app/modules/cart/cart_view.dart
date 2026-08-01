@@ -654,92 +654,100 @@ class CartBottomBar extends StatelessWidget {
 
   void _showPriceDetailsSheet(BuildContext context) {
     Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Price Details',
-                  style: GoogleFonts.poppins(
-                    fontSize: 13,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.titleMedium?.color,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close, size: 18),
-                  onPressed: () => Get.back(),
-                ),
-              ],
-            ),
-            const Divider(),
-            const SizedBox(height: 8),
-            Obx(() {
-              final isCalculatingDelivery =
-                  controller.isCalculatingDelivery.value;
-              final priceVal = controller.deliveryPrice;
-
-              return Column(
+      SafeArea(
+        top: false,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildInvoiceLine(context, 'Item Subtotal',
-                      formatCurrency(controller.originalSubtotal)),
-                  if (controller.productDiscountAmount > 0)
-                    _buildInvoiceLine(context, 'Product Discount',
-                        '- ${formatCurrency(controller.productDiscountAmount)}',
-                        isGreen: true),
-                  ...controller.appliedCoupons.map((coupon) {
-                    return _buildInvoiceLine(
-                      context,
-                      'Coupon Discount (${coupon.code})',
-                      '- ${formatCurrency(coupon.discountAmount)}',
-                      isGreen: true,
+                  Text(
+                    'Price Details',
+                    style: GoogleFonts.poppins(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).textTheme.titleMedium?.color,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 18),
+                    onPressed: () => Get.back(),
+                  ),
+                ],
+              ),
+              const Divider(),
+              const SizedBox(height: 8),
+              Obx(() {
+                final isCalculatingDelivery =
+                    controller.isCalculatingDelivery.value;
+                final priceVal = controller.deliveryPrice;
+
+                return Column(
+                  children: [
+                    _buildInvoiceLine(context, 'Item Subtotal',
+                        formatCurrency(controller.originalSubtotal)),
+                    if (controller.productDiscountAmount > 0)
+                      _buildInvoiceLine(context, 'Product Discount',
+                          '- ${formatCurrency(controller.productDiscountAmount)}',
+                          isGreen: true),
+                    ...controller.appliedCoupons.map((coupon) {
+                      return _buildInvoiceLine(
+                        context,
+                        'Coupon Discount (${coupon.code})',
+                        '- ${formatCurrency(coupon.discountAmount)}',
+                        isGreen: true,
+                      );
+                    }),
+                    _buildInvoiceLine(
+                        context,
+                        'Delivery Charges',
+                        isCalculatingDelivery
+                            ? 'Calculating...'
+                            : (priceVal > 0
+                                ? formatCurrency(priceVal)
+                                : 'FREE')),
+                    if (controller.totalTax > 0)
+                      _buildInvoiceLine(
+                          context, 'Tax', formatCurrency(controller.totalTax)),
+                  ],
+                );
+              }),
+              const Divider(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Total Amount',
+                    style: GoogleFonts.poppins(
+                        fontSize: 13, fontWeight: FontWeight.bold),
+                  ),
+                  Obx(() {
+                    final isCalculating =
+                        controller.isCalculatingDelivery.value;
+                    final totalVal = controller.totalAmount;
+                    return Text(
+                      isCalculating
+                          ? 'Calculating...'
+                          : formatCurrency(totalVal),
+                      style: GoogleFonts.poppins(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
+                          color: AppColors.primary),
                     );
                   }),
-                  _buildInvoiceLine(
-                      context,
-                      'Delivery Charges',
-                      isCalculatingDelivery
-                          ? 'Calculating...'
-                          : (priceVal > 0 ? formatCurrency(priceVal) : 'FREE')),
-                  if (controller.totalTax > 0)
-                    _buildInvoiceLine(
-                        context, 'Tax', formatCurrency(controller.totalTax)),
                 ],
-              );
-            }),
-            const Divider(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Total Amount',
-                  style: GoogleFonts.poppins(
-                      fontSize: 13, fontWeight: FontWeight.bold),
-                ),
-                Obx(() {
-                  final isCalculating = controller.isCalculatingDelivery.value;
-                  final totalVal = controller.totalAmount;
-                  return Text(
-                    isCalculating ? 'Calculating...' : formatCurrency(totalVal),
-                    style: GoogleFonts.poppins(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w900,
-                        color: AppColors.primary),
-                  );
-                }),
-              ],
-            ),
-            const SizedBox(height: 12),
-          ],
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
         ),
       ),
       isScrollControlled: true,
