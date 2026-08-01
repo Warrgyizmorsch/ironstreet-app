@@ -21,6 +21,10 @@ class CategoryProductView extends GetView<CategoryController> {
 
     final isPushed = ModalRoute.of(context)?.canPop ?? false;
 
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double itemWidth = (screenWidth - 32 - 10) / 2;
+    final double childAspectRatio = itemWidth / (itemWidth + 72);
+
     // Load category arguments if available
     final categoryId = Get.arguments as int?;
     if (categoryId != null && controller.activeProductCategoryId.value != categoryId) {
@@ -284,11 +288,11 @@ class CategoryProductView extends GetView<CategoryController> {
               SliverPadding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 sliver: SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    childAspectRatio: 0.72,
+                    childAspectRatio: childAspectRatio,
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (context, index) => const ProductCardShimmer(width: double.infinity),
@@ -321,11 +325,11 @@ class CategoryProductView extends GetView<CategoryController> {
               SliverPadding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 70), // Bottom padding clearance for bottom bar
                 sliver: SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    childAspectRatio: 0.72,
+                    childAspectRatio: childAspectRatio,
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {

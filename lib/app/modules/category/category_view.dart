@@ -19,6 +19,10 @@ class CategoryView extends GetView<HomeController> {
     // 1. Find the HomeController that is already running from the Home Screen
     final controller = Get.find<HomeController>();
 
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double itemWidth = (screenWidth - 32 - 10) / 2;
+    final double childAspectRatio = itemWidth / (itemWidth + 72);
+
     if (initialSearchQuery != null) {
       controller.searchQuery.value = initialSearchQuery!;
     }
@@ -152,11 +156,11 @@ class CategoryView extends GetView<HomeController> {
                   ? GridView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 10,
-                        childAspectRatio: 0.66,
+                        childAspectRatio: childAspectRatio,
                       ),
                       itemCount: 6,
                       itemBuilder: (context, index) => const ProductCardShimmer(width: double.infinity),
@@ -188,11 +192,11 @@ class CategoryView extends GetView<HomeController> {
                                 horizontal: 16, vertical: 8),
                             physics: const BouncingScrollPhysics(),
                             gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
                               crossAxisSpacing: 10,
                               mainAxisSpacing: 10,
-                              childAspectRatio: 0.66,
+                              childAspectRatio: childAspectRatio,
                             ),
                             itemCount: products.length,
                             itemBuilder: (context, index) {
