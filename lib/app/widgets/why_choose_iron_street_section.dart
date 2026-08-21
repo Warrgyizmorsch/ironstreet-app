@@ -9,7 +9,7 @@ class WhyChooseIronStreetSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> features = [
       {
-        'title': '15K+ Products',
+        'title': '200+ Products',
         'icon': Icons.inventory_2_outlined,
       },
       {
@@ -107,7 +107,11 @@ class WhyChooseIronStreetSection extends StatelessWidget {
                         style: GoogleFonts.poppins(
                           fontSize: 9,
                           fontWeight: FontWeight.w600,
-                          color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.color
+                              ?.withValues(alpha: 0.8),
                         ),
                       ),
                     ],

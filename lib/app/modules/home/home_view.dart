@@ -178,7 +178,8 @@ class HomeView extends GetView<HomeController> {
           DrawerHeader(
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
-              border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+              border: Border(
+                  bottom: BorderSide(color: Theme.of(context).dividerColor)),
             ),
             child: Row(
               children: [
@@ -214,7 +215,8 @@ class HomeView extends GetView<HomeController> {
               padding: EdgeInsets.zero,
               children: [
                 _buildDrawerSectionTitle('COLLECTIONS'),
-                _buildDrawerItem(context, Icons.chair, 'Living Room Furniture', () {
+                _buildDrawerItem(context, Icons.chair, 'Living Room Furniture',
+                    () {
                   Get.back();
                   Get.toNamed(Routes.CATEGORY, arguments: 139);
                 }),
@@ -222,21 +224,25 @@ class HomeView extends GetView<HomeController> {
                   Get.back();
                   Get.toNamed(Routes.CATEGORY, arguments: 142);
                 }),
-                _buildDrawerItem(context, Icons.restaurant, 'Dining & Kitchen', () {
+                _buildDrawerItem(context, Icons.restaurant, 'Dining & Kitchen',
+                    () {
                   Get.back();
                   Get.toNamed(Routes.CATEGORY, arguments: 140);
                 }),
                 const Divider(),
                 _buildDrawerSectionTitle('BENEFITS & EXPLORE'),
-                _buildDrawerItem(context, Icons.storefront, 'Our Experience Stores', () {
+                _buildDrawerItem(
+                    context, Icons.storefront, 'Our Experience Stores', () {
                   controller.currentIndex.value = 3;
                   Get.back();
                 }),
-                _buildDrawerItem(context, Icons.phone_in_talk, 'Request Callback', () {
+                _buildDrawerItem(
+                    context, Icons.phone_in_talk, 'Request Callback', () {
                   controller.currentIndex.value = 2;
                   Get.back();
                 }),
-                _buildDrawerItem(context, Icons.account_circle, 'My Account', () {
+                _buildDrawerItem(context, Icons.account_circle, 'My Account',
+                    () {
                   controller.currentIndex.value = 4;
                   Get.back();
                 }),
@@ -267,7 +273,7 @@ class HomeView extends GetView<HomeController> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '15-Year Solid Wood Warranty certified by layout & styling professionals.',
+                  '15-Year Iron Furniture Warranty certified by layout & styling professionals.',
                   style: GoogleFonts.poppins(
                     fontSize: 8,
                     color: Colors.grey,
@@ -296,9 +302,12 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildDrawerItem(BuildContext context, IconData icon, String label, VoidCallback onTap) {
+  Widget _buildDrawerItem(
+      BuildContext context, IconData icon, String label, VoidCallback onTap) {
     return ListTile(
-      leading: Icon(icon, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7), size: 20),
+      leading: Icon(icon,
+          color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7),
+          size: 20),
       title: Text(
         label,
         style: GoogleFonts.poppins(
@@ -412,7 +421,8 @@ class HomeView extends GetView<HomeController> {
         _buildCategoryHorizontalScroll(),
 
         Obx(() {
-          if (controller.isSliderLoading.value && controller.sliderBanners.isEmpty) {
+          if (controller.isSliderLoading.value &&
+              controller.sliderBanners.isEmpty) {
             return const BannerSliderShimmer();
           }
           if (controller.sliderBanners.isEmpty) {
@@ -684,7 +694,9 @@ class HomeView extends GetView<HomeController> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   decoration: BoxDecoration(
                     color: isActive
-                        ? (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF3D2619) : const Color(0xFFFFF0E6))
+                        ? (Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFF3D2619)
+                            : const Color(0xFFFFF0E6))
                         : Colors.transparent,
                     border: Border.all(
                       color: isActive
@@ -698,7 +710,13 @@ class HomeView extends GetView<HomeController> {
                     style: GoogleFonts.poppins(
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
-                      color: isActive ? AppColors.primary : Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                      color: isActive
+                          ? AppColors.primary
+                          : Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                              ?.withOpacity(0.7),
                     ),
                   ),
                 ),
@@ -980,13 +998,21 @@ class HomeView extends GetView<HomeController> {
                   'We hear you, ${nameController.text}! Our professional interior layout and styling coordinator will ring you back on ${phoneController.text} during the requested slot (${timeSlot.value}).',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                      fontSize: 12, color: Theme.of(Get.context!).textTheme.bodySmall?.color?.withOpacity(0.8)),
+                      fontSize: 12,
+                      color: Theme.of(Get.context!)
+                          .textTheme
+                          .bodySmall
+                          ?.color
+                          ?.withOpacity(0.8)),
                 ),
               ),
               const SizedBox(height: 24),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(Get.context!).brightness == Brightness.dark ? const Color(0xFF2D2D2D) : const Color(0xFF222222),
+                  backgroundColor:
+                      Theme.of(Get.context!).brightness == Brightness.dark
+                          ? const Color(0xFF2D2D2D)
+                          : const Color(0xFF222222),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                   shape: RoundedRectangleBorder(
@@ -1023,9 +1049,10 @@ class HomeView extends GetView<HomeController> {
                       : const Color(0xFFFFF3EC),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                      color: Theme.of(Get.context!).brightness == Brightness.dark
-                          ? const Color(0xFF5A3926)
-                          : const Color(0xFFFFD4C0)),
+                      color:
+                          Theme.of(Get.context!).brightness == Brightness.dark
+                              ? const Color(0xFF5A3926)
+                              : const Color(0xFFFFD4C0)),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1049,7 +1076,12 @@ class HomeView extends GetView<HomeController> {
                           Text(
                             'Struggling with space sizing, fabric combinations or custom layout advice? Get a free home layout call with zero commitments.',
                             style: GoogleFonts.poppins(
-                                fontSize: 9, color: Theme.of(Get.context!).textTheme.bodySmall?.color?.withOpacity(0.8)),
+                                fontSize: 9,
+                                color: Theme.of(Get.context!)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.color
+                                    ?.withOpacity(0.8)),
                           ),
                         ],
                       ),
@@ -1072,9 +1104,10 @@ class HomeView extends GetView<HomeController> {
                   hintText: 'Enter your name',
                   isDense: true,
                   filled: true,
-                  fillColor: Theme.of(Get.context!).brightness == Brightness.dark
-                      ? const Color(0xFF2D2D2D)
-                      : const Color(0xFFF6F6F6),
+                  fillColor:
+                      Theme.of(Get.context!).brightness == Brightness.dark
+                          ? const Color(0xFF2D2D2D)
+                          : const Color(0xFFF6F6F6),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide.none),
@@ -1097,9 +1130,10 @@ class HomeView extends GetView<HomeController> {
                   prefixText: '+91 ',
                   isDense: true,
                   filled: true,
-                  fillColor: Theme.of(Get.context!).brightness == Brightness.dark
-                      ? const Color(0xFF2D2D2D)
-                      : const Color(0xFFF6F6F6),
+                  fillColor:
+                      Theme.of(Get.context!).brightness == Brightness.dark
+                          ? const Color(0xFF2D2D2D)
+                          : const Color(0xFFF6F6F6),
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide.none),
@@ -1268,7 +1302,9 @@ class HomeView extends GetView<HomeController> {
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     decoration: BoxDecoration(
                       color: isActive
-                          ? (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF3D2619) : const Color(0xFFFFF0E6))
+                          ? (Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF3D2619)
+                              : const Color(0xFFFFF0E6))
                           : Colors.transparent,
                       border: Border.all(
                         color: isActive
@@ -1282,7 +1318,13 @@ class HomeView extends GetView<HomeController> {
                       style: GoogleFonts.poppins(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        color: isActive ? AppColors.primary : Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                        color: isActive
+                            ? AppColors.primary
+                            : Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.color
+                                ?.withOpacity(0.7),
                       ),
                     ),
                   ),
@@ -1342,7 +1384,12 @@ class HomeView extends GetView<HomeController> {
                                   child: Text(
                                     store.address,
                                     style: GoogleFonts.poppins(
-                                        fontSize: 10, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.8)),
+                                        fontSize: 10,
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.color
+                                            ?.withOpacity(0.8)),
                                   ),
                                 ),
                               ],
@@ -1360,7 +1407,11 @@ class HomeView extends GetView<HomeController> {
                                       store.timings,
                                       style: GoogleFonts.poppins(
                                           fontSize: 10,
-                                          color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.8)),
+                                          color: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.color
+                                              ?.withOpacity(0.8)),
                                     ),
                                   ],
                                 ),
@@ -1380,9 +1431,13 @@ class HomeView extends GetView<HomeController> {
                                 Expanded(
                                   child: OutlinedButton.icon(
                                     style: OutlinedButton.styleFrom(
-                                        foregroundColor: Theme.of(context).textTheme.bodyLarge?.color,
+                                        foregroundColor: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge
+                                            ?.color,
                                         side: BorderSide(
-                                            color: Theme.of(context).dividerColor)),
+                                            color: Theme.of(context)
+                                                .dividerColor)),
                                     onPressed: () =>
                                         _openMap(store.mapUrl, store.address),
                                     icon: const Icon(Icons.navigation,

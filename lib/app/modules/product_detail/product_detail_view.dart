@@ -2161,7 +2161,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Need custom sizes, wood polish, iron frame colors, or fully personalized furniture? We customize this product to your exact needs!',
+                      'Need custom sizes, iron frame colors, or fully personalized furniture? We customize this product to your exact needs!',
                       style: GoogleFonts.poppins(
                         fontSize: 11,
                         color: Colors.grey[600],
@@ -2192,7 +2192,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                     '• Product: ${prod.name}\n'
                     '• SKU: ${prod.sku.isNotEmpty ? prod.sku : "N/A"}\n'
                     '• Current Price: ₹${NumberFormat('#,##,###').format(price)}\n\n'
-                    'Please share wood polish, dimensions, and custom frame options.';
+                    'Please share Iron polish, dimensions, and custom frame options.';
 
                 final String encodedMessage = Uri.encodeComponent(rawMessage);
                 final Uri whatsappUrl =

@@ -77,7 +77,7 @@ class SplashView extends GetView<SplashController> {
               const SizedBox(height: 6),
               // Subtitle
               Text(
-                'SOLID WOOD & IRON FURNITURE',
+                'Metal & IRON FURNITURE',
                 style: GoogleFonts.poppins(
                   fontSize: 9,
                   fontWeight: FontWeight.w600,
