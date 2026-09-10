@@ -2192,7 +2192,7 @@ class ProductDetailView extends GetView<ProductDetailController> {
                     '• Product: ${prod.name}\n'
                     '• SKU: ${prod.sku.isNotEmpty ? prod.sku : "N/A"}\n'
                     '• Current Price: ₹${NumberFormat('#,##,###').format(price)}\n\n'
-                    'Please share Iron polish, dimensions, and custom frame options.';
+                    'Please share Metal polish, dimensions, and custom frame options.';
 
                 final String encodedMessage = Uri.encodeComponent(rawMessage);
                 final Uri whatsappUrl =

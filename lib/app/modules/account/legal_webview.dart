@@ -1,111 +1,7 @@
-// import 'package:flutter/material.dart';
-// import 'package:webview_flutter/webview_flutter.dart';
-// import 'package:google_fonts/google_fonts.dart';
-
-// class LegalWebView extends StatefulWidget {
-//   final String title;
-//   final String url;
-
-//   const LegalWebView({
-//     super.key,
-//     required this.title,
-//     required this.url,
-//   });
-
-//   @override
-//   State<LegalWebView> createState() => _LegalWebViewState();
-// }
-
-// class _LegalWebViewState extends State<LegalWebView> {
-//   late final WebViewController _controller;
-//   bool _isLoading = true;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _controller = WebViewController()
-//       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-//       ..setBackgroundColor(Colors.white)
-//       ..setNavigationDelegate(
-//         NavigationDelegate(
-//           onPageStarted: (String url) {
-//             setState(() {
-//               _isLoading = true;
-//             });
-//           },
-//           onPageFinished: (String url) {
-//             setState(() {
-//               _isLoading = false;
-//             });
-//             // Inject JavaScript to hide website headers, footers, and topbar elements
-//             _controller.runJavaScript('''
-//               (function() {
-//                 const selectors = [
-//                   'header', '.site-header', '.header-wrapper', '.masthead',
-//                   'footer', '.site-footer', '.footer-wrapper', '.colophon',
-//                   '.top-bar', '.entry-header-wrapper', '.mobile-header',
-//                   '.header-mobile', '#header', '#footer', '.page-title-section'
-//                 ];
-//                 selectors.forEach(selector => {
-//                   document.querySelectorAll(selector).forEach(element => {
-//                     element.style.display = 'none';
-//                   });
-//                 });
-
-//                 // Adjust content container padding or margin for clean layout
-//                 const contentSelectors = ['#content', '.site-content', '.main-content-wrapper'];
-//                 contentSelectors.forEach(sel => {
-//                   document.querySelectorAll(sel).forEach(el => {
-//                     el.style.paddingTop = '0px';
-//                     el.style.marginTop = '0px';
-//                   });
-//                 });
-//               })();
-//             ''');
-//           },
-//           onWebResourceError: (WebResourceError error) {},
-//         ),
-//       )
-//       ..loadRequest(Uri.parse(widget.url));
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       appBar: AppBar(
-//         backgroundColor: Colors.white,
-//         elevation: 0,
-//         leading: IconButton(
-//           icon: const Icon(Icons.arrow_back, color: Colors.black87),
-//           onPressed: () => Navigator.of(context).pop(),
-//         ),
-//         title: Text(
-//           widget.title,
-//           style: GoogleFonts.poppins(
-//             color: Colors.black87,
-//             fontWeight: FontWeight.bold,
-//             fontSize: 16,
-//           ),
-//         ),
-//       ),
-//       body: Stack(
-//         children: [
-//           WebViewWidget(controller: _controller),
-//           if (_isLoading)
-//             const Center(
-//               child: CircularProgressIndicator(
-//                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFF37021)),
-//               ),
-//             ),
-//         ],
-//       ),
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class LegalWebView extends StatefulWidget {
   final String title;
@@ -129,9 +25,12 @@ class _LegalWebViewState extends State<LegalWebView> {
   void initState() {
     super.initState();
 
+    final isDark = Get.isDarkMode;
+    final bgColor = isDark ? const Color(0xFF121212) : Colors.white;
+
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(Colors.transparent)
+      ..setBackgroundColor(bgColor)
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (_) {
@@ -140,8 +39,8 @@ class _LegalWebViewState extends State<LegalWebView> {
             }
           },
           onPageFinished: (_) async {
-            final isDark = Theme.of(context).brightness == Brightness.dark;
-            await _removeWebsiteHeaderFooter(isDark);
+            final isDarkCurrent = Theme.of(context).brightness == Brightness.dark;
+            await _injectCustomStyleAndClean(isDarkCurrent);
 
             if (mounted) {
               setState(() => _isLoading = false);
@@ -155,51 +54,68 @@ class _LegalWebViewState extends State<LegalWebView> {
       ..loadRequest(Uri.parse(widget.url));
   }
 
-  Future<void> _removeWebsiteHeaderFooter(bool isDark) async {
+  Future<void> _injectCustomStyleAndClean(bool isDark) async {
+    final bgColor = isDark ? '#121212' : '#ffffff';
+    final textColor = isDark ? '#e0e0e0' : '#222222';
+    final headingColor = isDark ? '#ffffff' : '#111111';
+
     await _controller.runJavaScript('''
       (function() {
+        // 1. Remove website header, footer, popups, and floating buttons
         document.querySelectorAll(
-          '.header-container, .footer, .title-breadcrumb, #simple-chat-button--container, .pum-overlay, #back-top'
+          '.header-container, .footer, .title-breadcrumb, #simple-chat-button--container, .pum-overlay, #back-top, header, footer, .site-header, .site-footer'
         ).forEach(el => el.remove());
 
-        document.body.style.margin = '0';
-        document.body.style.padding = '0';
-        document.body.style.backgroundColor = '${isDark ? "#121212" : "#ffffff"}';
-
-        const main = document.querySelector('.main-container');
-        if (main) {
-          main.style.marginTop = '0';
-          main.style.paddingTop = '0';
+        // 2. Inject clean style sheet to prevent font blur and layout breakage
+        let style = document.getElementById('ironstreet-custom-style');
+        if (!style) {
+          style = document.createElement('style');
+          style.id = 'ironstreet-custom-style';
+          document.head.appendChild(style);
         }
 
-        const container = document.querySelector('.main-container .container');
-        if (container) {
-          container.style.width = '100%';
-          container.style.maxWidth = '100%';
-          container.style.padding = '16px';
-          container.style.boxSizing = 'border-box';
-        }
-
-        const row = document.querySelector('.main-container .row');
-        if (row) {
-          row.style.margin = '0';
-        }
-
-        document.querySelectorAll('h1').forEach(h1 => {
-          h1.style.fontSize = '24px';
-          h1.style.marginBottom = '20px';
-          h1.style.color = '${isDark ? "#ffffff" : "#222222"}';
-        });
-
-        document.querySelectorAll('p, li, span, h2, h3, h4, h5, h6, div, td, th').forEach(text => {
-          if ($isDark) {
-            text.style.color = '#e0e0e0';
-          } else {
-            text.style.color = '#333333';
+        style.innerHTML = `
+          html, body {
+            background-color: $bgColor !important;
+            color: $textColor !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            -webkit-font-smoothing: antialiased !important;
+            -moz-osx-font-smoothing: grayscale !important;
+            text-rendering: optimizeLegibility !important;
           }
-          text.style.fontSize = '14px';
-          text.style.lineHeight = '1.7';
-        });
+          .main-container, .main-container .container, .main-container .row, #content, .site-content, .entry-content, article {
+            background-color: $bgColor !important;
+            color: $textColor !important;
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+          }
+          .main-container .container {
+            padding: 16px !important;
+          }
+          h1, h2, h3, h4, h5, h6 {
+            color: $headingColor !important;
+            font-weight: 700 !important;
+            line-height: 1.3 !important;
+          }
+          h1 { font-size: 22px !important; margin-bottom: 16px !important; }
+          h2 { font-size: 18px !important; margin-top: 20px !important; margin-bottom: 10px !important; }
+          h3 { font-size: 16px !important; margin-top: 16px !important; margin-bottom: 8px !important; }
+          p, li, td, th {
+            color: $textColor !important;
+            font-size: 14px !important;
+            line-height: 1.7 !important;
+          }
+          a {
+            color: #F03B3B !important;
+          }
+          .header-container, .footer, .title-breadcrumb, #simple-chat-button--container, .pum-overlay, #back-top {
+            display: none !important;
+          }
+        `;
       })();
     ''');
   }
@@ -213,13 +129,16 @@ class _LegalWebViewState extends State<LegalWebView> {
         elevation: 0,
         surfaceTintColor: Theme.of(context).appBarTheme.surfaceTintColor,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back,
-              color: Theme.of(context).appBarTheme.iconTheme?.color ?? Theme.of(context).textTheme.titleLarge?.color),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).appBarTheme.iconTheme?.color ??
+                Theme.of(context).textTheme.titleLarge?.color,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         centerTitle: true,
         title: Text(
-          'Iron Street',
+          widget.title.isNotEmpty ? widget.title : 'Iron Street',
           style: GoogleFonts.poppins(
             color: Theme.of(context).textTheme.titleLarge?.color,
             fontWeight: FontWeight.bold,
