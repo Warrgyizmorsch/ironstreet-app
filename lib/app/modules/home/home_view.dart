@@ -229,6 +229,11 @@ class HomeView extends GetView<HomeController> {
                   Get.back();
                   Get.toNamed(Routes.CATEGORY, arguments: 140);
                 }),
+                _buildDrawerItem(
+                    context, Icons.outdoor_grill, 'Outdoor Furniture', () {
+                  Get.back();
+                  Get.toNamed(Routes.CATEGORY, arguments: 141);
+                }),
                 const Divider(),
                 _buildDrawerSectionTitle('BENEFITS & EXPLORE'),
                 _buildDrawerItem(
