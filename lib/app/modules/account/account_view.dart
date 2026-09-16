@@ -10,6 +10,7 @@ import 'account_controller.dart';
 import '../../routes/app_pages.dart';
 import 'legal_policies_view.dart';
 import 'package:iron_street_app/app/data/local/session_manager.dart';
+import 'package:iron_street_app/app/utills/constant/images.dart';
 import '../profile/profile_controller.dart';
 
 class AccountView extends GetView<AccountController> {
@@ -60,7 +61,8 @@ class AccountView extends GetView<AccountController> {
   }
 
   // --- PROFILE DASHBOARD STATE ---
-  Widget _buildProfileDashboard(BuildContext context, AccountController accCtrl) {
+  Widget _buildProfileDashboard(
+      BuildContext context, AccountController accCtrl) {
     final profCtrl = Get.isRegistered<ProfileController>()
         ? Get.find<ProfileController>()
         : Get.put(ProfileController(), permanent: true);
@@ -114,13 +116,13 @@ class AccountView extends GetView<AccountController> {
                       // Avatar image URL from WP user URL field
                       final avatarUrl = user?.profileImage ?? '';
 
-
                       return Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Theme.of(context).dividerColor),
+                          border:
+                              Border.all(color: Theme.of(context).dividerColor),
                         ),
                         child: Row(
                           children: [
@@ -130,7 +132,8 @@ class AccountView extends GetView<AccountController> {
                                     width: 58,
                                     height: 58,
                                     decoration: BoxDecoration(
-                                      color: Theme.of(context).brightness == Brightness.dark
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
                                           ? const Color(0xFF3D2619)
                                           : const Color(0xFFFFF0E6),
                                       shape: BoxShape.circle,
@@ -154,7 +157,8 @@ class AccountView extends GetView<AccountController> {
                                           height: 58,
                                           fit: BoxFit.cover,
                                           errorBuilder: (_, __, ___) =>
-                                              _initialsCircle(context, initials),
+                                              _initialsCircle(
+                                                  context, initials),
                                         ),
                                       )
                                     : _initialsCircle(context, initials),
@@ -168,7 +172,10 @@ class AccountView extends GetView<AccountController> {
                                     style: GoogleFonts.poppins(
                                         fontSize: 14,
                                         fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).textTheme.titleMedium?.color),
+                                        color: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.color),
                                   ),
                                   Text(
                                     displayEmail,
@@ -189,12 +196,14 @@ class AccountView extends GetView<AccountController> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 2),
                                     decoration: BoxDecoration(
-                                      color: Theme.of(context).brightness == Brightness.dark
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.dark
                                           ? const Color(0xFF3D2619)
                                           : const Color(0xFFFFF0E6),
                                       borderRadius: BorderRadius.circular(20),
                                       border: Border.all(
-                                          color: Theme.of(context).brightness == Brightness.dark
+                                          color: Theme.of(context).brightness ==
+                                                  Brightness.dark
                                               ? const Color(0xFF5A3926)
                                               : const Color(0xFFFFD4C0)),
                                     ),
@@ -220,7 +229,8 @@ class AccountView extends GetView<AccountController> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Theme.of(context).dividerColor),
+                        border:
+                            Border.all(color: Theme.of(context).dividerColor),
                       ),
                       child: Column(
                         children: [
@@ -257,7 +267,8 @@ class AccountView extends GetView<AccountController> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Theme.of(context).dividerColor),
+                        border:
+                            Border.all(color: Theme.of(context).dividerColor),
                       ),
                       child: Column(
                         children: [
@@ -277,7 +288,8 @@ class AccountView extends GetView<AccountController> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Theme.of(context).dividerColor),
+                        border:
+                            Border.all(color: Theme.of(context).dividerColor),
                       ),
                       child: Column(
                         children: [
@@ -301,12 +313,14 @@ class AccountView extends GetView<AccountController> {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.red[600],
                           side: BorderSide(
-                              color: Theme.of(context).brightness == Brightness.dark
+                              color: Theme.of(context).brightness ==
+                                      Brightness.dark
                                   ? Colors.red[900]!
                                   : Colors.red[100]!),
-                          backgroundColor: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.red[900]?.withValues(alpha: 0.2)
-                              : Colors.red[50],
+                          backgroundColor:
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.red[900]?.withValues(alpha: 0.2)
+                                  : Colors.red[50],
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),
@@ -523,7 +537,11 @@ class AccountView extends GetView<AccountController> {
         style: GoogleFonts.poppins(
           fontSize: 10,
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+          color: Theme.of(context)
+              .textTheme
+              .bodySmall
+              ?.color
+              ?.withValues(alpha: 0.8),
           letterSpacing: 0.8,
         ),
       ),
@@ -620,9 +638,12 @@ class AccountView extends GetView<AccountController> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildThemeDialogOption(context, 'System Default', 'system', currentModeRx, sessionManager),
-            _buildThemeDialogOption(context, 'Light Mode', 'light', currentModeRx, sessionManager),
-            _buildThemeDialogOption(context, 'Dark Mode', 'dark', currentModeRx, sessionManager),
+            _buildThemeDialogOption(context, 'System Default', 'system',
+                currentModeRx, sessionManager),
+            _buildThemeDialogOption(
+                context, 'Light Mode', 'light', currentModeRx, sessionManager),
+            _buildThemeDialogOption(
+                context, 'Dark Mode', 'dark', currentModeRx, sessionManager),
           ],
         ),
       ),
@@ -700,6 +721,55 @@ class AccountView extends GetView<AccountController> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(height: 20),
+              // Brand Logo & Welcome Header
+              Center(
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.25),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: ClipOval(
+                        child: Image.asset(
+                          AppImages.appLogo,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Iron Street',
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.titleMedium?.color,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Metal & Iron Furniture',
+                      style: GoogleFonts.poppins(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.color
+                            ?.withValues(alpha: 0.6),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
               // Tabs Header
               Row(
                 children: [
@@ -726,7 +796,11 @@ class AccountView extends GetView<AccountController> {
                               fontWeight: FontWeight.bold,
                               color: isLoginTab.value
                                   ? AppColors.primary
-                                  : Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color
+                                      ?.withValues(alpha: 0.6),
                             ),
                           ),
                         ),
@@ -756,7 +830,11 @@ class AccountView extends GetView<AccountController> {
                               fontWeight: FontWeight.bold,
                               color: !isLoginTab.value
                                   ? AppColors.primary
-                                  : Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.6),
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.color
+                                      ?.withValues(alpha: 0.6),
                             ),
                           ),
                         ),
@@ -810,7 +888,11 @@ class AccountView extends GetView<AccountController> {
           'Sign in to access your orders, account profile, and benefits.',
           style: GoogleFonts.poppins(
             fontSize: 10,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: 20),
@@ -821,7 +903,11 @@ class AccountView extends GetView<AccountController> {
           style: GoogleFonts.poppins(
             fontSize: 10,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: 6),
@@ -851,7 +937,11 @@ class AccountView extends GetView<AccountController> {
           style: GoogleFonts.poppins(
             fontSize: 10,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: 6),
@@ -940,7 +1030,11 @@ class AccountView extends GetView<AccountController> {
           'Join Iron Street to unlock exclusive catalogs, coupons, and secure orders.',
           style: GoogleFonts.poppins(
             fontSize: 10,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: 20),
@@ -957,7 +1051,11 @@ class AccountView extends GetView<AccountController> {
                     style: GoogleFonts.poppins(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.color
+                          ?.withValues(alpha: 0.8),
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -991,7 +1089,11 @@ class AccountView extends GetView<AccountController> {
                     style: GoogleFonts.poppins(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+                      color: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.color
+                          ?.withValues(alpha: 0.8),
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -1025,7 +1127,11 @@ class AccountView extends GetView<AccountController> {
           style: GoogleFonts.poppins(
             fontSize: 10,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: 6),
@@ -1055,7 +1161,11 @@ class AccountView extends GetView<AccountController> {
           style: GoogleFonts.poppins(
             fontSize: 10,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: 6),
@@ -1086,7 +1196,11 @@ class AccountView extends GetView<AccountController> {
           style: GoogleFonts.poppins(
             fontSize: 10,
             fontWeight: FontWeight.bold,
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.8),
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withValues(alpha: 0.8),
           ),
         ),
         const SizedBox(height: 6),

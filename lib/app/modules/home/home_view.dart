@@ -172,6 +172,7 @@ class HomeView extends GetView<HomeController> {
 
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
+      
       backgroundColor: Theme.of(context).cardColor,
       child: Column(
         children: [
@@ -183,6 +184,25 @@ class HomeView extends GetView<HomeController> {
             ),
             child: Row(
               children: [
+                Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      AppImages.appLogo,
+                      width: 46,
+                      height: 46,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -190,7 +210,7 @@ class HomeView extends GetView<HomeController> {
                     Text(
                       'Iron Street',
                       style: GoogleFonts.poppins(
-                        fontSize: 22,
+                        fontSize: 20,
                         fontWeight: FontWeight.w900,
                         color: AppColors.primary,
                       ),
@@ -199,7 +219,7 @@ class HomeView extends GetView<HomeController> {
                     Text(
                       'EXPERIENCE STORE APP',
                       style: GoogleFonts.poppins(
-                        fontSize: 9,
+                        fontSize: 8.5,
                         fontWeight: FontWeight.bold,
                         color: Colors.grey,
                         letterSpacing: 1.2,

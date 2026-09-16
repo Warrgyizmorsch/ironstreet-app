@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iron_street_app/app/utills/constant/images.dart';
 import 'package:iron_street_app/app/utills/theme/app_colors.dart';
 
 import '../modules/cart/cart_controller.dart';
@@ -28,16 +29,35 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
         onTap: () => Get.offAllNamed(Routes.HOME),
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
-          child: Text(
-            'Iron Street',
-            style: GoogleFonts.poppins(
-              textStyle: const TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w900,
-                fontSize: 20,
-                letterSpacing: -0.5,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: ClipOval(
+                  child: Image.asset(
+                    AppImages.appLogo,
+                    width: 28,
+                    height: 28,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 8),
+              Text(
+                'Iron Street',
+                style: GoogleFonts.poppins(
+                  textStyle: const TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 19,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
