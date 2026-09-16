@@ -440,7 +440,8 @@ class HomeView extends GetView<HomeController> {
               if (categoryId != null) {
                 Get.toNamed(Routes.CATEGORY, arguments: categoryId);
               } else {
-                CustomToast.show('Opening selection: "${banner.title}"');
+                // controller.currentIndex.value = 1;
+                // CustomToast.show('Opening selection: "${banner.title}"');
               }
             },
           );
